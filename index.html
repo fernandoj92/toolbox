@@ -1,34 +1,25 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en-us">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta charset="UTF-8">
     <title>AMIDST Toolbox by amidst</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-light.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>AMIDST Toolbox</h1>
-        <p>Analysis of MassIve Data STreams using Probabilistic Graphical Models</p>
+    <section class="page-header">
+      <h1 class="project-name">AMIDST Toolbox</h1>
+      <h2 class="project-tagline">Analysis of MassIve Data STreams using Probabilistic Graphical Models</h2>
+      <a href="https://github.com/amidst/toolbox" class="btn">View on GitHub</a>
+      <a href="https://github.com/amidst/toolbox/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/amidst/toolbox/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-        <p class="view"><a href="https://github.com/amidst/toolbox">View the Project on GitHub <small>amidst/toolbox</small></a></p>
-
-
-        <ul>
-          <li><a href="https://github.com/amidst/toolbox/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/amidst/toolbox/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/amidst/toolbox">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h1>
+    <section class="main-content">
+      <h1>
 <a id="scope" class="anchor" href="#scope" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scope</h1>
 
 <p>This toolbox offers a collection of scalable and parallel algorithms for inference and learning of hybrid Bayesian networks from streaming data. For example, AMIDST provides parallel multi-core implementations for Bayesian parameter learning, using streaming variational Bayes and variational message passing. Additionally, AMIDST efficiently leverages existing functionalities and algorithms by interfacing to existing software tools such as R, Weka, HUGIN and MOA. AMIDST is an open source toolbox written in Java and is available under the Apache Software License.</p>
@@ -49,27 +40,37 @@
 </p>
 
 <h1>
-<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h1>
+<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation<a name="documentation"></a>
+</h1>
 
 <ol>
 <li>
-<a href="#functionalities">Functionalities</a>
+<a href="#functionalities">Toolbox Functionalities</a>
 
 <ul>
-<li><a href="#datastreams">Data Sreams</a></li>
+<li><a href="#datastreams">Data Streams</a></li>
 <li><a href="#pgms">Probabilistic Graphical Models</a></li>
 <li><a href="#inference">Inference Engine</a></li>
 <li><a href="#learning">Learning Engine</a></li>
 <li><a href="#conceptdrift">Concept Drift</a></li>
-<li><a href="#librarylinks">Library Links (MOA, Weka, Hugin, R, etc)</a></li>
+<li><a href="#librarylinks">Links to MOA, Weka, Hugin and R</a></li>
 </ul>
 </li>
-<li><a href="#installation">Installing, Compiling &amp; Running from the command line</a></li>
+<li>
+<a href="#architecture">Toolbox Architecture</a>
+
+<ul>
+<li><a href="#description">Description</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#compilation">Compiling &amp; Running from the command line</a></li>
+<li><a href="#extension">Extending AMDIDST (Fork&amp;Pull)</a></li>
+</ul>
+</li>
 <li><a href="#examples">Code Examples</a></li>
 </ol>
 
 <h2>
-<a id="functionalities" class="anchor" href="#functionalities" aria-hidden="true"><span class="octicon octicon-link"></span></a>Functionalities<a name="functionalities"></a>
+<a id="toolbox-functionalities" class="anchor" href="#toolbox-functionalities" aria-hidden="true"><span class="octicon octicon-link"></span></a>Toolbox Functionalities<a name="functionalities"></a>
 </h2>
 
 <p>The AMIDST is an open source Java 8 toolbox that makes use of functional programming style to provide parallel processing on mutli-core CPUs [<a href="http://www.idi.ntnu.no/%7Ehelgel/papers/">CIM2015</a>]. AMIDST provides a collection of functionalities and algorithms for learning hybrid Bayesian networks from streaming data. In what follows, we describe the main functionalities that AMIDST toolbox supplies.</p>
@@ -105,7 +106,7 @@
 <p>AMIDST also offers some support for dealing with concept drift while learning BNs from data streams. Firstly, we provide an extension of the \textit{streaming variational Bayes} algorithm \citep{broderick2013streaming} which exponentially down-weights the influence of \textit{old} data samples with the use of a fading factor (TODO). So, models learnt with this approach will be \textit{focused} in most recent data. In addition, AMIDST provides a probabilistic concept drift detector based on the use of latent variables \citep{IDA2015}.</p>
 
 <h3>
-<a id="library-links" class="anchor" href="#library-links" aria-hidden="true"><span class="octicon octicon-link"></span></a>Library Links<a name="librarylinks"></a>
+<a id="links-to-moa-weka-hugin-and-r" class="anchor" href="#links-to-moa-weka-hugin-and-r" aria-hidden="true"><span class="octicon octicon-link"></span></a>Links to MOA, Weka, Hugin and R<a name="librarylinks"></a>
 </h3>
 
 <p>AMIDST leverages existing functionalities and algorithms by interfacing to existing software tools such as R, Weka, HUGIN and MOA (Massive Online Analysis) \citep{BifetHolmesKirkbyPfahringer10}. This allows to efficiently well established systems and also broaden the AMIDST user-base. </p>
@@ -119,13 +120,11 @@
 <strong>RLink</strong> module ....</li>
 </ul>
 
-<h2>
-<a id="installation-compiling--running-from-the-command-line" class="anchor" href="#installation-compiling--running-from-the-command-line" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation, Compiling &amp; Running from the command line<a name="compiling"></a>
-</h2>
+<p><a href="#documentation">[Back to Top]</a></p>
 
-<h3>
+<h2>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation<a name="installation"></a>
-</h3>
+</h2>
 
 <p>Install Java 8 and IntelliJ:</p>
 
@@ -135,9 +134,9 @@
 
 <p>In IntelliJ open the maven project by pointint at the pom file. Also you need to point to the Java 8 installation and you are ready to rock.</p>
 
-<h3>
+<h2>
 <a id="compiling--running-from-the-command-line" class="anchor" href="#compiling--running-from-the-command-line" aria-hidden="true"><span class="octicon octicon-link"></span></a>Compiling &amp; Running from the command line<a name="compiling"></a>
-</h3>
+</h2>
 
 <ol>
 <li><p>Install Maven: <a href="http://maven.apache.org/download.cgi">http://maven.apache.org/download.cgi</a>
@@ -164,13 +163,15 @@ which points to file "maven_startup.sh"</p>
 <h2>
 <a id="code-examples" class="anchor" href="#code-examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Code Examples<a name="examples"></a>
 </h2>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/amidst">amidst</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/amidst/toolbox">AMIDST Toolbox</a> is maintained by <a href="https://github.com/amidst">amidst</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
-    
+
+    </section>
+
+  
   </body>
 </html>
