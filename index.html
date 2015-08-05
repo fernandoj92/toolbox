@@ -62,7 +62,9 @@
 <ul>
 <li><a href="#description">Description</a></li>
 <li><a href="#java8">Java 8 Integration: Lambdas, streams, and functional-sytle programming</a></li>
-<li><a href="#installation">Installation</a></li>
+<li><a href="#installation">Install AMIDST Toolbox</a></li>
+<li><a href="#installmoa">Install MOALink</a></li>
+<li><a href="#installhugin">Install HuginLink</a></li>
 <li><a href="#compilation">Compiling &amp; Running from the command line</a></li>
 <li><a href="#extension">Extending AMIDST with Github Fork &amp; Pull scheme</a></li>
 </ul>
@@ -84,11 +86,15 @@
 
 <p>The AMIDST is an open source Java 8 toolbox that makes use of functional programming style to provide parallel processing on mutli-core CPUs \citep{CIM2015}. AMIDST provides a collection of functionalities and algorithms for learning hybrid Bayesian networks from streaming data. In what follows, we describe the main functionalities that AMIDST toolbox supplies.</p>
 
+<p><a href="#documentation">[Back to Top]</a></p>
+
 <h3>
 <a id="data-streams" class="anchor" href="#data-streams" aria-hidden="true"><span class="octicon octicon-link"></span></a>Data Streams<a name="datastreams"></a>
 </h3>
 
 <p>AMIDST provides parallel processing built-in functionalities for dealing with streaming data \citep{CIM2015}. It is possible to make several passes over the data samples if the stream can be stored on disk, otherwise the samples are discarded after being processed. The data format supported by AMIDST is Weka's ARFF (Attribute-Relation File Format) \citep{Hall2009}.</p>
+
+<p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
 <a id="probabilistic-graphical-models" class="anchor" href="#probabilistic-graphical-models" aria-hidden="true"><span class="octicon octicon-link"></span></a>Probabilistic Graphical Models<a name="pgms"></a>
@@ -96,11 +102,15 @@
 
 <p>AMIDST currently includes efficient implementations for representing Bayesian networks. AMIDST supports both discrete and continuous variables, and besides Multionomial, Gaussian and conditional linear Gaussian distributions, it also supports other distributions such as Gamma, Poission, Dirichlet, etc. as far as the final BN can be represented as a \textit{conjugate-exponential family model} \citep{WinnBishop2005}.  Other kind of probabilistic graphical models, such as dynamic BNs, are expected to be included in this toolbox.</p>
 
+<p><a href="#documentation">[Back to Top]</a></p>
+
 <h3>
 <a id="inference-engine" class="anchor" href="#inference-engine" aria-hidden="true"><span class="octicon octicon-link"></span></a>Inference Engine<a name="inference"></a>
 </h3>
 
 <p>AMIDST includes the implementation of the \textit{variational message passing} \citep{WinnBishop2005} algorithm, and the parallel implementation of the \textit{importance sampling} \citep{hammersley1964monte,CAEPIA2015} algorithm. It also supports exact inference by interfacing with Hugin's junction tree inference algorithm \citep{Madsen2005Hugin}. </p>
+
+<p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
 <a id="learning-engine" class="anchor" href="#learning-engine" aria-hidden="true"><span class="octicon octicon-link"></span></a>Learning Engine<a name="learning"></a>
@@ -108,11 +118,15 @@
 
 <p>In AMIDST, a fully Bayesian approach is pursued, which means that the parameter learning reduces to the task of inference. AMIDST provides a multi-core parallel implementation of the \textit{streaming variational Bayes} algorithm \citep{broderick2013streaming}, using \textit{variational message passing} as underlying inference engine, which can deal with large models with latent variables. When the model does not contain latent variables, an efficient parallel implementation of \textit{maximum likelihood estimation} \citep{mlestimation} can be also used by exploiting an efficient vector-based representation of BNs as \textit{exponential family models} \citep{WinnBishop2005}. For structural learning, AMIDST currently supports standard PC and parallel TAN algorithms by interfacing with HUGIN \citep{Madsen2005Hugin,Madsen2014}.</p>
 
+<p><a href="#documentation">[Back to Top]</a></p>
+
 <h3>
 <a id="concept-drift" class="anchor" href="#concept-drift" aria-hidden="true"><span class="octicon octicon-link"></span></a>Concept drift<a name="conceptdrift"></a>
 </h3>
 
 <p>AMIDST also offers some support for dealing with concept drift while learning BNs from data streams. Firstly, we provide an extension of the \textit{streaming variational Bayes} algorithm \citep{broderick2013streaming} which exponentially down-weights the influence of \textit{old} data samples with the use of a fading factor (TODO). So, models learnt with this approach will be \textit{focused} in most recent data. In addition, AMIDST provides a probabilistic concept drift detector based on the use of latent variables \citep{IDA2015}.</p>
+
+<p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
 <a id="links-to-moa-weka-hugin-and-r" class="anchor" href="#links-to-moa-weka-hugin-and-r" aria-hidden="true"><span class="octicon octicon-link"></span></a>Links to MOA, Weka, Hugin and R<a name="librarylinks"></a>
@@ -158,7 +172,7 @@
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
-<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation<a name="installation"></a>
+<a id="installa-amidst-toolbox-" class="anchor" href="#installa-amidst-toolbox-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installa AMIDST Toolbox <a name="installation"></a>
 </h3>
 
 <p>The first step is to install <a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">Java 8</a>.  We strongly recommend <a href="http://www.jetbrains.com/idea/download/">IntelliJ</a> as IDE tool because it has direct support of Maven and Github. </p>
@@ -180,6 +194,25 @@
 </ul>
 
 <p><a href="#documentation">[Back to Top]</a></p>
+
+<h3>
+<a id="install-moalink" class="anchor" href="#install-moalink" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install MOALink<a name="installmoa"></a>
+</h3>
+
+<p>To use AMIDST functionality within <a href="http://moa.cms.waikato.ac.nz">MOA</a> you just have to run the script \texttt{compileWithDependencies.sh} in the <em>moalink</em> directory. A file <em>moalink-1.0-SNAPSHOT-jar-with-dependencies.jar</em> will be generated in the \texttt{moalink/target} directory. Please place this jar file on your library path for MOA. </p>
+
+<p>With this jar file we can make use of the different learning and inference algorithms in AMIDST to learn more expressive Bayesian network models for classification, regression and clustering. AMIDST offers the possibility to add latent Gaussian and/or Multinomial variables to a base naive Bayes structure. Normally, the addition of these latent variables should provide classifiers with lower bias and higher variance, that is, more sophisticated classifiers that are able to lean more complex interdependencies in the data, but also more prone to overfit. The user should evaluate the complexity of his/her dataset and choose the number of latent Gaussian variables and states of the multinomial latent variable accordingly.</p>
+
+<p>With the following command, MOA gui can be invoked e.g (remember to place \texttt{compileWithDependencies.sh} under the lib folder reference in the <em>-cp</em> option):</p>
+
+<pre><code>java -Xmx512m -cp "../lib/*" -javaagent:../lib/sizeofag-1.0.0.jar moa.gui.GUI
+</code></pre>
+
+<p>Note that the above example should be slightly adapted to run on a Windows machine: e.g. use \textasciicircum~ instead of \textbackslash~ to escape brackets.</p>
+
+<h3>
+<a id="install-huginlink" class="anchor" href="#install-huginlink" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install HuginLink<a name="installhugin"></a>
+</h3>
 
 <h3>
 <a id="compiling--running-from-the-command-line" class="anchor" href="#compiling--running-from-the-command-line" aria-hidden="true"><span class="octicon octicon-link"></span></a>Compiling &amp; Running from the command line<a name="compilation"></a>
@@ -895,277 +928,271 @@ parameterLearningAlgorithm<span class="pl-k">.</span>runLearning();
 <span class="pl-c">//We print the model</span>
 <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(bnModel<span class="pl-k">.</span>toString());</pre></div>
 
-<p>\section{Concept Drift Methods}</p>
+<p><a href="#documentation">[Back to Top]</a></p>
 
-<p>\subsection{Maximum Likelihood with Fading}</p>
+<h2>
+<a id="concept-drift-methods-" class="anchor" href="#concept-drift-methods-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Concept Drift Methods <a name="conceptdriftexample"></a>
+</h2>
+
+<h3>
+<a id="maximum-likelihood-with-fading-" class="anchor" href="#maximum-likelihood-with-fading-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Maximum Likelihood with Fading <a name="mlfadingexample"></a>
+</h3>
 
 <p>This example shows how to adaptively learn the parameters of a Bayesian network from a stream of data using exponential forgetting with a given fading factor, directly inspired by the approach presented in</p>
 
-<p>\textit{Olesen, K. G., Lauritzen, S. L., &amp; Jensen, F. V. (1992, July). aHUGIN: A system creating adaptive causal probabilistic networks. In Proceedings of the Eighth international conference on Uncertainty in Artificial Intelligence (pp. 223-229). Morgan Kaufmann Publishers Inc.}</p>
+<blockquote>
+<p>Olesen, K. G., Lauritzen, S. L., &amp; Jensen, F. V. (1992, July). aHUGIN: A system creating adaptive causal probabilistic networks. In Proceedings of the Eighth international conference on Uncertainty in Artificial Intelligence (pp. 223-229). Morgan Kaufmann Publishers Inc.</p>
+</blockquote>
 
-<p>\begin{lstlisting}
-//We can open the data stream using the static class DataStreamLoader
-DataStream data = DataStreamLoader.openFromFile("datasets/WasteIncineratorSample.arff");</p>
+<div class="highlight highlight-java"><pre><span class="pl-c">//We can open the data stream using the static class DataStreamLoader</span>
+<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/WasteIncineratorSample.arff<span class="pl-pds">"</span></span>);
 
-<p>//We create a ParameterLearningAlgorithm object with 
-//the MaximumLikelihoodFading builder
-MaximumLikelihoodFading parameterLearningAlgorithm = new MaximumLikelihoodFading();</p>
+<span class="pl-c">//We create a ParameterLearningAlgorithm object with </span>
+<span class="pl-c">//the MaximumLikelihoodFading builder</span>
+<span class="pl-smi">MaximumLikelihoodFading</span> parameterLearningAlgorithm <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">MaximumLikelihoodFading</span>();
 
-<p>//We fix the DAG structure
-parameterLearningAlgorithm.setDAG(MaximimumLikelihoodByBatchExample.getNaiveBayesStructure(data, 0));</p>
+<span class="pl-c">//We fix the DAG structure</span>
+parameterLearningAlgorithm<span class="pl-k">.</span>setDAG(<span class="pl-smi">MaximimumLikelihoodByBatchExample</span><span class="pl-k">.</span>getNaiveBayesStructure(data, <span class="pl-c1">0</span>));
 
-<p>//We fix the fading or forgeting factor
-parameterLearningAlgorithm.setFadingFactor(0.9);</p>
+<span class="pl-c">//We fix the fading or forgeting factor</span>
+parameterLearningAlgorithm<span class="pl-k">.</span>setFadingFactor(<span class="pl-c1">0.9</span>);
 
-<p>//We set the batch size which will be employed to learn the model
-parameterLearningAlgorithm.setBatchSize(100);</p>
+<span class="pl-c">//We set the batch size which will be employed to learn the model</span>
+parameterLearningAlgorithm<span class="pl-k">.</span>setBatchSize(<span class="pl-c1">100</span>);
 
-<p>//We set the data which is going to be used for leaning the parameters
-parameterLearningAlgorithm.setDataStream(data);</p>
+<span class="pl-c">//We set the data which is going to be used for leaning the parameters</span>
+parameterLearningAlgorithm<span class="pl-k">.</span>setDataStream(data);
 
-<p>//We perform the learning
-parameterLearningAlgorithm.runLearning();</p>
+<span class="pl-c">//We perform the learning</span>
+parameterLearningAlgorithm<span class="pl-k">.</span>runLearning();
 
-<p>//And we get the model
-BayesianNetwork bnModel = parameterLearningAlgorithm.getLearntBayesianNetwork();</p>
+<span class="pl-c">//And we get the model</span>
+<span class="pl-smi">BayesianNetwork</span> bnModel <span class="pl-k">=</span> parameterLearningAlgorithm<span class="pl-k">.</span>getLearntBayesianNetwork();
 
-<p>//We print the model
-System.out.println(bnModel.toString());
-\end{lstlisting}</p>
+<span class="pl-c">//We print the model</span>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(bnModel<span class="pl-k">.</span>toString());</pre></div>
 
-<p>\subsection{Streaming Variational Bayes with Fading}</p>
+<p><a href="#documentation">[Back to Top]</a></p>
+
+<h3>
+<a id="streaming-variational-bayes-with-fading-" class="anchor" href="#streaming-variational-bayes-with-fading-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Streaming Variational Bayes with Fading <a name="svbfadingexample"></a>
+</h3>
 
 <p>This example shows how to adaptively learn in the parameters of a Bayesian network from a stream of data with a Bayesian approach using a combination of the the following two methods,</p>
 
-<p>\textit{Broderick, T., Boyd, N., Wibisono, A., Wilson, A. C., &amp; Jordan, M. I. (2013). Streaming variational Bayes. 
-In Advances in Neural Information Processing Systems (pp. 1727-1735).}</p>
+<blockquote>
+<p>Broderick, T., Boyd, N., Wibisono, A., Wilson, A. C., &amp; Jordan, M. I. (2013). Streaming variational Bayes. 
+In Advances in Neural Information Processing Systems (pp. 1727-1735).</p>
 
-<p>\textit{Olesen, K. G., Lauritzen, S. L., &amp; Jensen, F. V. (1992, July). aHUGIN: A system creating adaptive causal probabilistic networks. In Proceedings of the Eighth international conference on Uncertainty in Artificial Intelligence (pp. 223-229). Morgan Kaufmann Publishers Inc.}</p>
+<p>Olesen, K. G., Lauritzen, S. L., &amp; Jensen, F. V. (1992, July). aHUGIN: A system creating adaptive causal probabilistic networks. In Proceedings of the Eighth international conference on Uncertainty in Artificial Intelligence (pp. 223-229). Morgan Kaufmann Publishers Inc.</p>
+</blockquote>
 
-<p>\begin{lstlisting}
-//We can open the data stream using the static class DataStreamLoader
-DataStream data = DataStreamLoader.openFromFile("datasets/WasteIncineratorSample.arff");</p>
+<div class="highlight highlight-java"><pre><span class="pl-c">//We can open the data stream using the static class DataStreamLoader</span>
+<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/WasteIncineratorSample.arff<span class="pl-pds">"</span></span>);
 
-<p>//We create a SVB object
-SVBFading parameterLearningAlgorithm = new SVBFading();</p>
+<span class="pl-c">//We create a SVB object</span>
+<span class="pl-smi">SVBFading</span> parameterLearningAlgorithm <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">SVBFading</span>();
 
-<p>//We fix the DAG structure
-parameterLearningAlgorithm.setDAG(SVBExample.getHiddenNaiveBayesStructure(data));</p>
+<span class="pl-c">//We fix the DAG structure</span>
+parameterLearningAlgorithm<span class="pl-k">.</span>setDAG(<span class="pl-smi">SVBExample</span><span class="pl-k">.</span>getHiddenNaiveBayesStructure(data));
 
-<p>//We fix the fading or forgeting factor
-parameterLearningAlgorithm.setFadingFactor(0.9);</p>
+<span class="pl-c">//We fix the fading or forgeting factor</span>
+parameterLearningAlgorithm<span class="pl-k">.</span>setFadingFactor(<span class="pl-c1">0.9</span>);
 
-<p>//We fix the size of the window
-parameterLearningAlgorithm.setWindowsSize(100);</p>
+<span class="pl-c">//We fix the size of the window</span>
+parameterLearningAlgorithm<span class="pl-k">.</span>setWindowsSize(<span class="pl-c1">100</span>);
 
-<p>//We can activate the output
-parameterLearningAlgorithm.setOutput(true);</p>
+<span class="pl-c">//We can activate the output</span>
+parameterLearningAlgorithm<span class="pl-k">.</span>setOutput(<span class="pl-c1">true</span>);
 
-<p>//We set the data which is going to be used for leaning the parameters
-parameterLearningAlgorithm.setDataStream(data);</p>
+<span class="pl-c">//We set the data which is going to be used for leaning the parameters</span>
+parameterLearningAlgorithm<span class="pl-k">.</span>setDataStream(data);
 
-<p>//We perform the learning
-parameterLearningAlgorithm.runLearning();</p>
+<span class="pl-c">//We perform the learning</span>
+parameterLearningAlgorithm<span class="pl-k">.</span>runLearning();
 
-<p>//And we get the model
-BayesianNetwork bnModel = parameterLearningAlgorithm.getLearntBayesianNetwork();</p>
+<span class="pl-c">//And we get the model</span>
+<span class="pl-smi">BayesianNetwork</span> bnModel <span class="pl-k">=</span> parameterLearningAlgorithm<span class="pl-k">.</span>getLearntBayesianNetwork();
 
-<p>//We print the model
-System.out.println(bnModel.toString());
-\end{lstlisting}</p>
+<span class="pl-c">//We print the model</span>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(bnModel<span class="pl-k">.</span>toString());</pre></div>
 
-<p>\subsection{Naive Bayes with Virtual Concept Drift Detection}</p>
+<p><a href="#documentation">[Back to Top]</a></p>
+
+<h3>
+<a id="naive-bayes-with-virtual-concept-drift-detection-" class="anchor" href="#naive-bayes-with-virtual-concept-drift-detection-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Naive Bayes with Virtual Concept Drift Detection <a name="nbconceptdriftexample"></a>
+</h3>
 
 <p>This example shows how to use the class NaiveBayesVirtualConceptDriftDetector to run the virtual concept drift detector detailed in</p>
 
-<p>\textit{Borchani et al. Modeling concept drift: A probabilistic graphical model based approach. IDA 2015.}</p>
+<blockquote>
+<p>Borchani et al. Modeling concept drift: A probabilistic graphical model based approach. IDA 2015.</p>
+</blockquote>
 
-<p>\begin{lstlisting}
-//We can open the data stream using the static class DataStreamLoader
-DataStream data = DataStreamLoader.openFromFile("./datasets/DriftSets/sea.arff");</p>
+<div class="highlight highlight-java"><pre><span class="pl-c">//We can open the data stream using the static class DataStreamLoader</span>
+<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>./datasets/DriftSets/sea.arff<span class="pl-pds">"</span></span>);
 
-<p>//We create a NaiveBayesVirtualConceptDriftDetector object
-NaiveBayesVirtualConceptDriftDetector virtualDriftDetector = new NaiveBayesVirtualConceptDriftDetector();</p>
+<span class="pl-c">//We create a NaiveBayesVirtualConceptDriftDetector object</span>
+<span class="pl-smi">NaiveBayesVirtualConceptDriftDetector</span> virtualDriftDetector <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">NaiveBayesVirtualConceptDriftDetector</span>();
 
-<p>//We set class variable as the last attribute
-virtualDriftDetector.setClassIndex(-1);</p>
+<span class="pl-c">//We set class variable as the last attribute</span>
+virtualDriftDetector<span class="pl-k">.</span>setClassIndex(<span class="pl-k">-</span><span class="pl-c1">1</span>);
 
-<p>//We set the data which is going to be used
-virtualDriftDetector.setData(data);</p>
+<span class="pl-c">//We set the data which is going to be used</span>
+virtualDriftDetector<span class="pl-k">.</span>setData(data);
 
-<p>//We fix the size of the window
-int windowSize = 1000;
-virtualDriftDetector.setWindowsSize(windowSize);</p>
+<span class="pl-c">//We fix the size of the window</span>
+<span class="pl-k">int</span> windowSize <span class="pl-k">=</span> <span class="pl-c1">1000</span>;
+virtualDriftDetector<span class="pl-k">.</span>setWindowsSize(windowSize);
 
-<p>//We fix the so-called transition variance
-virtualDriftDetector.setTransitionVariance(0.1);</p>
+<span class="pl-c">//We fix the so-called transition variance</span>
+virtualDriftDetector<span class="pl-k">.</span>setTransitionVariance(<span class="pl-c1">0.1</span>);
 
-<p>//We fix the number of global latent variables
-virtualDriftDetector.setNumberOfGlobalVars(1);</p>
+<span class="pl-c">//We fix the number of global latent variables</span>
+virtualDriftDetector<span class="pl-k">.</span>setNumberOfGlobalVars(<span class="pl-c1">1</span>);
 
-<p>//We should invoke this method before processing any data
-virtualDriftDetector.initLearning();</p>
+<span class="pl-c">//We should invoke this method before processing any data</span>
+virtualDriftDetector<span class="pl-k">.</span>initLearning();
 
-<p>//Some prints
-System.out.print("Batch");
-for (Variable hiddenVar : virtualDriftDetector.getHiddenVars()) {
-    System.out.print("\t" + hiddenVar.getName());
+<span class="pl-c">//Some prints</span>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>print(<span class="pl-s"><span class="pl-pds">"</span>Batch<span class="pl-pds">"</span></span>);
+<span class="pl-k">for</span> (<span class="pl-smi">Variable</span> hiddenVar <span class="pl-k">:</span> virtualDriftDetector<span class="pl-k">.</span>getHiddenVars()) {
+    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>print(<span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\t</span><span class="pl-pds">"</span></span> <span class="pl-k">+</span> hiddenVar<span class="pl-k">.</span>getName());
 }
-System.out.println();</p>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println();
 
-<p>//Then we show how we can perform the sequential processing of
-// data batches. They must be of the same value than the window
-// size parameter set above.
-int countBatch = 0;
-for (DataOnMemory batch : 
-                data.iterableOverBatches(windowSize)){</p>
 
-<pre><code>//We update the model by invoking this method. The output
-// is an array with a value associated
-// to each fo the global hidden variables
-double[] out = virtualDriftDetector.updateModel(batch);
+<span class="pl-c">//Then we show how we can perform the sequential processing of</span>
+<span class="pl-c">// data batches. They must be of the same value than the window</span>
+<span class="pl-c">// size parameter set above.</span>
+<span class="pl-k">int</span> countBatch <span class="pl-k">=</span> <span class="pl-c1">0</span>;
+<span class="pl-k">for</span> (<span class="pl-k">DataOnMemory&lt;<span class="pl-smi">DataInstance</span>&gt;</span> batch <span class="pl-k">:</span> 
+                data<span class="pl-k">.</span>iterableOverBatches(windowSize)){
 
-//We print the output
-System.out.print(countBatch + "\t");
-for (int i = 0; i &lt; out.length; i++) {
-    System.out.print(out[i]+"\t");
-}
-System.out.println();
-countBatch++;
-</code></pre>
+    <span class="pl-c">//We update the model by invoking this method. The output</span>
+    <span class="pl-c">// is an array with a value associated</span>
+    <span class="pl-c">// to each fo the global hidden variables</span>
+    <span class="pl-k">double</span>[] out <span class="pl-k">=</span> virtualDriftDetector<span class="pl-k">.</span>updateModel(batch);
 
-<p>}
-\end{lstlisting}</p>
+    <span class="pl-c">//We print the output</span>
+    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>print(countBatch <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\t</span><span class="pl-pds">"</span></span>);
+    <span class="pl-k">for</span> (<span class="pl-k">int</span> i <span class="pl-k">=</span> <span class="pl-c1">0</span>; i <span class="pl-k">&lt;</span> out<span class="pl-k">.</span>length; i<span class="pl-k">++</span>) {
+        <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>print(out[i]<span class="pl-k">+</span><span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\t</span><span class="pl-pds">"</span></span>);
+    }
+    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println();
+    countBatch<span class="pl-k">++</span>;
+}</pre></div>
 
-<p>% !TEX root = TexMain.tex
-%----------------------------------------------------------------------------------------------------------------------------------------
-\chapter{Code Examples of the HuginLink API}\label{sec:codeExamples}
-%----------------------------------------------------------------------------------------------------------------------------------------</p>
+<p><a href="#documentation">[Back to Top]</a></p>
 
-<p>\section{Models conversion between AMIDST and Hugin}</p>
+<h2>
+<a id="huginlink-" class="anchor" href="#huginlink-" aria-hidden="true"><span class="octicon octicon-link"></span></a>HuginLink <a name="huginglinkexample"></a>
+</h2>
+
+<h3>
+<a id="models-conversion-between-amidst-and-hugin-" class="anchor" href="#models-conversion-between-amidst-and-hugin-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Models conversion between AMIDST and Hugin <a name="huginglinkconversionexample"></a>
+</h3>
 
 <p>This example shows how to use the class BNConverterToAMIDST and BNConverterToHugin to convert a 
 Bayesian network models between Hugin and AMIDST formats</p>
 
-<p>\begin{lstlisting}
-//We load from Hugin format
-Domain huginBN = BNLoaderFromHugin.loadFromFile("networks/asia.net");</p>
+<div class="highlight highlight-java"><pre><span class="pl-c">//We load from Hugin format</span>
+<span class="pl-smi">Domain</span> huginBN <span class="pl-k">=</span> <span class="pl-smi">BNLoaderFromHugin</span><span class="pl-k">.</span>loadFromFile(<span class="pl-s"><span class="pl-pds">"</span>networks/asia.net<span class="pl-pds">"</span></span>);
 
-<p>//Then, it is converted to AMIDST BayesianNetwork object
-BayesianNetwork amidstBN = BNConverterToAMIDST.convertToAmidst(huginBN);</p>
+<span class="pl-c">//Then, it is converted to AMIDST BayesianNetwork object</span>
+<span class="pl-smi">BayesianNetwork</span> amidstBN <span class="pl-k">=</span> <span class="pl-smi">BNConverterToAMIDST</span><span class="pl-k">.</span>convertToAmidst(huginBN);
 
-<p>//Then, it is converted to Hugin Bayesian Network object
-huginBN = BNConverterToHugin.convertToHugin(amidstBN);</p>
+<span class="pl-c">//Then, it is converted to Hugin Bayesian Network object</span>
+huginBN <span class="pl-k">=</span> <span class="pl-smi">BNConverterToHugin</span><span class="pl-k">.</span>convertToHugin(amidstBN);
 
-<p>System.out.println(amidstBN.toString());
-System.out.println(huginBN.toString());
-\end{lstlisting}</p>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(amidstBN<span class="pl-k">.</span>toString());
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(huginBN<span class="pl-k">.</span>toString());</pre></div>
 
-<p>\section{I/O of Bayesian Networks}</p>
+<p><a href="#documentation">[Back to Top]</a></p>
+
+<h3>
+<a id="io-of-bayesian-networks-with-hugin-net-format-" class="anchor" href="#io-of-bayesian-networks-with-hugin-net-format-" aria-hidden="true"><span class="octicon octicon-link"></span></a>I/O of Bayesian Networks with Hugin net format <a name="huginglinkioexample"></a>
+</h3>
 
 <p>This example shows how to use the class BNLoaderFromHugin and BNWriterToHugin classes to load and
 write Bayesian networks in Hugin format.</p>
 
-<p>\begin{lstlisting}
-//We load from Hugin format
-Domain huginBN = BNLoaderFromHugin.loadFromFile("networks/asia.net");</p>
+<div class="highlight highlight-java"><pre><span class="pl-c">//We load from Hugin format</span>
+<span class="pl-smi">Domain</span> huginBN <span class="pl-k">=</span> <span class="pl-smi">BNLoaderFromHugin</span><span class="pl-k">.</span>loadFromFile(<span class="pl-s"><span class="pl-pds">"</span>networks/asia.net<span class="pl-pds">"</span></span>);
 
-<p>//We save a AMIDST BN to Hugin format
-BayesianNetwork amidstBN = BNConverterToAMIDST.convertToAmidst(huginBN);
-BNWriterToHugin.saveToHuginFile(amidstBN,"networks/tmp.net");
-\end{lstlisting}</p>
+<span class="pl-c">//We save a AMIDST BN to Hugin format</span>
+<span class="pl-smi">BayesianNetwork</span> amidstBN <span class="pl-k">=</span> <span class="pl-smi">BNConverterToAMIDST</span><span class="pl-k">.</span>convertToAmidst(huginBN);
+<span class="pl-smi">BNWriterToHugin</span><span class="pl-k">.</span>saveToHuginFile(amidstBN,<span class="pl-s"><span class="pl-pds">"</span>networks/tmp.net<span class="pl-pds">"</span></span>);</pre></div>
 
-<p>\section{Invoking Hugin's inference engine}</p>
+<p><a href="#documentation">[Back to Top]</a></p>
 
-<p>This example we show how to perform inference using Hugin (<a href="http://www.hugin.com">http://www.hugin.com</a>) inference engine within the AMIDST toolbox</p>
+<h3>
+<a id="invoking-hugins-inference-engine-" class="anchor" href="#invoking-hugins-inference-engine-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Invoking Hugin's inference engine <a name="huginglinkinferenceexample"></a>
+</h3>
 
-<p>\begin{lstlisting}
-//We first load the WasteIncinerator bayesian network which has multinomial and Gaussian variables.
-BayesianNetwork bn = BayesianNetworkLoader.loadFromFile("./networks/WasteIncinerator.bn");</p>
+<p>This example we show how to perform inference using <a href="http://www.hugin.com">Hugin</a> inference engine within the AMIDST toolbox</p>
 
-<p>//We recover the relevant variables for this example: Mout which is normally distributed, and W which is multinomial.
-Variable varMout = bn.getStaticVariables().getVariableByName("Mout");
-Variable varW = bn.getStaticVariables().getVariableByName("W");</p>
+<div class="highlight highlight-java"><pre><span class="pl-c">//We first load the WasteIncinerator bayesian network which has multinomial and Gaussian variables.</span>
+<span class="pl-smi">BayesianNetwork</span> bn <span class="pl-k">=</span> <span class="pl-smi">BayesianNetworkLoader</span><span class="pl-k">.</span>loadFromFile(<span class="pl-s"><span class="pl-pds">"</span>./networks/WasteIncinerator.bn<span class="pl-pds">"</span></span>);
 
-<p>//First we create an instance of a inference algorithm. In this case, we use the ImportanceSampling class.
-InferenceAlgorithm inferenceAlgorithm = new HuginInference();
-//Then, we set the BN model
-inferenceAlgorithm.setModel(bn);</p>
+<span class="pl-c">//We recover the relevant variables for this example: Mout which is normally distributed, and W which is multinomial.</span>
+<span class="pl-smi">Variable</span> varMout <span class="pl-k">=</span> bn<span class="pl-k">.</span>getStaticVariables()<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>Mout<span class="pl-pds">"</span></span>);
+<span class="pl-smi">Variable</span> varW <span class="pl-k">=</span> bn<span class="pl-k">.</span>getStaticVariables()<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>W<span class="pl-pds">"</span></span>);
 
-<p>//If exists, we also set the evidence.
-Assignment assignment = new HashMapAssignment(1);
-assignment.setValue(varW,0);
-inferenceAlgorithm.setEvidence(assignment);</p>
+<span class="pl-c">//First we create an instance of a inference algorithm. In this case, we use the ImportanceSampling class.</span>
+<span class="pl-smi">InferenceAlgorithm</span> inferenceAlgorithm <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">HuginInference</span>();
+<span class="pl-c">//Then, we set the BN model</span>
+inferenceAlgorithm<span class="pl-k">.</span>setModel(bn);
 
-<p>//Then we run inference
-inferenceAlgorithm.runInference();</p>
+<span class="pl-c">//If exists, we also set the evidence.</span>
+<span class="pl-smi">Assignment</span> assignment <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">HashMapAssignment</span>(<span class="pl-c1">1</span>);
+assignment<span class="pl-k">.</span>setValue(varW,<span class="pl-c1">0</span>);
+inferenceAlgorithm<span class="pl-k">.</span>setEvidence(assignment);
 
-<p>//Then we query the posterior of
-System.out.println("P(Mout|W=0) = " + inferenceAlgorithm.getPosterior(varMout));</p>
+<span class="pl-c">//Then we run inference</span>
+inferenceAlgorithm<span class="pl-k">.</span>runInference();
 
-<p>//Or some more refined queries
-System.out.println("P(0.7 (0.7 &lt; v &amp;&amp; v &lt; 3.5) ? 1.0 : 0.0 ));</p>
+<span class="pl-c">//Then we query the posterior of</span>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(Mout|W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> inferenceAlgorithm<span class="pl-k">.</span>getPosterior(varMout));
 
-<p>\end{lstlisting}</p>
+<span class="pl-c">//Or some more refined queries</span>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(0.7&lt;Mout&lt;3.5 | W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> inferenceAlgorithm<span class="pl-k">.</span>getExpectedValue(varMout, v <span class="pl-k">-</span><span class="pl-k">&gt;</span> (<span class="pl-c1">0.7</span> <span class="pl-k">&lt;</span> v <span class="pl-k">&amp;&amp;</span> v <span class="pl-k">&lt;</span> <span class="pl-c1">3.5</span>) <span class="pl-k">?</span> <span class="pl-c1">1.0</span> <span class="pl-k">:</span> <span class="pl-c1">0.0</span> ));</pre></div>
 
-<p>%%% Local Variables:
-%%% mode: latex
-%%% TeX-master: "TexMain"
-%%% End:</p>
+<p><a href="#documentation">[Back to Top]</a></p>
 
-<p>\begin{lstlisting}</p>
+<h2>
+<a id="moalink-" class="anchor" href="#moalink-" aria-hidden="true"><span class="octicon octicon-link"></span></a>MoaLink <a name="moalinkexample"></a>
+</h2>
 
-<p>\end{lstlisting}</p>
+<h3>
+<a id="amidst-classifiers-from-moa-" class="anchor" href="#amidst-classifiers-from-moa-" aria-hidden="true"><span class="octicon octicon-link"></span></a>AMIDST Classifiers from MOA <a name="moalinkclassifiersexample"></a>
+</h3>
 
-<p>% !TEX root = TexMain.tex
-%----------------------------------------------------------------------------------------------------------------------------------------
-\chapter{MoaLink Module: AMIDST models from MOA}\label{sec:codeExamples}
-%----------------------------------------------------------------------------------------------------------------------------------------</p>
+<p>The following command can be used to learn a Bayesian model with a latent Gaussian variable (HG) and a multinomial with 2 states (HM), as displayed in figure below. The VMP algorithm is used to learn the parameters of these two non-observed variables and make predictions over the class variable.</p>
 
-<p>\section{Generate Jar with AMIDST extension}
-In the moalink directory, run the \texttt{compileWithDependencies.sh}. A moalink-1.0-SNAPSHOT-jar-with-dependencies.jar will be generated in the \texttt{target} directory. Please place this jar file on your library path for moa. </p>
+<p align="center">
+<img title="Taxonomy" src="http://amidst.github.io/toolbox/images/HODE.jpg" width="400">
+</p>
 
-<p>With this jar file we can make use of the different learning and inference algorithms in AMIDST to learn more expressive Bayesian network models for classification, regression and clustering. AMIDST offers the possibility to add latent Gaussian and/or Multinomial variables to a base naive Bayes structure. Normally, the addition of these latent variables should provide classifiers with lower bias and higher variance, that is, more sophisticated classifiers that are able to lean more complex interdependencies in the data, but also more prone to overfit. The user should evaluate the complexity of his/her dataset and choose the number of latent Gaussian variables and states of the multinomial latent variable accordingly.</p>
+<pre><code>java -Xmx512m -cp "../lib/*" -javaagent:../lib/sizeofag-1.0.0.jar 
+moa.DoTask EvaluatePrequential -l \(bayes.AmidstClassifier -g 1 
+-m 2\) -s generators.RandomRBFGenerator -i 10000 -f 1000 -q 1000
+</code></pre>
 
-<p>With the following command, MOA gui can be invoked e.g (remember to place \texttt{compileWithDependencies.sh} under the lib folder reference in the \verb'-cp' option):</p>
+<h3>
+<a id="amidst-regression-from-moa-" class="anchor" href="#amidst-regression-from-moa-" aria-hidden="true"><span class="octicon octicon-link"></span></a>AMIDST Regression from MOA <a name="moalinkregressionsexample"></a>
+</h3>
 
-<p>\begin{verbatim}
-java -Xmx512m -cp "../lib/*" -javaagent:../lib/sizeofag-1.0.0.jar
-moa.gui.GUI
-\end{verbatim}</p>
+<p>It is possible to learn an enriched naive Bayes model for regression if the class label is of a continuous nature. The following command uses the model in Figure \ref{fig:HODE}(b) on a toy dataset from WEKA's collection of <a href="http://prdownloads.sourceforge.net/weka/datasets-numeric.jar">regression problems</a>.</p>
 
-<p>In the following sections we include some command examples to use the AMIDST models from MOA from the command line in a Unix machine\footnote{Note that these examples should be slightly adapted to run on a Windows machine: e.g. use \textasciicircum~ instead of \textbackslash~ to escape brackets.}.</p>
+<p align="center">
+<img title="Taxonomy" src="http://amidst.github.io/toolbox/images/regressionHODE.jpg" width="400">
+</p>
 
-<p>\section{AMIDST Classifiers from MOA}</p>
-
-<p>The following command can be used to learn a Bayesian model with a latent Gaussian variable (HG) and a multinomial with 2 states (HM), as displayed in Figure \ref{fig:HODE} (a). The VMP algorithm is used to learn the parameters of these two non-observed variables and make predictions over the class variable.</p>
-
-<p>\begin{figure}[htb]
-   \centering
-   \begin{tabular}{cc}
-    \includegraphics[scale=0.8]{figs/HODE}&amp;
-    \includegraphics[scale=0.8]{figs/regressionHODE}\
-    (a) Model for classification &amp; (b) Model for regression \
-    \end{tabular}
-\caption{Bayesian network model learnt for a stream of data with $10$ numeric attributes. Grey nodes represent discrete variables and white nodes continuous variables. It corresponds to a Naive Bayes model structure enriched with a Gaussian and a 2-state multinomial parent. The C and R variables represent the class and the regressor variables respectively.}
-\label{fig:HODE}
-\end{figure}</p>
-
-<p>\begin{verbatim}
-java -Xmx512m -cp "../lib/*" -javaagent:../lib/sizeofag-1.0.0.jar 
-moa.DoTask EvaluatePrequential -l (bayes.AmidstClassifier -g 1 
--m 2) -s generators.RandomRBFGenerator -i 10000 -f 1000 -q 1000
-\end{verbatim}</p>
-
-<p>\section{AMIDST Regression from MOA}</p>
-
-<p>It is possible to learn an enriched naive Bayes model for regression if the class label is of a continuous nature. The following command uses the model in Figure \ref{fig:HODE}(b) on a toy dataset from WEKA's collection of regression problems\footnote{\url{<a href="http://prdownloads.sourceforge.net/weka/datasets-numeric.jar">http://prdownloads.sourceforge.net/weka/datasets-numeric.jar</a>}}.</p>
-
-<p>\begin{verbatim}
-java -Xmx512m -cp "../lib/*" -javaagent:../lib/sizeofag-1.0.0.jar 
+<pre><code>java -Xmx512m -cp "../lib/*" -javaagent:../lib/sizeofag-1.0.0.jar 
 moa.DoTask EvaluatePrequentialRegression -l bayes.AmidstRegressor
  -s (ArffFileStream -f ./quake.arff)
-\end{verbatim}</p>
+</code></pre>
 
 <p>Note that the simpler the dataset the less complex the model should be. In this case, \texttt{quake.arff} is a very simple and small dataset that should probably be learn with a more simple classifier, that is, a high-bias-low-variance classifier, in order to avoid overfitting. This aims at providing a simple running example.</p>
 
