@@ -62,12 +62,19 @@
 <ul>
 <li><a href="#description">Description</a></li>
 <li><a href="#java8">Java 8 Integration: Lambdas, streams, and functional-sytle programming</a></li>
-<li><a href="#installation">Installation: Using and Contributing to AMIDST</a></li>
+<li><a href="#installation">Installation</a></li>
 <li><a href="#compilation">Compiling &amp; Running from the command line</a></li>
 <li><a href="#extension">Extending AMIDST with Github Fork &amp; Pull scheme</a></li>
 </ul>
 </li>
-<li><a href="#examples">Code Examples</a></li>
+<li>
+<a href="#examples">Code Examples</a>
+
+<ul>
+<li><a href="#datastreamsexample">Data Streams</a></li>
+<li><a href="#variablesexample">Variables</a></li>
+</ul>
+</li>
 <li><a href="http://amidst.github.io/toolbox/javadoc/index.html">Java Doc</a></li>
 </ol>
 
@@ -129,7 +136,7 @@
 <a id="description" class="anchor" href="#description" aria-hidden="true"><span class="octicon octicon-link"></span></a>Description<a name="description"></a>
 </h3>
 
-<p>AMIDST toolbox is an open source project under <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache Software License 2.0</a>. It is written in Java and is based on <a href="https://en.wikipedia.org/wiki/Apache_Maven">Apache Maven</a> for building and structuring the project. This toolbox is structured as <a href="http://books.sonatype.com/mvnex-book/reference/multimodule.html">multi-module Maven project</a>. Roughly speaking, a <strong>Maven module</strong> is an independent piece of software with explicit dependencies to other modules in the project and to other external libraries. Each module is placed in independent folders and contains an xml file describing its dependencies. In this current version, the toolbox is composed by the following modules:</p>
+<p>AMIDST toolbox is an open source project under <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache Software License 2.0</a>. It is written in Java and is based on <a href="https://en.wikipedia.org/wiki/Apache_Maven">Apache Maven</a> for building and structuring the project. This toolbox is structured as <a href="http://books.sonatype.com/mvnex-book/reference/multimodule.html">multi-module Maven project</a>. Roughly speaking, a <strong>Maven module</strong> is an independent piece of software with explicit dependencies to other modules in the project and to other external libraries. Each module is placed in independent folders and contains an xml file describing its dependencies. In this current version, the toolbox is composed by the following four modules:</p>
 
 <ul>
 <li><p><strong>Core module</strong> contains all the main functionalities of the toolbox. It is placed in the <em>core</em> folder. Go to the <a href="http://amidst.github.io/toolbox/javadoc/index.html">Java Doc</a> for details about the different Java classes. </p></li>
@@ -137,6 +144,8 @@
 <li><p><strong>MoaLink module</strong> contains the code needed to use the AMIDST functionality within MOA. It is placed in the <em>moalink</em> folder  under the root project folder.</p></li>
 <li><p><strong>HuginLink module</strong> contains the code needed to use <a href="www.hugin.com">Hugin software</a> within AMIDST. It is placed in the <em>huginlink</em> folder under the root project folder. </p></li>
 </ul>
+
+<p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
 <a id="java-8-integration-lambdas-streams-and-functional-sytle-programming" class="anchor" href="#java-8-integration-lambdas-streams-and-functional-sytle-programming" aria-hidden="true"><span class="octicon octicon-link"></span></a>Java 8 Integration: Lambdas, streams, and functional-sytle programming<a name="java8"></a>
@@ -146,20 +155,29 @@
 
 <p>Our paper <a href="">Probabilistic Graphical Models on Multi-Core CPUs using Java 8</a> provides a deep discussion over the different design issues we had to face and how they were solved using Java 8 functional-style features. </p>
 
+<p><a href="#documentation">[Back to Top]</a></p>
+
 <h3>
-<a id="installation-using-and-contributing-to-amidst-" class="anchor" href="#installation-using-and-contributing-to-amidst-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation: Using and Contributing to AMIDST <a name="installation"></a>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation<a name="installation"></a>
 </h3>
 
-<p>The first step is to install <a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">Java 8</a>. As IDE tool we strongly recommend <a href="http://www.jetbrains.com/idea/download/">IntelliJ</a> because it has direct support of Maven and Github. </p>
+<p>The first step is to install <a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">Java 8</a>.  We strongly recommend <a href="http://www.jetbrains.com/idea/download/">IntelliJ</a> as IDE tool because it has direct support of Maven and Github. </p>
 
 <p>Now, we detail two different installation settings based on Maven and IntelliJ. The first installation settings is for those who just want to use the AMIDST toolbox and do not plan to make contributions/extensions to this open software project. The second settings details how to proceed to be a contributor of this project. </p>
 
 <ul>
-<li><p><strong>Using AMIDST</strong> </p></li>
-<li><p><strong>Contributing to AMDIST</strong> </p></li>
-</ul>
+<li>
+<p><strong>Using AMIDST</strong> simply requires to create a new <strong>Maven Project</strong> using IntelliJ where your code will be placed. Then edit the file "pom.xml" and add the following lines referring to the link the AMIDST jar library inside the dependencies plugin (follow this <a href="http://books.sonatype.com/mvnex-book/reference/customizing-sect-add-depend.html">link</a> for further details) and then you are ready to rock. </p>
 
-<p>In IntelliJ open the maven project by pointint at the pom file. Also you need to point to the Java 8 installation and you are ready to rock.</p>
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;eu.amidst.toolbox&lt;/groupId&gt;
+    &lt;artifactId&gt;AMIDST&lt;/artifactId&gt;
+    &lt;version&gt;1.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+</li>
+<li><p><strong>Contributing to AMDIST</strong> is based on the <a href="https://help.github.com/articles/using-pull-requests/">Fork &amp; Pull</a> collaboration model. Read this <a href="https://guides.github.com/activities/forking/">guide</a> for full details about how to fork a project and make a pull request. Once you have forked the project and make a local copy to you computer, just you can just open with Intellij the project by pointing at the pom file.Further details about how to contribute to this project are given this <a href="#extension">section</a>. </p></li>
+</ul>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
@@ -168,8 +186,7 @@
 </h3>
 
 <ol>
-<li><p>Install Maven: <a href="http://maven.apache.org/download.cgi">http://maven.apache.org/download.cgi</a>
-(Download binaries and copy to Applications folder)</p></li>
+<li><p>Install Maven: <a href="http://maven.apache.org/download.cgi">http://maven.apache.org/download.cgi</a>  (follow specific instructions for your OS).</p></li>
 <li><p>Modify the file maven_startup.sh (which you can find in the root project folder) and fix the path of your maven (Line 5) and java installation (Line 9).</p></li>
 <li>
 <p>Create (or modify if already exists) a file ".profile" or ".bash_profile" in you home directory and add the following line,
@@ -195,11 +212,88 @@ which points to file "maven_startup.sh"</p>
 <a id="extending-amidst-with-github-fork--pull-scheme" class="anchor" href="#extending-amidst-with-github-fork--pull-scheme" aria-hidden="true"><span class="octicon octicon-link"></span></a>Extending AMIDST with Github Fork &amp; Pull scheme<a name="extension"></a>
 </h3>
 
+<p>Developers are expected to contribute to this open software following the <a href="https://help.github.com/articles/using-pull-requests/">Fork &amp; Pull</a> collaboration model. Read this <a href="https://guides.github.com/activities/forking/">guide</a> for full details about how to fork a project and make a pull request.</p>
+
+<p>Some of these collaboration approaches should be followed depending the kind of contribution you are aiming at:</p>
+
+<ul>
+<li><p><strong>Basic Contributions</strong> encompasses those contributions to the code that do not imply any major change or addition. For example, fixing a bug, adding methods to existing classes, adding new utility classes, etc. This contributions are made through a <a href="https://help.github.com/articles/using-pull-requests/">pull request</a>, which will be examined by the core group of developers of the project. </p></li>
+<li><p><strong>Major Extensions</strong> refers to those contributions which aims to be a new functionality of the toolbox. For example, a new inference/learning algorithm, new PGMs, etc. These extensions or new functionalities will be integrated as new Maven modules will be located in the folder <em>extensions</em> under the root project folder. Contributing with a new extension will be based on the following three steps: (i) create a new Maven module using IntelliJ (follow this <a href="https://www.jetbrains.com/idea/help/creating-maven-module.html">link</a> for details); (ii) code your new algorithm inside this module; and (iii) make a <a href="https://help.github.com/articles/using-pull-requests/">pull request</a> to add the new functionality to the project repository. </p></li>
+</ul>
+
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h2>
 <a id="code-examples" class="anchor" href="#code-examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Code Examples<a name="examples"></a>
 </h2>
+
+<h3>
+<a id="data-streams-1" class="anchor" href="#data-streams-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Data Streams<a name="datastreamsexample"></a>
+</h3>
+
+<p>In this example we show how to use the main features of a <em>DataStream</em> object. More precisely,  we show six different ways of iterating over the data samples of a <em>DataStream</em> object.</p>
+
+<div class="highlight highlight-java"><pre><span class="pl-c">//We can open the data stream using the static class DataStreamLoader</span>
+<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/SmallDataSet.arff<span class="pl-pds">"</span></span>);
+
+<span class="pl-c">//Access to the attributes defining the data set</span>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>Attributes defining the data set<span class="pl-pds">"</span></span>);
+<span class="pl-k">for</span> (<span class="pl-smi">Attribute</span> attribute <span class="pl-k">:</span> data<span class="pl-k">.</span>getAttributes()) {
+    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(attribute<span class="pl-k">.</span>getName());
+}
+<span class="pl-smi">Attribute</span> attA <span class="pl-k">=</span> data<span class="pl-k">.</span>getAttributes()<span class="pl-k">.</span>getAttributeByName(<span class="pl-s"><span class="pl-pds">"</span>A<span class="pl-pds">"</span></span>);
+
+<span class="pl-c">//1. Iterating over samples using a for loop</span>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>1. Iterating over samples using a for loop<span class="pl-pds">"</span></span>);
+<span class="pl-k">for</span> (<span class="pl-smi">DataInstance</span> dataInstance <span class="pl-k">:</span> data) {
+    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>The value of attribute A for the current data instance is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> dataInstance<span class="pl-k">.</span>getValue(attA));
+}
+
+
+<span class="pl-c">//2. Iterating using streams. We need to restart the data again as a DataStream can only be used once.</span>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>2. Iterating using streams.<span class="pl-pds">"</span></span>);
+data<span class="pl-k">.</span>restart();
+data<span class="pl-k">.</span>stream()<span class="pl-k">.</span>forEach(dataInstance <span class="pl-k">-</span><span class="pl-k">&gt;</span>
+                <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>The value of attribute A for the current data instance is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> dataInstance<span class="pl-k">.</span>getValue(attA))
+);
+
+
+<span class="pl-c">//3. Iterating using parallel streams.</span>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>3. Iterating using parallel streams.<span class="pl-pds">"</span></span>);
+data<span class="pl-k">.</span>restart();
+data<span class="pl-k">.</span>parallelStream(<span class="pl-c1">10</span>)<span class="pl-k">.</span>forEach(dataInstance <span class="pl-k">-</span><span class="pl-k">&gt;</span>
+                <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>The value of attribute A for the current data instance is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> dataInstance<span class="pl-k">.</span>getValue(attA))
+);
+
+<span class="pl-c">//4. Iterating over a stream of data batches.</span>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>4. Iterating over a stream of data batches.<span class="pl-pds">"</span></span>);
+data<span class="pl-k">.</span>restart();
+data<span class="pl-k">.</span>streamOfBatches(<span class="pl-c1">10</span>)<span class="pl-k">.</span>forEach(batch <span class="pl-k">-</span><span class="pl-k">&gt;</span> {
+    <span class="pl-k">for</span> (<span class="pl-smi">DataInstance</span> dataInstance <span class="pl-k">:</span> batch)
+        <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>The value of attribute A for the current data instance is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> dataInstance<span class="pl-k">.</span>getValue(attA));
+});
+
+<span class="pl-c">//5. Iterating over a parallel stream of data batches.</span>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>5. Iterating over a parallel stream of data batches.<span class="pl-pds">"</span></span>);
+data<span class="pl-k">.</span>restart();
+data<span class="pl-k">.</span>parallelStreamOfBatches(<span class="pl-c1">10</span>)<span class="pl-k">.</span>forEach(batch <span class="pl-k">-</span><span class="pl-k">&gt;</span> {
+    <span class="pl-k">for</span> (<span class="pl-smi">DataInstance</span> dataInstance <span class="pl-k">:</span> batch)
+        <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>The value of attribute A for the current data instance is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> dataInstance<span class="pl-k">.</span>getValue(attA));
+});
+
+
+<span class="pl-c">//6. Iterating over data batches using a for loop</span>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>6. Iterating over data batches using a for loop.<span class="pl-pds">"</span></span>);
+<span class="pl-k">for</span> (<span class="pl-k">DataOnMemory&lt;<span class="pl-smi">DataInstance</span>&gt;</span> batch <span class="pl-k">:</span> data<span class="pl-k">.</span>iterableOverBatches(<span class="pl-c1">10</span>)) {
+    <span class="pl-k">for</span> (<span class="pl-smi">DataInstance</span> dataInstance <span class="pl-k">:</span> batch)
+        <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>The value of attribute A for the current data instance is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> dataInstance<span class="pl-k">.</span>getValue(attA));
+}</pre></div>
+
+<p><a href="#documentation">[Back to Top]</a></p>
+
+<h3>
+<a id="variables" class="anchor" href="#variables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Variables<a name="variablesexample"></a>
+</h3>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
