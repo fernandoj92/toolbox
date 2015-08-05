@@ -3,7 +3,14 @@ title: Code Examples
 layout: Cayman
 ---
 
-## Data Streams<a name="datastreamsexample"></a>
+# This is a H1
+
+[the clickable text](http://xlson.com/)
+
+* Bullet lists are also easy to create
+* One more
+
+## Data Streams
   
 In this example we show how to use the main features of a *DataStream* object. More precisely,  we show six different ways of iterating over the data samples of a *DataStream* object.
 
