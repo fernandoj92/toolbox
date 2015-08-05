@@ -1,5 +1,6 @@
 ---
 title: Code Examples
+layout: Cayman
 ---
 
 ## Data Streams<a name="datastreamsexample"></a>
