@@ -2,7 +2,7 @@
 <html lang="en-us">
   <head>
     <meta charset="UTF-8">
-    <title>AMIDST Toolbox by amidst</title>
+    <title>AMIDST Toolbox 1.0 by amidst</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
@@ -11,7 +11,7 @@
   </head>
   <body>
     <section class="page-header">
-      <h1 class="project-name">AMIDST Toolbox</h1>
+      <h1 class="project-name">AMIDST Toolbox 1.0</h1>
       <h2 class="project-tagline">Analysis of MassIve Data STreams using Probabilistic Graphical Models</h2>
       <a href="https://github.com/amidst/toolbox" class="btn">View on GitHub</a>
       <a href="https://github.com/amidst/toolbox/zipball/master" class="btn">Download .zip</a>
@@ -61,6 +61,7 @@
 
 <ul>
 <li><a href="#description">Description</a></li>
+<li><a href="#java8">Java 8 Integration: Lambdas, streams, and functional-sytle programming</a></li>
 <li><a href="#installation">Installation</a></li>
 <li><a href="#compilation">Compiling &amp; Running from the command line</a></li>
 <li><a href="#extension">Extending AMIDST with Github Fork &amp; Pull scheme</a></li>
@@ -74,7 +75,7 @@
 <a id="toolbox-functionalities" class="anchor" href="#toolbox-functionalities" aria-hidden="true"><span class="octicon octicon-link"></span></a>Toolbox Functionalities<a name="functionalities"></a>
 </h2>
 
-<p>The AMIDST is an open source Java 8 toolbox that makes use of functional programming style to provide parallel processing on mutli-core CPUs [<a href="http://www.idi.ntnu.no/%7Ehelgel/papers/">CIM2015</a>]. AMIDST provides a collection of functionalities and algorithms for learning hybrid Bayesian networks from streaming data. In what follows, we describe the main functionalities that AMIDST toolbox supplies.</p>
+<p>The AMIDST is an open source Java 8 toolbox that makes use of functional programming style to provide parallel processing on mutli-core CPUs \citep{CIM2015}. AMIDST provides a collection of functionalities and algorithms for learning hybrid Bayesian networks from streaming data. In what follows, we describe the main functionalities that AMIDST toolbox supplies.</p>
 
 <h3>
 <a id="data-streams" class="anchor" href="#data-streams" aria-hidden="true"><span class="octicon octicon-link"></span></a>Data Streams<a name="datastreams"></a>
@@ -113,19 +114,41 @@
 <p>AMIDST leverages existing functionalities and algorithms by interfacing to existing software tools such as R, Weka, HUGIN and MOA (Massive Online Analysis) \citep{BifetHolmesKirkbyPfahringer10}. This allows to efficiently well established systems and also broaden the AMIDST user-base. </p>
 
 <ul>
-<li>
-<strong>HuginLink</strong> module consists of a set of functionalities implemented to link the AMIDST toolbox with the HUGIN software \citep{Madsen2005Hugin}. This connection extends AMIDST by providing the main functionalities integrated in Hugin software, such as exact inference algorithms and scalable structural learning algorithms \citep{Madsen2014}. </li>
-<li>
-<strong>MoaLink</strong> module ensures an easy use of AMDIST functionalities within MOA \citep{BifetHolmesKirkbyPfahringer10}.  The main idea is that any model deployed in AMIDST can be integrated and evaluated using MOA's graphical user interface. As a proof of concept, \textit{MoaLink} already provides a classification, a regression and a clustering method based on BN models with latent variables. These models are learnt in a streaming fashion using AMIDST learning engine. </li>
-<li>
-<strong>RLink</strong> module ....</li>
+<li><p><strong>HuginLink</strong> consists of a set of functionalities implemented to link the AMIDST toolbox with the HUGIN software \citep{Madsen2005Hugin}. This connection extends AMIDST by providing the main functionalities integrated in Hugin software, such as exact inference algorithms and scalable structural learning algorithms \citep{Madsen2014}. </p></li>
+<li><p><strong>MoaLink</strong> ensures an easy use of AMDIST functionalities within MOA \citep{BifetHolmesKirkbyPfahringer10}.  The main idea is that any model deployed in AMIDST can be integrated and evaluated using MOA's graphical user interface. As a proof of concept, \textit{MoaLink} already provides a classification, a regression and a clustering method based on BN models with latent variables. These models are learnt in a streaming fashion using AMIDST learning engine. </p></li>
+<li><p><strong>RLink</strong> ....</p></li>
 </ul>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h2>
-<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation<a name="installation"></a>
+<a id="toolbox-code-architecture" class="anchor" href="#toolbox-code-architecture" aria-hidden="true"><span class="octicon octicon-link"></span></a>Toolbox Code Architecture<a name="architecture"></a>
 </h2>
+
+<h3>
+<a id="description" class="anchor" href="#description" aria-hidden="true"><span class="octicon octicon-link"></span></a>Description<a name="description"></a>
+</h3>
+
+<p>AMIDST toolbox is an open source project under <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache Software License 2.0</a>. It is written in Java and is based on <a href="https://en.wikipedia.org/wiki/Apache_Maven">Apache Maven</a> for building and structuring the project. This toolbox is structured as <a href="http://books.sonatype.com/mvnex-book/reference/multimodule.html">multi-module Maven project</a>. Roughly speaking, a <strong>Maven module</strong> is an independent piece of software with explicit dependencies to other modules in the project and to other external libraries. Each module is placed in independent folders and contains an xml file describing its dependencies. In this current version, the toolbox is composed by the following modules:</p>
+
+<ul>
+<li><p><strong>Core module</strong> contains all the main functionalities of the toolbox. It is placed in the <em>core</em> folder. Go to the <a href="http://amidst.github.io/toolbox/javadoc/index.html">Java Doc</a> for details about the different Java classes. </p></li>
+<li><p><strong>Examples module</strong> contains basic code examples showing how to use the main functionalities of the toolbox. It is placed in the <em>examples</em> folder. </p></li>
+<li><p><strong>MoaLink module</strong> contains the code needed to use the AMIDST functionality within MOA. It is placed in the <em>moalink</em> folder. </p></li>
+<li><p><strong>HuginLink module</strong> contains the code needed to use <a href="www.hugin.com">Hugin software</a> within AMIDST. It is placed in the <em>huginlink</em> folder. </p></li>
+</ul>
+
+<h3>
+<a id="java-8-integration-lambdas-streams-and-functional-sytle-programming" class="anchor" href="#java-8-integration-lambdas-streams-and-functional-sytle-programming" aria-hidden="true"><span class="octicon octicon-link"></span></a>Java 8 Integration: Lambdas, streams, and functional-sytle programming<a name="java8"></a>
+</h3>
+
+<p>This toolbox has been specifically designed for using the functional-style features provided by the Java 8 release. This design leverages these new features for developing easy-to-code parallel algorithms on mutli-core CPUs. As commented above, the main scalability properties of this toolbox rely on this functional-style approach introduced in Java 8. Our aim is that future developers can also exploit this specific design of the toolbox for easily developing new methods for dealing with massive data streams using PGMs.  </p>
+
+<p>Our paper <a href="">Probabilistic Graphical Models on Multi-Core CPUs using Java 8</a> provides a deep discussion over the different design issues we had to face and how they are solved using Java 8 functional-style features. </p>
+
+<h3>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation<a name="installation"></a>
+</h3>
 
 <p>Install Java 8 and IntelliJ:</p>
 
@@ -136,9 +159,9 @@
 <p>In IntelliJ open the maven project by pointint at the pom file. Also you need to point to the Java 8 installation and you are ready to rock.
 <a href="#documentation">[Back to Top]</a></p>
 
-<h2>
-<a id="compiling--running-from-the-command-line" class="anchor" href="#compiling--running-from-the-command-line" aria-hidden="true"><span class="octicon octicon-link"></span></a>Compiling &amp; Running from the command line<a name="compiling"></a>
-</h2>
+<h3>
+<a id="compiling--running-from-the-command-line" class="anchor" href="#compiling--running-from-the-command-line" aria-hidden="true"><span class="octicon octicon-link"></span></a>Compiling &amp; Running from the command line<a name="compilation"></a>
+</h3>
 
 <ol>
 <li><p>Install Maven: <a href="http://maven.apache.org/download.cgi">http://maven.apache.org/download.cgi</a>
@@ -164,22 +187,6 @@ which points to file "maven_startup.sh"</p>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
-<h2>
-<a id="toolbox-architecture" class="anchor" href="#toolbox-architecture" aria-hidden="true"><span class="octicon octicon-link"></span></a>Toolbox Architecture<a name="architecture"></a>
-</h2>
-
-<h3>
-<a id="description" class="anchor" href="#description" aria-hidden="true"><span class="octicon octicon-link"></span></a>Description<a name="description"></a>
-</h3>
-
-<h3>
-<a id="installation-1" class="anchor" href="#installation-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation<a name="installation"></a>
-</h3>
-
-<h3>
-<a id="compiling--running-from-the-command-line-1" class="anchor" href="#compiling--running-from-the-command-line-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Compiling &amp; Running from the command line<a name="compilation"></a>
-</h3>
-
 <h3>
 <a id="extending-amidst-with-github-fork--pull-scheme" class="anchor" href="#extending-amidst-with-github-fork--pull-scheme" aria-hidden="true"><span class="octicon octicon-link"></span></a>Extending AMIDST with Github Fork &amp; Pull scheme<a name="extension"></a>
 </h3>
@@ -193,7 +200,7 @@ which points to file "maven_startup.sh"</p>
 <p><a href="#documentation">[Back to Top]</a></p>
 
       <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/amidst/toolbox">AMIDST Toolbox</a> is maintained by <a href="https://github.com/amidst">amidst</a>.</span>
+        <span class="site-footer-owner"><a href="https://github.com/amidst/toolbox">AMIDST Toolbox 1.0</a> is maintained by <a href="https://github.com/amidst">amidst</a>.</span>
 
         <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
