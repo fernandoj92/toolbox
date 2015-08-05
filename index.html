@@ -62,7 +62,7 @@
 <ul>
 <li><a href="#description">Description</a></li>
 <li><a href="#java8">Java 8 Integration: Lambdas, streams, and functional-sytle programming</a></li>
-<li><a href="#installation">Installation</a></li>
+<li><a href="#installation">Installation: Using and Contributing to AMIDST</a></li>
 <li><a href="#compilation">Compiling &amp; Running from the command line</a></li>
 <li><a href="#extension">Extending AMIDST with Github Fork &amp; Pull scheme</a></li>
 </ul>
@@ -133,9 +133,9 @@
 
 <ul>
 <li><p><strong>Core module</strong> contains all the main functionalities of the toolbox. It is placed in the <em>core</em> folder. Go to the <a href="http://amidst.github.io/toolbox/javadoc/index.html">Java Doc</a> for details about the different Java classes. </p></li>
-<li><p><strong>Examples module</strong> contains basic code examples showing how to use the main functionalities of the toolbox. It is placed in the <em>examples</em> folder. </p></li>
-<li><p><strong>MoaLink module</strong> contains the code needed to use the AMIDST functionality within MOA. It is placed in the <em>moalink</em> folder. </p></li>
-<li><p><strong>HuginLink module</strong> contains the code needed to use <a href="www.hugin.com">Hugin software</a> within AMIDST. It is placed in the <em>huginlink</em> folder. </p></li>
+<li><p><strong>Examples module</strong> contains basic code examples showing how to use the main functionalities of the toolbox. It is placed in the <em>examples</em> folder under the root project folder.</p></li>
+<li><p><strong>MoaLink module</strong> contains the code needed to use the AMIDST functionality within MOA. It is placed in the <em>moalink</em> folder  under the root project folder.</p></li>
+<li><p><strong>HuginLink module</strong> contains the code needed to use <a href="www.hugin.com">Hugin software</a> within AMIDST. It is placed in the <em>huginlink</em> folder under the root project folder. </p></li>
 </ul>
 
 <h3>
@@ -144,20 +144,24 @@
 
 <p>This toolbox has been specifically designed for using the functional-style features provided by the Java 8 release. This design leverages these new features for developing easy-to-code parallel algorithms on mutli-core CPUs. As commented above, the main scalability properties of this toolbox rely on this functional-style approach introduced in Java 8. Our aim is that future developers can also exploit this specific design of the toolbox for easily developing new methods for dealing with massive data streams using PGMs.  </p>
 
-<p>Our paper <a href="">Probabilistic Graphical Models on Multi-Core CPUs using Java 8</a> provides a deep discussion over the different design issues we had to face and how they are solved using Java 8 functional-style features. </p>
+<p>Our paper <a href="">Probabilistic Graphical Models on Multi-Core CPUs using Java 8</a> provides a deep discussion over the different design issues we had to face and how they were solved using Java 8 functional-style features. </p>
 
 <h3>
-<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation<a name="installation"></a>
+<a id="installation-using-and-contributing-to-amidst-" class="anchor" href="#installation-using-and-contributing-to-amidst-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation: Using and Contributing to AMIDST <a name="installation"></a>
 </h3>
 
-<p>Install Java 8 and IntelliJ:</p>
+<p>The first step is to install <a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">Java 8</a>. As IDE tool we strongly recommend <a href="http://www.jetbrains.com/idea/download/">IntelliJ</a> because it has direct support of Maven and Github. </p>
 
-<p><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html</a></p>
+<p>Now, we detail two different installation settings based on Maven and IntelliJ. The first installation settings is for those who just want to use the AMIDST toolbox and do not plan to make contributions/extensions to this open software project. The second settings details how to proceed to be a contributor of this project. </p>
 
-<p><a href="http://www.jetbrains.com/idea/download/">http://www.jetbrains.com/idea/download/</a></p>
+<ul>
+<li><p><strong>Using AMIDST</strong> </p></li>
+<li><p><strong>Contributing to AMDIST</strong> </p></li>
+</ul>
 
-<p>In IntelliJ open the maven project by pointint at the pom file. Also you need to point to the Java 8 installation and you are ready to rock.
-<a href="#documentation">[Back to Top]</a></p>
+<p>In IntelliJ open the maven project by pointint at the pom file. Also you need to point to the Java 8 installation and you are ready to rock.</p>
+
+<p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
 <a id="compiling--running-from-the-command-line" class="anchor" href="#compiling--running-from-the-command-line" aria-hidden="true"><span class="octicon octicon-link"></span></a>Compiling &amp; Running from the command line<a name="compilation"></a>
