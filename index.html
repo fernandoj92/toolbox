@@ -281,6 +281,19 @@
 <a id="installing-huginlink" class="anchor" href="#installing-huginlink" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installing HuginLink<a name="installhugin"></a>
 </h4>
 
+<p>We describe how to install <a href="http://www.hugin.com/productsservices/demo">Hugin Lite</a> which is a freely available demo version of <a href="http://www.hugin.com">Hugin Software</a>. For those with a full license, just follow the same steps. </p>
+
+<p>Once you have installed <a href="http://www.hugin.com/productsservices/demo">Hugin Lite</a>, you will find inside the installation folder another folder called <em>Libraries</em> which contains the library files needed for the installation. Chose the file that fits with your operation system and copy it to the folder <em>./huginlink/huginlib/</em> inside the project root folder. For example, for a MAC OS X with 64 bits architecture the file needed is <em>libhapi82-64.jnilib</em>.
+Now, you can invoke the following example by using the script <em>run.sh</em> :</p>
+
+<pre><code>./run.sh eu.amidst.huginlink.examples.inference.HuginInferenceExample
+</code></pre>
+
+<p>We notice that ror running any code invoking the Hugin API, you have to provide the following option to the JVM  </p>
+
+<pre><code>-java.library.path="./huginlink/huginlib/" 
+</code></pre>
+
 <h3>
 <a id="compiling--running-from-the-command-line" class="anchor" href="#compiling--running-from-the-command-line" aria-hidden="true"><span class="octicon octicon-link"></span></a>Compiling &amp; Running from the command line<a name="compilation"></a>
 </h3>
