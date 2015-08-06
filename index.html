@@ -12,7 +12,7 @@
   <body>
     <section class="page-header">
       <h1 class="project-name">AMIDST Toolbox 1.0</h1>
-      <h2 class="project-tagline">Analysis of MassIve Data STreams using Probabilistic Graphical Models</h2>
+      <h2 class="project-tagline">A Java Library for Analysis of MassIve Data STreams using Probabilistic Graphical Models</h2>
       <a href="https://github.com/amidst/toolbox" class="btn">View on GitHub</a>
       <a href="https://github.com/amidst/toolbox/zipball/master" class="btn">Download .zip</a>
       <a href="https://github.com/amidst/toolbox/tarball/master" class="btn">Download .tar.gz</a>
@@ -22,7 +22,7 @@
       <h1>
 <a id="scope" class="anchor" href="#scope" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scope</h1>
 
-<p>This toolbox offers a collection of scalable and parallel algorithms for inference and learning of hybrid Bayesian networks from streaming data. For example, AMIDST provides parallel multi-core implementations for Bayesian parameter learning, using streaming variational Bayes and variational message passing. Additionally, AMIDST efficiently leverages existing functionalities and algorithms by interfacing to existing software tools such as R, Weka, HUGIN and MOA. AMIDST is an open source toolbox written in Java and is available under the Apache Software License.</p>
+<p>This toolbox offers a collection of scalable and parallel algorithms for inference and learning of hybrid Bayesian networks from streaming data. For example, AMIDST provides parallel multi-core implementations for Bayesian parameter learning, using streaming variational Bayes and variational message passing. Additionally, AMIDST efficiently leverages existing functionalities and algorithms by interfacing to existing software tools such as R, Weka, HUGIN and MOA. AMIDST is an open source toolbox written in Java and is available under the Apache Software License 2.0.</p>
 
 <p>In the next figure we show a taxonomy of relevant data mining tools dealing with PGMs and data streams. To the best of our knowledge, there is no other software for mining data streams based on PGMs, most of the existing softwares based on PGMs are only focused on mining stationary data sets. Hence, the main goal of AMIDST is to fill this gap and produce a significant contribution within the areas of PGMs and mining streaming data.</p>
 
@@ -73,116 +73,63 @@
 <a href="#examples">Code Examples</a>
 
 <ul>
-<li><a href="#datastreamsexample">Data Streams</a></li>
-<li><a href="#variablesexample">Variables</a></li>
+<li>
+<a href="#ioexample">I/O Functionality</a>
+
+<ul>
+<li><a href="#iodatastreamsexample">I/O of Data Streams</a></li>
+<li><a href="#iobnsexample">I/O of Bayesian Networks</a></li>
+</ul>
+</li>
+<li>
+<a href="#inferenceexample">Inference Algorithms</a>
+
+<ul>
+<li><a href="#inferenceengingeexample">The Inference Engine</a></li>
+<li><a href="#vmpexample">Variational Message Passing</a></li>
+<li><a href="#isexample">Importance Sampling</a></li>
+</ul>
+</li>
+<li>
+<a href="#learningexample">Learning Algorithms</a>
+
+<ul>
+<li><a href="#mlexample">Maximum Likelihood</a></li>
+<li><a href="#pmlexample">Parallel Maximum Likelihood</a></li>
+<li><a href="#svbexample">Streaming Variational Bayes</a></li>
+<li><a href="#psvbexample">Parallel Streaming Variational Bayes</a></li>
+</ul>
+</li>
+<li>
+<a href="#conceptdriftexample">Concept Drift Methods</a>
+
+<ul>
+<li><a href="#mlfadingexample">Maximum Likelihood with Fading</a></li>
+<li><a href="#svbfadingexample">Streaming Variational Bayes with Fading</a></li>
+<li><a href="#nbconceptdriftexample">Naive Bayes with Virtual Concept Drift Detection</a></li>
+</ul>
+</li>
+<li>
+<a href="#huginglinkexample">HuginLink</a>
+
+<ul>
+<li><a href="#huginglinkconversionexample">Models conversion between AMIDST and Hugin</a></li>
+<li><a href="#huginglinkioexample">I/O of Bayesian Networks with Hugin net format</a></li>
+<li><a href="#huginglinkinferenceexample">Invoking Hugin's inference engine</a></li>
+</ul>
+</li>
+<li>
+<a href="#moalinkexample">MoaLink</a>
+
+<ul>
+<li><a href="#moalinkclassifiersexample">AMIDST Classifiers from MOA</a></li>
+<li><a href="#moalinkregressionsexample">AMIDST Regression from MOA</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="http://amidst.github.io/toolbox/javadoc/index.html">Java Doc</a></li>
 </ol>
-
-<h2>
-<a id="handling-bayesian-networks" class="anchor" href="#handling-bayesian-networks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Handling Bayesian Networks<a name="bnexample"></a>
-</h2>
-
-<h3>
-<a id="creating-bayesian-networks-with-no-hidden-variables" class="anchor" href="#creating-bayesian-networks-with-no-hidden-variables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating Bayesian Networks with no hidden variables<a name="bnnohiddenexample"></a>
-</h3>
-
-<h3>
-<a id="modifying-bayesian-networks-" class="anchor" href="#modifying-bayesian-networks-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Modifying Bayesian Networks <a name="bnmodifyexample"></a>
-</h3>
-
-<h2>
-<a id="io-functionality-" class="anchor" href="#io-functionality-" aria-hidden="true"><span class="octicon octicon-link"></span></a>{I/O Functionality} <a name="ioexample"></a>
-</h2>
-
-<h3>
-<a id="io-of-data-streams-" class="anchor" href="#io-of-data-streams-" aria-hidden="true"><span class="octicon octicon-link"></span></a>I/O of Data Streams <a name="iodatastreamsexample"></a>
-</h3>
-
-<h3>
-<a id="io-of-bayesian-networks-" class="anchor" href="#io-of-bayesian-networks-" aria-hidden="true"><span class="octicon octicon-link"></span></a>I/O of Bayesian Networks <a name="iobnsexample"></a>
-</h3>
-
-<h2>
-<a id="inference-algorithms-" class="anchor" href="#inference-algorithms-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Inference Algorithms <a name="inferenceexample"></a>
-</h2>
-
-<h3>
-<a id="the-inference-engine-" class="anchor" href="#the-inference-engine-" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Inference Engine <a name="inferenceengingeexample"></a>
-</h3>
-
-<h3>
-<a id="variational-message-passing-" class="anchor" href="#variational-message-passing-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Variational Message Passing <a name="vmpexample"></a>
-</h3>
-
-<h3>
-<a id="importance-sampling-" class="anchor" href="#importance-sampling-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Importance Sampling <a name="isexample"></a>
-</h3>
-
-<h2>
-<a id="learning-algorithms-" class="anchor" href="#learning-algorithms-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Learning Algorithms <a name="learningexample"></a>
-</h2>
-
-<h3>
-<a id="maximum-likelihood-" class="anchor" href="#maximum-likelihood-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Maximum Likelihood <a name="mlexample"></a>
-</h3>
-
-<h3>
-<a id="parallel-maximum-likelihood-" class="anchor" href="#parallel-maximum-likelihood-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parallel Maximum Likelihood <a name="pmlexample"></a>
-</h3>
-
-<h3>
-<a id="streaming-variational-bayes-" class="anchor" href="#streaming-variational-bayes-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Streaming Variational Bayes <a name="svbexample"></a>
-</h3>
-
-<h3>
-<a id="parallel-streaming-variational-bayes-" class="anchor" href="#parallel-streaming-variational-bayes-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parallel Streaming Variational Bayes <a name="psvbexample"></a>
-</h3>
-
-<h2>
-<a id="concept-drift-methods-" class="anchor" href="#concept-drift-methods-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Concept Drift Methods <a name="conceptdriftexample"></a>
-</h2>
-
-<h3>
-<a id="maximum-likelihood-with-fading-" class="anchor" href="#maximum-likelihood-with-fading-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Maximum Likelihood with Fading <a name="mlfadingexample"></a>
-</h3>
-
-<h3>
-<a id="streaming-variational-bayes-with-fading-" class="anchor" href="#streaming-variational-bayes-with-fading-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Streaming Variational Bayes with Fading <a name="svbfadingexample"></a>
-</h3>
-
-<h3>
-<a id="naive-bayes-with-virtual-concept-drift-detection-" class="anchor" href="#naive-bayes-with-virtual-concept-drift-detection-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Naive Bayes with Virtual Concept Drift Detection <a name="nbconceptdriftexample"></a>
-</h3>
-
-<h2>
-<a id="huginlink-" class="anchor" href="#huginlink-" aria-hidden="true"><span class="octicon octicon-link"></span></a>HuginLink <a name="huginglinkexample"></a>
-</h2>
-
-<h3>
-<a id="models-conversion-between-amidst-and-hugin-" class="anchor" href="#models-conversion-between-amidst-and-hugin-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Models conversion between AMIDST and Hugin <a name="huginglinkconversionexample"></a>
-</h3>
-
-<h3>
-<a id="io-of-bayesian-networks-with-hugin-net-format-" class="anchor" href="#io-of-bayesian-networks-with-hugin-net-format-" aria-hidden="true"><span class="octicon octicon-link"></span></a>I/O of Bayesian Networks with Hugin net format <a name="huginglinkioexample"></a>
-</h3>
-
-<h3>
-<a id="invoking-hugins-inference-engine-" class="anchor" href="#invoking-hugins-inference-engine-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Invoking Hugin's inference engine <a name="huginglinkinferenceexample"></a>
-</h3>
-
-<h2>
-<a id="moalink-" class="anchor" href="#moalink-" aria-hidden="true"><span class="octicon octicon-link"></span></a>MoaLink <a name="moalinkexample"></a>
-</h2>
-
-<h3>
-<a id="amidst-classifiers-from-moa-" class="anchor" href="#amidst-classifiers-from-moa-" aria-hidden="true"><span class="octicon octicon-link"></span></a>AMIDST Classifiers from MOA <a name="moalinkclassifiersexample"></a>
-</h3>
-
-<h3>
-<a id="amidst-regression-from-moa-" class="anchor" href="#amidst-regression-from-moa-" aria-hidden="true"><span class="octicon octicon-link"></span></a>AMIDST Regression from MOA <a name="moalinkregressionsexample"></a>
-</h3>
 
 <h2>
 <a id="toolbox-functionalities" class="anchor" href="#toolbox-functionalities" aria-hidden="true"><span class="octicon octicon-link"></span></a>Toolbox Functionalities<a name="functionalities"></a>
@@ -461,11 +408,11 @@ states<span class="pl-k">.</span>getStatesNames()<span class="pl-k">.</span>forE
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
-<a id="handling-bayesian-networks-1" class="anchor" href="#handling-bayesian-networks-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Handling Bayesian Networks<a name="bnexample"></a>
+<a id="handling-bayesian-networks" class="anchor" href="#handling-bayesian-networks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Handling Bayesian Networks<a name="bnexample"></a>
 </h3>
 
 <h4>
-<a id="creating-bayesian-networks-with-no-hidden-variables-1" class="anchor" href="#creating-bayesian-networks-with-no-hidden-variables-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating Bayesian Networks with no hidden variables<a name="bnnohiddenexample"></a>
+<a id="creating-bayesian-networks-with-no-hidden-variables" class="anchor" href="#creating-bayesian-networks-with-no-hidden-variables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating Bayesian Networks with no hidden variables<a name="bnnohiddenexample"></a>
 </h4>
 
 <p>In this example, we take a data set, create a BN and we compute the log-likelihood of all the samples
@@ -668,7 +615,7 @@ dag<span class="pl-k">.</span>getParentSet(i)<span class="pl-k">.</span>addParen
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
-<a id="modifying-bayesian-networks--1" class="anchor" href="#modifying-bayesian-networks--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Modifying Bayesian Networks <a name="bnmodifyexample"></a>
+<a id="modifying-bayesian-networks-" class="anchor" href="#modifying-bayesian-networks-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Modifying Bayesian Networks <a name="bnmodifyexample"></a>
 </h3>
 
 <p>In this example we show how to access and modify the conditional probabilities of a Bayesian network model.</p>
@@ -707,11 +654,11 @@ normalMultiDist<span class="pl-k">.</span>getNormal(<span class="pl-c1">1</span>
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h2>
-<a id="io-functionality--1" class="anchor" href="#io-functionality--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>I/O Functionality <a name="ioexample"></a>
+<a id="io-functionality-" class="anchor" href="#io-functionality-" aria-hidden="true"><span class="octicon octicon-link"></span></a>I/O Functionality <a name="ioexample"></a>
 </h2>
 
 <h3>
-<a id="io-of-data-streams--1" class="anchor" href="#io-of-data-streams--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>I/O of Data Streams <a name="iodatastreamsexample"></a>
+<a id="io-of-data-streams-" class="anchor" href="#io-of-data-streams-" aria-hidden="true"><span class="octicon octicon-link"></span></a>I/O of Data Streams <a name="iodatastreamsexample"></a>
 </h3>
 
 <p>In this example we show how to load and save data sets from <a href="http://www.cs.waikato.ac.nz/ml/weka/arff.html">.arff</a> files. </p>
@@ -725,7 +672,7 @@ normalMultiDist<span class="pl-k">.</span>getNormal(<span class="pl-c1">1</span>
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
-<a id="io-of-bayesian-networks--1" class="anchor" href="#io-of-bayesian-networks--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>I/O of Bayesian Networks <a name="iobnsexample"></a>
+<a id="io-of-bayesian-networks-" class="anchor" href="#io-of-bayesian-networks-" aria-hidden="true"><span class="octicon octicon-link"></span></a>I/O of Bayesian Networks <a name="iobnsexample"></a>
 </h3>
 
 <p>In this example we show how to load and save Bayesian networks models for a binary file with ".bn" extension. In this toolbox Bayesian networks models are saved as serialized objects.</p>
@@ -745,11 +692,11 @@ bn<span class="pl-k">.</span>randomInitialization(<span class="pl-k">new</span> 
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h2>
-<a id="inference-algorithms--1" class="anchor" href="#inference-algorithms--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Inference Algorithms <a name="inferenceexample"></a>
+<a id="inference-algorithms-" class="anchor" href="#inference-algorithms-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Inference Algorithms <a name="inferenceexample"></a>
 </h2>
 
 <h3>
-<a id="the-inference-engine--1" class="anchor" href="#the-inference-engine--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Inference Engine <a name="inferenceengingeexample"></a>
+<a id="the-inference-engine-" class="anchor" href="#the-inference-engine-" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Inference Engine <a name="inferenceengingeexample"></a>
 </h3>
 
 <p>This example show how to perform inference in a Bayesian network model using the InferenceEngine static class. This class aims to be a straigthfoward way to perform queries over a Bayesian network model. By the default the \textit{VMP} inference method is invoked.</p>
@@ -776,7 +723,7 @@ assignment<span class="pl-k">.</span>setValue(varW,<span class="pl-c1">0</span>)
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
-<a id="variational-message-passing--1" class="anchor" href="#variational-message-passing--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Variational Message Passing <a name="vmpexample"></a>
+<a id="variational-message-passing-" class="anchor" href="#variational-message-passing-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Variational Message Passing <a name="vmpexample"></a>
 </h3>
 
 <p>This example we show how to perform inference on a general Bayesian network using the Variational Message Passing (VMP)
@@ -822,7 +769,7 @@ inferenceAlgorithm<span class="pl-k">.</span>runInference();
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
-<a id="importance-sampling--1" class="anchor" href="#importance-sampling--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Importance Sampling <a name="isexample"></a>
+<a id="importance-sampling-" class="anchor" href="#importance-sampling-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Importance Sampling <a name="isexample"></a>
 </h3>
 
 <p>This example we show how to perform inference on a general Bayesian network using an importance sampling
@@ -871,11 +818,11 @@ inferenceAlgorithm<span class="pl-k">.</span>runInference();
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h2>
-<a id="learning-algorithms--1" class="anchor" href="#learning-algorithms--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Learning Algorithms <a name="learningexample"></a>
+<a id="learning-algorithms-" class="anchor" href="#learning-algorithms-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Learning Algorithms <a name="learningexample"></a>
 </h2>
 
 <h3>
-<a id="maximum-likelihood--1" class="anchor" href="#maximum-likelihood--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Maximum Likelihood <a name="mlexample"></a>
+<a id="maximum-likelihood-" class="anchor" href="#maximum-likelihood-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Maximum Likelihood <a name="mlexample"></a>
 </h3>
 
 <p>This other example shows how to learn incrementally the parameters of a Bayesian network using data batches,</p>
@@ -907,7 +854,7 @@ parameterLearningAlgorithm<span class="pl-k">.</span>initLearning();
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
-<a id="parallel-maximum-likelihood--1" class="anchor" href="#parallel-maximum-likelihood--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parallel Maximum Likelihood <a name="pmlexample"></a>
+<a id="parallel-maximum-likelihood-" class="anchor" href="#parallel-maximum-likelihood-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parallel Maximum Likelihood <a name="pmlexample"></a>
 </h3>
 
 <p>This example shows how to learn in parallel the parameters of a Bayesian network from a stream of data using maximum likelihood.</p>
@@ -942,7 +889,7 @@ parameterLearningAlgorithm<span class="pl-k">.</span>runLearning();
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
-<a id="streaming-variational-bayes--1" class="anchor" href="#streaming-variational-bayes--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Streaming Variational Bayes <a name="svbexample"></a>
+<a id="streaming-variational-bayes-" class="anchor" href="#streaming-variational-bayes-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Streaming Variational Bayes <a name="svbexample"></a>
 </h3>
 
 <p>This example shows how to learn incrementally the parameters of a Bayesian network from a stream of data with a Bayesian approach using the following algorithm,</p>
@@ -989,7 +936,7 @@ parameterLearningAlgorithm<span class="pl-k">.</span>initLearning();
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
-<a id="parallel-streaming-variational-bayes--1" class="anchor" href="#parallel-streaming-variational-bayes--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parallel Streaming Variational Bayes <a name="psvbexample"></a>
+<a id="parallel-streaming-variational-bayes-" class="anchor" href="#parallel-streaming-variational-bayes-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parallel Streaming Variational Bayes <a name="psvbexample"></a>
 </h3>
 
 <p>This example shows how to learn in the parameters of a Bayesian network from a stream of data with a Bayesian
@@ -1035,11 +982,11 @@ parameterLearningAlgorithm<span class="pl-k">.</span>runLearning();
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h2>
-<a id="concept-drift-methods--1" class="anchor" href="#concept-drift-methods--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Concept Drift Methods <a name="conceptdriftexample"></a>
+<a id="concept-drift-methods-" class="anchor" href="#concept-drift-methods-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Concept Drift Methods <a name="conceptdriftexample"></a>
 </h2>
 
 <h3>
-<a id="maximum-likelihood-with-fading--1" class="anchor" href="#maximum-likelihood-with-fading--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Maximum Likelihood with Fading <a name="mlfadingexample"></a>
+<a id="maximum-likelihood-with-fading-" class="anchor" href="#maximum-likelihood-with-fading-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Maximum Likelihood with Fading <a name="mlfadingexample"></a>
 </h3>
 
 <p>This example shows how to adaptively learn the parameters of a Bayesian network from a stream of data using exponential forgetting with a given fading factor, directly inspired by the approach presented in</p>
@@ -1079,7 +1026,7 @@ parameterLearningAlgorithm<span class="pl-k">.</span>runLearning();
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
-<a id="streaming-variational-bayes-with-fading--1" class="anchor" href="#streaming-variational-bayes-with-fading--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Streaming Variational Bayes with Fading <a name="svbfadingexample"></a>
+<a id="streaming-variational-bayes-with-fading-" class="anchor" href="#streaming-variational-bayes-with-fading-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Streaming Variational Bayes with Fading <a name="svbfadingexample"></a>
 </h3>
 
 <p>This example shows how to adaptively learn in the parameters of a Bayesian network from a stream of data with a Bayesian approach using a combination of the the following two methods,</p>
@@ -1124,7 +1071,7 @@ parameterLearningAlgorithm<span class="pl-k">.</span>runLearning();
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
-<a id="naive-bayes-with-virtual-concept-drift-detection--1" class="anchor" href="#naive-bayes-with-virtual-concept-drift-detection--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Naive Bayes with Virtual Concept Drift Detection <a name="nbconceptdriftexample"></a>
+<a id="naive-bayes-with-virtual-concept-drift-detection-" class="anchor" href="#naive-bayes-with-virtual-concept-drift-detection-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Naive Bayes with Virtual Concept Drift Detection <a name="nbconceptdriftexample"></a>
 </h3>
 
 <p>This example shows how to use the class NaiveBayesVirtualConceptDriftDetector to run the virtual concept drift detector detailed in</p>
@@ -1190,11 +1137,11 @@ virtualDriftDetector<span class="pl-k">.</span>initLearning();
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h2>
-<a id="huginlink--1" class="anchor" href="#huginlink--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>HuginLink <a name="huginglinkexample"></a>
+<a id="huginlink-" class="anchor" href="#huginlink-" aria-hidden="true"><span class="octicon octicon-link"></span></a>HuginLink <a name="huginglinkexample"></a>
 </h2>
 
 <h3>
-<a id="models-conversion-between-amidst-and-hugin--1" class="anchor" href="#models-conversion-between-amidst-and-hugin--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Models conversion between AMIDST and Hugin <a name="huginglinkconversionexample"></a>
+<a id="models-conversion-between-amidst-and-hugin-" class="anchor" href="#models-conversion-between-amidst-and-hugin-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Models conversion between AMIDST and Hugin <a name="huginglinkconversionexample"></a>
 </h3>
 
 <p>This example shows how to use the class BNConverterToAMIDST and BNConverterToHugin to convert a 
@@ -1215,7 +1162,7 @@ huginBN <span class="pl-k">=</span> <span class="pl-smi">BNConverterToHugin</spa
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
-<a id="io-of-bayesian-networks-with-hugin-net-format--1" class="anchor" href="#io-of-bayesian-networks-with-hugin-net-format--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>I/O of Bayesian Networks with Hugin net format <a name="huginglinkioexample"></a>
+<a id="io-of-bayesian-networks-with-hugin-net-format-" class="anchor" href="#io-of-bayesian-networks-with-hugin-net-format-" aria-hidden="true"><span class="octicon octicon-link"></span></a>I/O of Bayesian Networks with Hugin net format <a name="huginglinkioexample"></a>
 </h3>
 
 <p>This example shows how to use the class BNLoaderFromHugin and BNWriterToHugin classes to load and
@@ -1231,7 +1178,7 @@ write Bayesian networks in Hugin format.</p>
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
-<a id="invoking-hugins-inference-engine--1" class="anchor" href="#invoking-hugins-inference-engine--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Invoking Hugin's inference engine <a name="huginglinkinferenceexample"></a>
+<a id="invoking-hugins-inference-engine-" class="anchor" href="#invoking-hugins-inference-engine-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Invoking Hugin's inference engine <a name="huginglinkinferenceexample"></a>
 </h3>
 
 <p>This example we show how to perform inference using <a href="http://www.hugin.com">Hugin</a> inference engine within the AMIDST toolbox</p>
@@ -1265,11 +1212,11 @@ inferenceAlgorithm<span class="pl-k">.</span>runInference();
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h2>
-<a id="moalink--1" class="anchor" href="#moalink--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>MoaLink <a name="moalinkexample"></a>
+<a id="moalink-" class="anchor" href="#moalink-" aria-hidden="true"><span class="octicon octicon-link"></span></a>MoaLink <a name="moalinkexample"></a>
 </h2>
 
 <h3>
-<a id="amidst-classifiers-from-moa--1" class="anchor" href="#amidst-classifiers-from-moa--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>AMIDST Classifiers from MOA <a name="moalinkclassifiersexample"></a>
+<a id="amidst-classifiers-from-moa-" class="anchor" href="#amidst-classifiers-from-moa-" aria-hidden="true"><span class="octicon octicon-link"></span></a>AMIDST Classifiers from MOA <a name="moalinkclassifiersexample"></a>
 </h3>
 
 <p>The following command can be used to learn a Bayesian model with a latent Gaussian variable (HG) and a multinomial with 2 states (HM), as displayed in figure below. The VMP algorithm is used to learn the parameters of these two non-observed variables and make predictions over the class variable.</p>
@@ -1284,7 +1231,7 @@ moa.DoTask EvaluatePrequential -l \(bayes.AmidstClassifier -g 1
 </code></pre>
 
 <h3>
-<a id="amidst-regression-from-moa--1" class="anchor" href="#amidst-regression-from-moa--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>AMIDST Regression from MOA <a name="moalinkregressionsexample"></a>
+<a id="amidst-regression-from-moa-" class="anchor" href="#amidst-regression-from-moa-" aria-hidden="true"><span class="octicon octicon-link"></span></a>AMIDST Regression from MOA <a name="moalinkregressionsexample"></a>
 </h3>
 
 <p>It is possible to learn an enriched naive Bayes model for regression if the class label is of a continuous nature. The following command uses the model in Figure \ref{fig:HODE}(b) on a toy dataset from WEKA's collection of <a href="http://prdownloads.sourceforge.net/weka/datasets-numeric.jar">regression problems</a>.</p>
