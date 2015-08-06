@@ -12,7 +12,7 @@
   <body>
     <section class="page-header">
       <h1 class="project-name">AMIDST Toolbox 1.0</h1>
-      <h2 class="project-tagline">A Java Library for Analysis of MassIve Data STreams using Probabilistic Graphical Models</h2>
+      <h2 class="project-tagline">A Java Library for Analysis of MassIve Data Streams using Probabilistic Graphical Models</h2>
       <a href="https://github.com/amidst/toolbox" class="btn">View on GitHub</a>
       <a href="https://github.com/amidst/toolbox/zipball/master" class="btn">Download .zip</a>
       <a href="https://github.com/amidst/toolbox/tarball/master" class="btn">Download .tar.gz</a>
@@ -22,7 +22,7 @@
       <h1>
 <a id="scope" class="anchor" href="#scope" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scope</h1>
 
-<p>This toolbox offers a collection of scalable and parallel algorithms for inference and learning of hybrid Bayesian networks from streaming data. For example, AMIDST provides parallel multi-core implementations for Bayesian parameter learning, using streaming variational Bayes and variational message passing. Additionally, AMIDST efficiently leverages existing functionalities and algorithms by interfacing to existing software tools such as R, Weka, HUGIN and MOA. AMIDST is an open source toolbox written in Java and is available under the Apache Software License 2.0.</p>
+<p>This toolbox offers a collection of scalable and parallel algorithms for inference and learning of hybrid Bayesian networks from streaming data. For example, AMIDST provides parallel multi-core implementations for Bayesian parameter learning, using streaming variational Bayes and variational message passing. Additionally, AMIDST efficiently leverages existing functionalities and algorithms by interfacing to existing software tools such as <a href="https://www.r-project.org/">R</a>, <a href="http://www.hugin.com">Hugin</a> and <a href="http://moa.cms.waikato.ac.nz">MOA</a>. AMIDST is an open source toolbox written in Java and is available under the Apache Software License 2.0.</p>
 
 <p>In the next figure we show a taxonomy of relevant data mining tools dealing with PGMs and data streams. To the best of our knowledge, there is no other software for mining data streams based on PGMs, most of the existing softwares based on PGMs are only focused on mining stationary data sets. Hence, the main goal of AMIDST is to fill this gap and produce a significant contribution within the areas of PGMs and mining streaming data.</p>
 
@@ -53,7 +53,7 @@
 <li><a href="#inference">Inference Engine</a></li>
 <li><a href="#learning">Learning Engine</a></li>
 <li><a href="#conceptdrift">Concept Drift</a></li>
-<li><a href="#librarylinks">Links to MOA, Weka, Hugin and R</a></li>
+<li><a href="#librarylinks">Links to MOA, Hugin and R</a></li>
 </ul>
 </li>
 <li>
@@ -62,17 +62,33 @@
 <ul>
 <li><a href="#description">Description</a></li>
 <li><a href="#java8">Java 8 Integration: Lambdas, streams, and functional-sytle programming</a></li>
-<li><a href="#installation">Install AMIDST Toolbox</a></li>
-<li><a href="#installmoa">Install MOALink</a></li>
-<li><a href="#installhugin">Install HuginLink</a></li>
-<li><a href="#compilation">Compiling &amp; Running from the command line</a></li>
-<li><a href="#extension">Extending AMIDST with Github Fork &amp; Pull scheme</a></li>
+<li>
+<a href="#installation">Installing AMIDST Toolbox</a>
+
+<ul>
+<li><a href="#installmoa">Installing MOALink</a></li>
+<li><a href="#installhugin">Installing HuginLink</a></li>
 </ul>
 </li>
+<li><a href="#compilation">Compiling &amp; Running from the command line</a></li>
+</ul>
+</li>
+<li><a href="#extension">Extending AMIDST with Github Fork &amp; Pull scheme</a></li>
 <li>
 <a href="#examples">Code Examples</a>
 
 <ul>
+<li><a href="#datastreamsexample">Data Streams</a></li>
+<li><a href="#variablesexample">Random Variables</a></li>
+<li>
+<a href="#bnexample">Bayesian Networks</a>
+
+<ul>
+<li><a href="#bnnohiddenexample">Creating Bayesian Networks with no hidden variables</a></li>
+<li><a href="#bnhiddenexample">Creating Bayesian Networks with hidden variables</a></li>
+<li><a href="#bnmodifyexample">Modifying Bayesian Networks</a></li>
+</ul>
+</li>
 <li>
 <a href="#ioexample">I/O Functionality</a>
 
@@ -128,7 +144,7 @@
 </li>
 </ul>
 </li>
-<li><a href="http://amidst.github.io/toolbox/javadoc/index.html">Java Doc</a></li>
+<li><a href="http://amidst.github.io/toolbox/javadoc/index.html">API Java Doc</a></li>
 </ol>
 
 <h2>
@@ -159,7 +175,7 @@
 <a id="inference-engine" class="anchor" href="#inference-engine" aria-hidden="true"><span class="octicon octicon-link"></span></a>Inference Engine<a name="inference"></a>
 </h3>
 
-<p>AMIDST includes the implementation of the \textit{variational message passing} \citep{WinnBishop2005} algorithm, and the parallel implementation of the \textit{importance sampling} \citep{hammersley1964monte,CAEPIA2015} algorithm. It also supports exact inference by interfacing with Hugin's junction tree inference algorithm \citep{Madsen2005Hugin}. </p>
+<p>AMIDST includes the implementation of the \textit{variational message passing} \citep{WinnBishop2005} algorithm, and the parallel implementation of the \textit{importance sampling} \citep{hammersley1964monte,CAEPIA2015} algorithm. It also supports exact inference by interfacing with <a href="http://www.hugin.com">Hugin</a>'s junction tree inference algorithm \citep{Madsen2005Hugin}. </p>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
@@ -167,7 +183,7 @@
 <a id="learning-engine" class="anchor" href="#learning-engine" aria-hidden="true"><span class="octicon octicon-link"></span></a>Learning Engine<a name="learning"></a>
 </h3>
 
-<p>In AMIDST, a fully Bayesian approach is pursued, which means that the parameter learning reduces to the task of inference. AMIDST provides a multi-core parallel implementation of the \textit{streaming variational Bayes} algorithm \citep{broderick2013streaming}, using \textit{variational message passing} as underlying inference engine, which can deal with large models with latent variables. When the model does not contain latent variables, an efficient parallel implementation of \textit{maximum likelihood estimation} \citep{mlestimation} can be also used by exploiting an efficient vector-based representation of BNs as \textit{exponential family models} \citep{WinnBishop2005}. For structural learning, AMIDST currently supports standard PC and parallel TAN algorithms by interfacing with HUGIN \citep{Madsen2005Hugin,Madsen2014}.</p>
+<p>In AMIDST, a fully Bayesian approach is pursued, which means that the parameter learning reduces to the task of inference. AMIDST provides a multi-core parallel implementation of the \textit{streaming variational Bayes} algorithm \citep{broderick2013streaming}, using \textit{variational message passing} as underlying inference engine, which can deal with large models with latent variables. When the model does not contain latent variables, an efficient parallel implementation of \textit{maximum likelihood estimation} \citep{mlestimation} can be also used by exploiting an efficient vector-based representation of BNs as \textit{exponential family models} \citep{WinnBishop2005}. For structural learning, AMIDST currently supports standard PC and parallel TAN algorithms by interfacing with <a href="http://www.hugin.com">Hugin</a> \citep{Madsen2005Hugin,Madsen2014}.</p>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
@@ -180,14 +196,14 @@
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
-<a id="links-to-moa-weka-hugin-and-r" class="anchor" href="#links-to-moa-weka-hugin-and-r" aria-hidden="true"><span class="octicon octicon-link"></span></a>Links to MOA, Weka, Hugin and R<a name="librarylinks"></a>
+<a id="links-to-moa-hugin-and-r" class="anchor" href="#links-to-moa-hugin-and-r" aria-hidden="true"><span class="octicon octicon-link"></span></a>Links to MOA, Hugin and R<a name="librarylinks"></a>
 </h3>
 
-<p>AMIDST leverages existing functionalities and algorithms by interfacing to existing software tools such as R, Weka, HUGIN and MOA (Massive Online Analysis) \citep{BifetHolmesKirkbyPfahringer10}. This allows to efficiently well established systems and also broaden the AMIDST user-base. </p>
+<p>AMIDST leverages existing functionalities and algorithms by interfacing to existing software tools such as <a href="https://www.r-project.org/">R</a>, <a href="http://www.hugin.com">Hugin</a> and <a href="http://moa.cms.waikato.ac.nz">MOA</a> (Massive Online Analysis) \citep{BifetHolmesKirkbyPfahringer10}. This allows to efficiently well established systems and also broaden the AMIDST user-base. </p>
 
 <ul>
-<li><p><strong>HuginLink</strong> consists of a set of functionalities implemented to link the AMIDST toolbox with the HUGIN software \citep{Madsen2005Hugin}. This connection extends AMIDST by providing the main functionalities integrated in Hugin software, such as exact inference algorithms and scalable structural learning algorithms \citep{Madsen2014}. </p></li>
-<li><p><strong>MoaLink</strong> ensures an easy use of AMDIST functionalities within MOA \citep{BifetHolmesKirkbyPfahringer10}.  The main idea is that any model deployed in AMIDST can be integrated and evaluated using MOA's graphical user interface. As a proof of concept, \textit{MoaLink} already provides a classification, a regression and a clustering method based on BN models with latent variables. These models are learnt in a streaming fashion using AMIDST learning engine. </p></li>
+<li><p><strong>HuginLink</strong> consists of a set of functionalities implemented to link the AMIDST toolbox with the <a href="http://www.hugin.com">Hugin</a> software \citep{Madsen2005Hugin}. This connection extends AMIDST by providing the main functionalities integrated in <a href="http://www.hugin.com">Hugin</a> software, such as exact inference algorithms and scalable structural learning algorithms \citep{Madsen2014}. </p></li>
+<li><p><strong>MoaLink</strong> ensures an easy use of AMDIST functionalities within <a href="http://moa.cms.waikato.ac.nz">MOA</a> \citep{BifetHolmesKirkbyPfahringer10}.  The main idea is that any model deployed in AMIDST can be integrated and evaluated using MOA's graphical user interface. As a proof of concept, \textit{MoaLink} already provides a classification, a regression and a clustering method based on BN models with latent variables. These models are learnt in a streaming fashion using AMIDST learning engine. </p></li>
 <li><p><strong>RLink</strong> ....</p></li>
 </ul>
 
@@ -223,7 +239,7 @@
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
-<a id="installa-amidst-toolbox-" class="anchor" href="#installa-amidst-toolbox-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installa AMIDST Toolbox <a name="installation"></a>
+<a id="installing-amidst-toolbox-" class="anchor" href="#installing-amidst-toolbox-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installing AMIDST Toolbox <a name="installation"></a>
 </h3>
 
 <p>The first step is to install <a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">Java 8</a>.  We strongly recommend <a href="http://www.jetbrains.com/idea/download/">IntelliJ</a> as IDE tool because it has direct support of Maven and Github. </p>
@@ -246,24 +262,24 @@
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
-<h3>
-<a id="install-moalink" class="anchor" href="#install-moalink" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install MOALink<a name="installmoa"></a>
-</h3>
+<h4>
+<a id="installing-moalink" class="anchor" href="#installing-moalink" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installing MOALink<a name="installmoa"></a>
+</h4>
 
-<p>To use AMIDST functionality within <a href="http://moa.cms.waikato.ac.nz">MOA</a> you just have to run the script \texttt{compileWithDependencies.sh} in the <em>moalink</em> directory. A file <em>moalink-1.0-SNAPSHOT-jar-with-dependencies.jar</em> will be generated in the \texttt{moalink/target} directory. Please place this jar file on your library path for MOA. </p>
+<p>To use AMIDST functionality within <a href="http://moa.cms.waikato.ac.nz">MOA</a> you just have to run the script \texttt{compileWithDependencies.sh} in the <em>moalink</em> directory. A file <em>moalink-1.0-SNAPSHOT-jar-with-dependencies.jar</em> will be generated in the \texttt{moalink/target} directory. Please place this jar file on your library path for <a href="http://moa.cms.waikato.ac.nz">MOA</a>. </p>
 
 <p>With this jar file we can make use of the different learning and inference algorithms in AMIDST to learn more expressive Bayesian network models for classification, regression and clustering. AMIDST offers the possibility to add latent Gaussian and/or Multinomial variables to a base naive Bayes structure. Normally, the addition of these latent variables should provide classifiers with lower bias and higher variance, that is, more sophisticated classifiers that are able to lean more complex interdependencies in the data, but also more prone to overfit. The user should evaluate the complexity of his/her dataset and choose the number of latent Gaussian variables and states of the multinomial latent variable accordingly.</p>
 
-<p>With the following command, MOA gui can be invoked e.g (remember to place \texttt{compileWithDependencies.sh} under the lib folder reference in the <em>-cp</em> option):</p>
+<p>With the following command, <a href="http://moa.cms.waikato.ac.nz">MOA</a> gui can be invoked e.g (remember to place \texttt{compileWithDependencies.sh} under the lib folder reference in the <em>-cp</em> option):</p>
 
 <pre><code>java -Xmx512m -cp "../lib/*" -javaagent:../lib/sizeofag-1.0.0.jar moa.gui.GUI
 </code></pre>
 
 <p>Note that the above example should be slightly adapted to run on a Windows machine: e.g. use \textasciicircum~ instead of \textbackslash~ to escape brackets.</p>
 
-<h3>
-<a id="install-huginlink" class="anchor" href="#install-huginlink" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install HuginLink<a name="installhugin"></a>
-</h3>
+<h4>
+<a id="installing-huginlink" class="anchor" href="#installing-huginlink" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installing HuginLink<a name="installhugin"></a>
+</h4>
 
 <h3>
 <a id="compiling--running-from-the-command-line" class="anchor" href="#compiling--running-from-the-command-line" aria-hidden="true"><span class="octicon octicon-link"></span></a>Compiling &amp; Running from the command line<a name="compilation"></a>
@@ -292,9 +308,9 @@ which points to file "maven_startup.sh"</p>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
-<h3>
+<h2>
 <a id="extending-amidst-with-github-fork--pull-scheme" class="anchor" href="#extending-amidst-with-github-fork--pull-scheme" aria-hidden="true"><span class="octicon octicon-link"></span></a>Extending AMIDST with Github Fork &amp; Pull scheme<a name="extension"></a>
-</h3>
+</h2>
 
 <p>Developers are expected to contribute to this open software following the <a href="https://help.github.com/articles/using-pull-requests/">Fork &amp; Pull</a> collaboration model. Read this <a href="https://guides.github.com/activities/forking/">guide</a> for full details about how to fork a project and make a pull request.</p>
 
@@ -311,9 +327,9 @@ which points to file "maven_startup.sh"</p>
 <a id="code-examples" class="anchor" href="#code-examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Code Examples<a name="examples"></a>
 </h2>
 
-<h3>
+<h2>
 <a id="data-streams-1" class="anchor" href="#data-streams-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Data Streams<a name="datastreamsexample"></a>
-</h3>
+</h2>
 
 <p>In this example we show how to use the main features of a <em>DataStream</em> object. More precisely,  we show six different ways of iterating over the data samples of a <em>DataStream</em> object.</p>
 
@@ -330,23 +346,27 @@ which points to file "maven_startup.sh"</p>
 <span class="pl-c">//1. Iterating over samples using a for loop</span>
 <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>1. Iterating over samples using a for loop<span class="pl-pds">"</span></span>);
 <span class="pl-k">for</span> (<span class="pl-smi">DataInstance</span> dataInstance <span class="pl-k">:</span> data) {
-    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>The value of attribute A for the current data instance is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> dataInstance<span class="pl-k">.</span>getValue(attA));
+    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>The value of attribute A for the current data instance is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span>
+                                                          dataInstance<span class="pl-k">.</span>getValue(attA));
 }
 
 
-<span class="pl-c">//2. Iterating using streams. We need to restart the data again as a DataStream can only be used once.</span>
+<span class="pl-c">//2. Iterating using streams. We need to restart the data again </span>
+<span class="pl-c">//   as a DataStream can only be used once.</span>
 <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>2. Iterating using streams.<span class="pl-pds">"</span></span>);
 data<span class="pl-k">.</span>restart();
 data<span class="pl-k">.</span>stream()<span class="pl-k">.</span>forEach(dataInstance <span class="pl-k">-</span><span class="pl-k">&gt;</span>
-                <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>The value of attribute A for the current data instance is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> dataInstance<span class="pl-k">.</span>getValue(attA))
-);
-
-
-<span class="pl-c">//3. Iterating using parallel streams.</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>3. Iterating using parallel streams.<span class="pl-pds">"</span></span>);
-data<span class="pl-k">.</span>restart();
-data<span class="pl-k">.</span>parallelStream(<span class="pl-c1">10</span>)<span class="pl-k">.</span>forEach(dataInstance <span class="pl-k">-</span><span class="pl-k">&gt;</span>
-                <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>The value of attribute A for the current data instance is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> dataInstance<span class="pl-k">.</span>getValue(attA))
+                <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>The value of attribute A for the current data <span class="pl-pds">"</span></span><span class="pl-k">+</span>
+                                        instance is<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span> + dataInstance.getValue(attA))</span>
+<span class="pl-s">);</span>
+<span class="pl-s"></span>
+<span class="pl-s"></span>
+<span class="pl-s">//3. Iterating using parallel streams.</span>
+<span class="pl-s">System.out.println(<span class="pl-pds">"</span></span><span class="pl-c1">3.</span> <span class="pl-smi">Iterating</span> using parallel streams<span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">"</span>);</span>
+<span class="pl-s">data.restart();</span>
+<span class="pl-s">data.parallelStream(10).forEach(dataInstance -&gt;</span>
+<span class="pl-s">                System.out.println(<span class="pl-pds">"</span></span><span class="pl-smi">The</span> value of attribute <span class="pl-smi">A</span> <span class="pl-k">for</span> the current data <span class="pl-s"><span class="pl-pds">"</span>+</span>
+<span class="pl-s">                                        instance is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> dataInstance<span class="pl-k">.</span>getValue(attA))
 );
 
 <span class="pl-c">//4. Iterating over a stream of data batches.</span>
@@ -354,15 +374,17 @@ data<span class="pl-k">.</span>parallelStream(<span class="pl-c1">10</span>)<spa
 data<span class="pl-k">.</span>restart();
 data<span class="pl-k">.</span>streamOfBatches(<span class="pl-c1">10</span>)<span class="pl-k">.</span>forEach(batch <span class="pl-k">-</span><span class="pl-k">&gt;</span> {
     <span class="pl-k">for</span> (<span class="pl-smi">DataInstance</span> dataInstance <span class="pl-k">:</span> batch)
-        <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>The value of attribute A for the current data instance is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> dataInstance<span class="pl-k">.</span>getValue(attA));
-});
-
-<span class="pl-c">//5. Iterating over a parallel stream of data batches.</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>5. Iterating over a parallel stream of data batches.<span class="pl-pds">"</span></span>);
-data<span class="pl-k">.</span>restart();
-data<span class="pl-k">.</span>parallelStreamOfBatches(<span class="pl-c1">10</span>)<span class="pl-k">.</span>forEach(batch <span class="pl-k">-</span><span class="pl-k">&gt;</span> {
-    <span class="pl-k">for</span> (<span class="pl-smi">DataInstance</span> dataInstance <span class="pl-k">:</span> batch)
-        <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>The value of attribute A for the current data instance is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> dataInstance<span class="pl-k">.</span>getValue(attA));
+                <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>The value of attribute A for the current data <span class="pl-pds">"</span></span><span class="pl-k">+</span>
+                                        instance is<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span> + dataInstance.getValue(attA))</span>
+<span class="pl-s">});</span>
+<span class="pl-s"></span>
+<span class="pl-s">//5. Iterating over a parallel stream of data batches.</span>
+<span class="pl-s">System.out.println(<span class="pl-pds">"</span></span><span class="pl-c1">5.</span> <span class="pl-smi">Iterating</span> over a parallel stream of data batches<span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">"</span>);</span>
+<span class="pl-s">data.restart();</span>
+<span class="pl-s">data.parallelStreamOfBatches(10).forEach(batch -&gt; {</span>
+<span class="pl-s">    for (DataInstance dataInstance : batch)</span>
+<span class="pl-s">                System.out.println(<span class="pl-pds">"</span></span><span class="pl-smi">The</span> value of attribute <span class="pl-smi">A</span> <span class="pl-k">for</span> the current data <span class="pl-s"><span class="pl-pds">"</span>+</span>
+<span class="pl-s">                                        instance is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> dataInstance<span class="pl-k">.</span>getValue(attA))
 });
 
 
@@ -370,14 +392,15 @@ data<span class="pl-k">.</span>parallelStreamOfBatches(<span class="pl-c1">10</s
 <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>6. Iterating over data batches using a for loop.<span class="pl-pds">"</span></span>);
 <span class="pl-k">for</span> (<span class="pl-k">DataOnMemory&lt;<span class="pl-smi">DataInstance</span>&gt;</span> batch <span class="pl-k">:</span> data<span class="pl-k">.</span>iterableOverBatches(<span class="pl-c1">10</span>)) {
     <span class="pl-k">for</span> (<span class="pl-smi">DataInstance</span> dataInstance <span class="pl-k">:</span> batch)
-        <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>The value of attribute A for the current data instance is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> dataInstance<span class="pl-k">.</span>getValue(attA));
-}</pre></div>
+                <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>The value of attribute A for the current data <span class="pl-pds">"</span></span><span class="pl-k">+</span>
+                                        instance is<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span> + dataInstance.getValue(attA))</span>
+<span class="pl-s">}</span></pre></div>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
-<h3>
-<a id="variables" class="anchor" href="#variables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Variables<a name="variablesexample"></a>
-</h3>
+<h2>
+<a id="random-variables" class="anchor" href="#random-variables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Random Variables<a name="variablesexample"></a>
+</h2>
 
 <p>This example show the basic functionality of the classes Variables and Variable.</p>
 
@@ -392,13 +415,15 @@ data<span class="pl-k">.</span>parallelStreamOfBatches(<span class="pl-c1">10</s
 <span class="pl-smi">Variable</span> multinomialVar <span class="pl-k">=</span> variables<span class="pl-k">.</span>newMultionomialVariable(<span class="pl-s"><span class="pl-pds">"</span>Multinomial<span class="pl-pds">"</span></span>, <span class="pl-c1">2</span>);
 
 <span class="pl-c">//Now we create a Multinomial variable with two states: TRUE and FALSE</span>
-<span class="pl-smi">Variable</span> multinomialVar2 <span class="pl-k">=</span> variables<span class="pl-k">.</span>newMultionomialVariable(<span class="pl-s"><span class="pl-pds">"</span>Multinomial2<span class="pl-pds">"</span></span>, <span class="pl-smi">Arrays</span><span class="pl-k">.</span>asList(<span class="pl-s"><span class="pl-pds">"</span>TRUE, FALSE<span class="pl-pds">"</span></span>));
+<span class="pl-smi">Variable</span> multinomialVar2 <span class="pl-k">=</span> variables<span class="pl-k">.</span>newMultionomialVariable(<span class="pl-s"><span class="pl-pds">"</span>Multinomial2<span class="pl-pds">"</span></span>, 
+                                                <span class="pl-smi">Arrays</span><span class="pl-k">.</span>asList(<span class="pl-s"><span class="pl-pds">"</span>TRUE, FALSE<span class="pl-pds">"</span></span>));
 
 <span class="pl-c">//For Multinomial variables we can iterate over their different states</span>
 <span class="pl-smi">FiniteStateSpace</span> states <span class="pl-k">=</span> multinomialVar2<span class="pl-k">.</span>getStateSpaceType();
 states<span class="pl-k">.</span>getStatesNames()<span class="pl-k">.</span>forEach(<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">::</span>println);
 
-<span class="pl-c">//Variable objects can also be used, for example, to know if one variable can be set as parent of some other variable</span>
+<span class="pl-c">//Variable objects can also be used, for example, to know if one variable </span>
+<span class="pl-c">//can be set as parent of some other variable</span>
 <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>Can a Gaussian variable be parent of Multinomial variable? <span class="pl-pds">"</span></span> <span class="pl-k">+</span>
         (multinomialVar<span class="pl-k">.</span>getDistributionType()<span class="pl-k">.</span>isParentCompatible(gaussianVar)));
 
@@ -407,13 +432,13 @@ states<span class="pl-k">.</span>getStatesNames()<span class="pl-k">.</span>forE
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
-<h3>
-<a id="handling-bayesian-networks" class="anchor" href="#handling-bayesian-networks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Handling Bayesian Networks<a name="bnexample"></a>
-</h3>
+<h2>
+<a id="bayesian-networks" class="anchor" href="#bayesian-networks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bayesian Networks<a name="bnexample"></a>
+</h2>
 
-<h4>
+<h3>
 <a id="creating-bayesian-networks-with-no-hidden-variables" class="anchor" href="#creating-bayesian-networks-with-no-hidden-variables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating Bayesian Networks with no hidden variables<a name="bnnohiddenexample"></a>
-</h4>
+</h3>
 
 <p>In this example, we take a data set, create a BN and we compute the log-likelihood of all the samples
 of this data set. The numbers defining the probability distributions of the BN are randomly fixed.</p>
@@ -620,7 +645,7 @@ dag<span class="pl-k">.</span>getParentSet(i)<span class="pl-k">.</span>addParen
 
 <p>In this example we show how to access and modify the conditional probabilities of a Bayesian network model.</p>
 
-<div class="highlight highlight-java"><pre><span class="pl-c">//We first generate a Bayesian network with one multinomial, one Gaussian variable and one link</span>
+<div class="highlight highlight-java"><pre><span class="pl-c">//We first generate a Bayesian network with one multinomial, one Gaussian variable and one link.</span>
 <span class="pl-smi">BayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfGaussianVars(<span class="pl-c1">1</span>);
 <span class="pl-smi">BayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfMultinomialVars(<span class="pl-c1">1</span>,<span class="pl-c1">2</span>);
 <span class="pl-smi">BayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfLinks(<span class="pl-c1">1</span>);
@@ -718,7 +743,8 @@ assignment<span class="pl-k">.</span>setValue(varW,<span class="pl-c1">0</span>)
 <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(Mout|W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> <span class="pl-smi">InferenceEngine</span><span class="pl-k">.</span>getPosterior(varMout, bn, assignment));
 
 <span class="pl-c">//Or some more refined queries</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(0.7&lt;Mout&lt;6.59 | W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> <span class="pl-smi">InferenceEngine</span><span class="pl-k">.</span>getExpectedValue(varMout, bn, v <span class="pl-k">-</span><span class="pl-k">&gt;</span> (<span class="pl-c1">0.7</span> <span class="pl-k">&lt;</span> v <span class="pl-k">&amp;&amp;</span> v <span class="pl-k">&lt;</span> <span class="pl-c1">6.59</span>) <span class="pl-k">?</span> <span class="pl-c1">1.0</span> <span class="pl-k">:</span> <span class="pl-c1">0.0</span> ));</pre></div>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(0.7&lt;Mout&lt;6.59 | W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> 
+ <span class="pl-smi">InferenceEngine</span><span class="pl-k">.</span>getExpectedValue(varMout, bn, v <span class="pl-k">-</span><span class="pl-k">&gt;</span> (<span class="pl-c1">0.7</span> <span class="pl-k">&lt;</span> v <span class="pl-k">&amp;&amp;</span> v <span class="pl-k">&lt;</span> <span class="pl-c1">6.59</span>) <span class="pl-k">?</span> <span class="pl-c1">1.0</span> <span class="pl-k">:</span> <span class="pl-c1">0.0</span> ));</pre></div>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
@@ -761,10 +787,11 @@ inferenceAlgorithm<span class="pl-k">.</span>runInference();
 <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(Mout|W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> inferenceAlgorithm<span class="pl-k">.</span>getPosterior(varMout));
 
 <span class="pl-c">//Or some more refined queries</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(0.7&lt;Mout&lt;6.59 | W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> inferenceAlgorithm<span class="pl-k">.</span>getExpectedValue(varMout, v <span class="pl-k">-</span><span class="pl-k">&gt;</span> (<span class="pl-c1">0.7</span> <span class="pl-k">&lt;</span> v <span class="pl-k">&amp;&amp;</span> v <span class="pl-k">&lt;</span> <span class="pl-c1">6.59</span>) <span class="pl-k">?</span> <span class="pl-c1">1.0</span> <span class="pl-k">:</span> <span class="pl-c1">0.0</span> ));
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(0.7&lt;Mout&lt;6.59 | W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> 
+ inferenceAlgorithm<span class="pl-k">.</span>getExpectedValue(varMout, v <span class="pl-k">-</span><span class="pl-k">&gt;</span> (<span class="pl-c1">0.7</span> <span class="pl-k">&lt;</span> v <span class="pl-k">&amp;&amp;</span> v <span class="pl-k">&lt;</span> <span class="pl-c1">6.59</span>) <span class="pl-k">?</span> <span class="pl-c1">1.0</span> <span class="pl-k">:</span> <span class="pl-c1">0.0</span> ));
 
 <span class="pl-c">//We can also compute the probability of the evidence</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(W=0) = <span class="pl-pds">"</span></span><span class="pl-k">+</span><span class="pl-smi">Math</span><span class="pl-k">.</span>exp(inferenceAlgorithm<span class="pl-k">.</span>getLogProbabilityOfEvidence()));</pre></div>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> <span class="pl-smi">Math</span><span class="pl-k">.</span>exp(inferenceAlgorithm<span class="pl-k">.</span>getLogProbabilityOfEvidence()));</pre></div>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
@@ -810,10 +837,11 @@ inferenceAlgorithm<span class="pl-k">.</span>runInference();
 <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(Mout|W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> inferenceAlgorithm<span class="pl-k">.</span>getPosterior(varMout));
 
 <span class="pl-c">//Or some more refined queries</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(0.7&lt;Mout&lt;6.59 | W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> inferenceAlgorithm<span class="pl-k">.</span>getExpectedValue(varMout, v <span class="pl-k">-</span><span class="pl-k">&gt;</span> (<span class="pl-c1">0.7</span> <span class="pl-k">&lt;</span> v <span class="pl-k">&amp;&amp;</span> v <span class="pl-k">&lt;</span> <span class="pl-c1">6.59</span>) <span class="pl-k">?</span> <span class="pl-c1">1.0</span> <span class="pl-k">:</span> <span class="pl-c1">0.0</span> ));
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(0.7&lt;Mout&lt;6.59 | W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> 
+ inferenceAlgorithm<span class="pl-k">.</span>getExpectedValue(varMout, v <span class="pl-k">-</span><span class="pl-k">&gt;</span> (<span class="pl-c1">0.7</span> <span class="pl-k">&lt;</span> v <span class="pl-k">&amp;&amp;</span> v <span class="pl-k">&lt;</span> <span class="pl-c1">6.59</span>) <span class="pl-k">?</span> <span class="pl-c1">1.0</span> <span class="pl-k">:</span> <span class="pl-c1">0.0</span> ));
 
 <span class="pl-c">//We can also compute the probability of the evidence</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(W=0) = <span class="pl-pds">"</span></span><span class="pl-k">+</span><span class="pl-smi">Math</span><span class="pl-k">.</span>exp(inferenceAlgorithm<span class="pl-k">.</span>getLogProbabilityOfEvidence()));</pre></div>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> <span class="pl-smi">Math</span><span class="pl-k">.</span>exp(inferenceAlgorithm<span class="pl-k">.</span>getLogProbabilityOfEvidence()));</pre></div>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
@@ -828,7 +856,8 @@ inferenceAlgorithm<span class="pl-k">.</span>runInference();
 <p>This other example shows how to learn incrementally the parameters of a Bayesian network using data batches,</p>
 
 <div class="highlight highlight-java"><pre><span class="pl-c">//We can open the data stream using the static class DataStreamLoader</span>
-<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/WasteIncineratorSample.arff<span class="pl-pds">"</span></span>);
+<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> 
+                  <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/WasteIncineratorSample.arff<span class="pl-pds">"</span></span>);
 
 <span class="pl-c">//We create a ParameterLearningAlgorithm object with the MaximumLikehood builder</span>
 <span class="pl-smi">ParameterLearningAlgorithm</span> parameterLearningAlgorithm <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">ParallelMaximumLikelihood</span>();
@@ -860,7 +889,8 @@ parameterLearningAlgorithm<span class="pl-k">.</span>initLearning();
 <p>This example shows how to learn in parallel the parameters of a Bayesian network from a stream of data using maximum likelihood.</p>
 
 <div class="highlight highlight-java"><pre><span class="pl-c">//We can open the data stream using the static class DataStreamLoader</span>
-<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/syntheticData.arff<span class="pl-pds">"</span></span>);
+<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> 
+           <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/syntheticData.arff<span class="pl-pds">"</span></span>);
 
 <span class="pl-c">//We create a MaximumLikelihood object with the MaximumLikehood builder</span>
 <span class="pl-smi">MaximumLikelihood</span> parameterLearningAlgorithm <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">MaximumLikelihood</span>();
@@ -902,7 +932,8 @@ In Advances in Neural Information Processing Systems (pp. 1727-1735).</p>
 <p>In this second example we show a alternative implementation which explicitly updates the model by batches by using the class <em>SVB</em>.</p>
 
 <div class="highlight highlight-java"><pre><span class="pl-c">//We can open the data stream using the static class DataStreamLoader</span>
-<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/WasteIncineratorSample.arff<span class="pl-pds">"</span></span>);
+<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> 
+                      <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/WasteIncineratorSample.arff<span class="pl-pds">"</span></span>);
 
 <span class="pl-c">//We create a StreamingVariationalBayesVMP object</span>
 <span class="pl-smi">StreamingVariationalBayesVMP</span> parameterLearningAlgorithm <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">StreamingVariationalBayesVMP</span>();
@@ -948,7 +979,8 @@ In Advances in Neural Information Processing Systems (pp. 1727-1735).</p>
 </blockquote>
 
 <div class="highlight highlight-java"><pre><span class="pl-c">//We can open the data stream using the static class DataStreamLoader</span>
-<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/WasteIncineratorSample.arff<span class="pl-pds">"</span></span>);
+<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> 
+                   <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/WasteIncineratorSample.arff<span class="pl-pds">"</span></span>);
 
 <span class="pl-c">//We create a ParallelSVB object</span>
 <span class="pl-smi">ParallelSVB</span> parameterLearningAlgorithm <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">ParallelSVB</span>();
@@ -996,14 +1028,16 @@ parameterLearningAlgorithm<span class="pl-k">.</span>runLearning();
 </blockquote>
 
 <div class="highlight highlight-java"><pre><span class="pl-c">//We can open the data stream using the static class DataStreamLoader</span>
-<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/WasteIncineratorSample.arff<span class="pl-pds">"</span></span>);
+<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> 
+             <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/WasteIncineratorSample.arff<span class="pl-pds">"</span></span>);
 
 <span class="pl-c">//We create a ParameterLearningAlgorithm object with </span>
 <span class="pl-c">//the MaximumLikelihoodFading builder</span>
 <span class="pl-smi">MaximumLikelihoodFading</span> parameterLearningAlgorithm <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">MaximumLikelihoodFading</span>();
 
 <span class="pl-c">//We fix the DAG structure</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setDAG(<span class="pl-smi">MaximimumLikelihoodByBatchExample</span><span class="pl-k">.</span>getNaiveBayesStructure(data, <span class="pl-c1">0</span>));
+parameterLearningAlgorithm<span class="pl-k">.</span>setDAG(
+                <span class="pl-smi">MaximimumLikelihoodByBatchExample</span><span class="pl-k">.</span>getNaiveBayesStructure(data, <span class="pl-c1">0</span>));
 
 <span class="pl-c">//We fix the fading or forgeting factor</span>
 parameterLearningAlgorithm<span class="pl-k">.</span>setFadingFactor(<span class="pl-c1">0.9</span>);
@@ -1039,7 +1073,8 @@ In Advances in Neural Information Processing Systems (pp. 1727-1735).</p>
 </blockquote>
 
 <div class="highlight highlight-java"><pre><span class="pl-c">//We can open the data stream using the static class DataStreamLoader</span>
-<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/WasteIncineratorSample.arff<span class="pl-pds">"</span></span>);
+<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> 
+           <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/WasteIncineratorSample.arff<span class="pl-pds">"</span></span>);
 
 <span class="pl-c">//We create a SVB object</span>
 <span class="pl-smi">SVBFading</span> parameterLearningAlgorithm <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">SVBFading</span>();
@@ -1084,7 +1119,8 @@ parameterLearningAlgorithm<span class="pl-k">.</span>runLearning();
 <span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>./datasets/DriftSets/sea.arff<span class="pl-pds">"</span></span>);
 
 <span class="pl-c">//We create a NaiveBayesVirtualConceptDriftDetector object</span>
-<span class="pl-smi">NaiveBayesVirtualConceptDriftDetector</span> virtualDriftDetector <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">NaiveBayesVirtualConceptDriftDetector</span>();
+<span class="pl-smi">NaiveBayesVirtualConceptDriftDetector</span> virtualDriftDetector <span class="pl-k">=</span> 
+                                        <span class="pl-k">new</span> <span class="pl-smi">NaiveBayesVirtualConceptDriftDetector</span>();
 
 <span class="pl-c">//We set class variable as the last attribute</span>
 virtualDriftDetector<span class="pl-k">.</span>setClassIndex(<span class="pl-k">-</span><span class="pl-c1">1</span>);
@@ -1183,15 +1219,19 @@ write Bayesian networks in Hugin format.</p>
 
 <p>This example we show how to perform inference using <a href="http://www.hugin.com">Hugin</a> inference engine within the AMIDST toolbox</p>
 
-<div class="highlight highlight-java"><pre><span class="pl-c">//We first load the WasteIncinerator bayesian network which has multinomial and Gaussian variables.</span>
+<div class="highlight highlight-java"><pre><span class="pl-c">//We first load the WasteIncinerator bayesian network </span>
+<span class="pl-c">//which has multinomial and Gaussian variables.</span>
 <span class="pl-smi">BayesianNetwork</span> bn <span class="pl-k">=</span> <span class="pl-smi">BayesianNetworkLoader</span><span class="pl-k">.</span>loadFromFile(<span class="pl-s"><span class="pl-pds">"</span>./networks/WasteIncinerator.bn<span class="pl-pds">"</span></span>);
 
-<span class="pl-c">//We recover the relevant variables for this example: Mout which is normally distributed, and W which is multinomial.</span>
+<span class="pl-c">//We recover the relevant variables for this example: </span>
+<span class="pl-c">//Mout which is normally distributed, and W which is multinomial.</span>
 <span class="pl-smi">Variable</span> varMout <span class="pl-k">=</span> bn<span class="pl-k">.</span>getStaticVariables()<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>Mout<span class="pl-pds">"</span></span>);
 <span class="pl-smi">Variable</span> varW <span class="pl-k">=</span> bn<span class="pl-k">.</span>getStaticVariables()<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>W<span class="pl-pds">"</span></span>);
 
-<span class="pl-c">//First we create an instance of a inference algorithm. In this case, we use the ImportanceSampling class.</span>
+<span class="pl-c">//First we create an instance of a inference algorithm. </span>
+<span class="pl-c">//In this case, we use the ImportanceSampling class.</span>
 <span class="pl-smi">InferenceAlgorithm</span> inferenceAlgorithm <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">HuginInference</span>();
+
 <span class="pl-c">//Then, we set the BN model</span>
 inferenceAlgorithm<span class="pl-k">.</span>setModel(bn);
 
@@ -1207,7 +1247,8 @@ inferenceAlgorithm<span class="pl-k">.</span>runInference();
 <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(Mout|W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> inferenceAlgorithm<span class="pl-k">.</span>getPosterior(varMout));
 
 <span class="pl-c">//Or some more refined queries</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(0.7&lt;Mout&lt;3.5 | W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> inferenceAlgorithm<span class="pl-k">.</span>getExpectedValue(varMout, v <span class="pl-k">-</span><span class="pl-k">&gt;</span> (<span class="pl-c1">0.7</span> <span class="pl-k">&lt;</span> v <span class="pl-k">&amp;&amp;</span> v <span class="pl-k">&lt;</span> <span class="pl-c1">3.5</span>) <span class="pl-k">?</span> <span class="pl-c1">1.0</span> <span class="pl-k">:</span> <span class="pl-c1">0.0</span> ));</pre></div>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(0.7&lt;Mout&lt;3.5 | W=0) = <span class="pl-pds">"</span></span> 
+   <span class="pl-k">+</span> inferenceAlgorithm<span class="pl-k">.</span>getExpectedValue(varMout, v <span class="pl-k">-</span><span class="pl-k">&gt;</span> (<span class="pl-c1">0.7</span> <span class="pl-k">&lt;</span> v <span class="pl-k">&amp;&amp;</span> v <span class="pl-k">&lt;</span> <span class="pl-c1">3.5</span>) <span class="pl-k">?</span> <span class="pl-c1">1.0</span> <span class="pl-k">:</span> <span class="pl-c1">0.0</span> ));</pre></div>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
@@ -1229,6 +1270,8 @@ inferenceAlgorithm<span class="pl-k">.</span>runInference();
 moa.DoTask EvaluatePrequential -l \(bayes.AmidstClassifier -g 1 
 -m 2\) -s generators.RandomRBFGenerator -i 10000 -f 1000 -q 1000
 </code></pre>
+
+<p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
 <a id="amidst-regression-from-moa-" class="anchor" href="#amidst-regression-from-moa-" aria-hidden="true"><span class="octicon octicon-link"></span></a>AMIDST Regression from MOA <a name="moalinkregressionsexample"></a>
