@@ -51,7 +51,6 @@ public class DrillingAttributes extends Attributes {
         return attributesDrilling;
     }
 
-
     @Override
     public Attribute getAttributeByName(String name) {
         return null;

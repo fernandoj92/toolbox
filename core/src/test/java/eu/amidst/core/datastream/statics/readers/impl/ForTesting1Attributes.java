@@ -38,7 +38,6 @@ public class ForTesting1Attributes extends Attributes {
         return attributesTesting1;
     }
 
-
     @Override
     public Attribute getAttributeByName(String name) {
         return null;

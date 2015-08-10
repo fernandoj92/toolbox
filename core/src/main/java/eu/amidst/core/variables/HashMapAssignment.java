@@ -9,21 +9,41 @@
 package eu.amidst.core.variables;
 
 import eu.amidst.core.utils.Utils;
-
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by ana@cs.aau.dk on 03/11/14.
+ * This class implements the interface {@link Assignment} and handles the assignments using a HashMap.
  */
 public class HashMapAssignment implements Assignment {
+
+    /** Represents an assignment as a {@link java.util.Map} object that maps variables to values. */
     private Map<Variable,Double> assignment;
 
+    /**
+     * Creates a new HashMapAssignment given the number of variables.
+     * @param nOfVars the number of variables.
+     */
     public HashMapAssignment(int nOfVars){
         assignment = new ConcurrentHashMap(nOfVars);
     }
 
+    /**
+     * Creates a new HashMapAssignment given an {@link Assignment} object.
+     * @param assignment1 an assignment.
+     */
+    public HashMapAssignment(Assignment assignment1){
+        Set<Variable> variableList = assignment1.getVariables();
+        assignment = new ConcurrentHashMap(variableList.size());
+        for(Variable var: variableList) {
+            this.setValue(var,assignment1.getValue(var));
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getValue(Variable key){
         Double val = assignment.get(key);
@@ -35,18 +55,27 @@ public class HashMapAssignment implements Assignment {
             return Utils.missingValue();
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setValue(Variable var, double val) {
         this.assignment.put(var,val);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Variable> getVariables() {
         return assignment.keySet();
     }
 
-    // Now you can use the following loop to iterate over all assignments:
-    // for (Map.Entry<Variable, Double> entry : assignment.entrySet()) return entry;
+    /**
+     * Returns a {@link Set} view of the mappings contained in this HashMapAssignment.
+     * @return a set view of the mappings contained in this HashMapAssignment.
+     */
     public Set<Map.Entry<Variable,Double>> entrySet(){
         return assignment.entrySet();
     }

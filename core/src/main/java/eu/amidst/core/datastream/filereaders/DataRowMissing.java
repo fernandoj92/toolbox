@@ -12,17 +12,15 @@ import eu.amidst.core.datastream.Attribute;
 import eu.amidst.core.datastream.Attributes;
 
 /**
- *
- * This class represents a {@link DataRow} object where all the attributes
- * have assigned a missing value.
- *
+ * This class implements the {@link DataRow} interface.
+ * It represents a {@link DataRow} object where all the attributes have missing values.
  */
 public class DataRowMissing implements DataRow{
 
     /**
-     * Return a Double.NaN value representing a missing observation
-     * @param att, the Attribute object we want to query
-     * @return a Double.NaN value
+     * Returns a Double.NaN value indicating that the observation is missing.
+     * @param att the {@link Attribute} object we want to query.
+     * @return a Double.NaN value.
      */
     @Override
     public double getValue(Attribute att) {
@@ -31,22 +29,32 @@ public class DataRowMissing implements DataRow{
 
 
     /**
-     * This method makes no sense in this implementation of a DataRow
-     * @param att, the Attribute object we want to assign
-     * @param value, the assigned value
+     * No implementation is provided for this method because no value is set for a missing observation.
+     * @param att the {@link Attribute} object we want to assign.
+     * @param value the value to be assigned.
      */
     @Override
     public void setValue(Attribute att, double value) {
 
     }
 
-
     /**
-     * This method makes no sense in this implementation of a DataRow.
+     * No implementation is provided for this method because all the attributes have no assigned values.
      * @return null
      */
     @Override
     public Attributes getAttributes() {
         return null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public double[] toArray() {
+        //TODO check this!
+        throw new UnsupportedOperationException("To be implemented (#of attributes should be kept)");
+    }
+
+
 }

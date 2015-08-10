@@ -43,7 +43,7 @@ public abstract class MessagePassingAlgorithm<E extends Vector> implements Infer
     protected double probOfEvidence = Double.NaN;
     protected Random random = new Random(0);
     protected int seed=0;
-    protected int maxIter = 1000;
+    protected int maxIter = 100;
     protected double threshold = 0.0001;
     protected boolean output = false;
     protected int nIter = 0;
@@ -59,8 +59,16 @@ public abstract class MessagePassingAlgorithm<E extends Vector> implements Infer
         this.threshold = threshold;
     }
 
+    public double getThreshold() {
+        return threshold;
+    }
+
     public void setMaxIter(int maxIter) {
         this.maxIter = maxIter;
+    }
+
+    public int getMaxIter() {
+        return maxIter;
     }
 
     public void resetQs(){
