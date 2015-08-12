@@ -459,17 +459,16 @@ of this data set. The numbers defining the probability distributions of the BN a
 <div class="highlight highlight-java"><pre><span class="pl-c">//We can open the data stream using the static class DataStreamLoader</span>
 <span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/syntheticData.arff<span class="pl-pds">"</span></span>);
 
+
 <span class="pl-c">/**</span>
-<span class="pl-c"> * 1. Once the data is loaded, we create a random variable for each of the attributes </span>
-<span class="pl-c"> * (i.e. data columns) in our data.</span>
+<span class="pl-c"> * 1. Once the data is loaded, we create a random variable for each of the attributes (i.e. data columns)</span>
+<span class="pl-c"> * in our data.</span>
 <span class="pl-c"> *</span>
-<span class="pl-c"> * 2. StaticVariables is the class for doing that. It takes a list of Attributes and </span>
-<span class="pl-c"> * internally creates all the variables. We create the variables using StaticVariables </span>
-<span class="pl-c"> * class to guarantee that each variable has a different ID number and make it </span>
-<span class="pl-c"> * transparent for the user.</span>
+<span class="pl-c"> * 2. {@link Variables} is the class for doing that. It takes a list of Attributes and internally creates</span>
+<span class="pl-c"> * all the variables. We create the variables using Variables class to guarantee that each variable</span>
+<span class="pl-c"> * has a different ID number and make it transparent for the user.</span>
 <span class="pl-c"> *</span>
-<span class="pl-c"> * 3. We can extract the Variable objects by using the method </span>
-<span class="pl-c"> * getVariableByName();</span>
+<span class="pl-c"> * 3. We can extract the Variable objects by using the method getVariableByName();</span>
 <span class="pl-c"> */</span>
 <span class="pl-smi">Variables</span> variables <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Variables</span>(data<span class="pl-k">.</span>getAttributes());
 
@@ -483,11 +482,11 @@ of this data set. The numbers defining the probability distributions of the BN a
 <span class="pl-smi">Variable</span> i <span class="pl-k">=</span> variables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>I<span class="pl-pds">"</span></span>);
 
 <span class="pl-c">/**</span>
-<span class="pl-c"> * 1. Once you have defined your StaticVariables object, the next step is to create</span>
+<span class="pl-c"> * 1. Once you have defined your {@link Variables} object, the next step is to create</span>
 <span class="pl-c"> * a DAG structure over this set of variables.</span>
 <span class="pl-c"> *</span>
-<span class="pl-c"> * 2. To add parents to each variable, we first recover the ParentSet object by the </span>
-<span class="pl-c"> * method getParentSet(Variable var) and then call the method addParent().</span>
+<span class="pl-c"> * 2. To add parents to each variable, we first recover the ParentSet object by the method</span>
+<span class="pl-c"> * getParentSet(Variable var) and then call the method addParent().</span>
 <span class="pl-c"> */</span>
 <span class="pl-smi">DAG</span> dag <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">DAG</span>(variables);
 
@@ -523,24 +522,22 @@ dag<span class="pl-k">.</span>getParentSet(g)<span class="pl-k">.</span>addParen
 <span class="pl-c">/**</span>
 <span class="pl-c"> * 1. We now create the Bayesian network from the previous DAG.</span>
 <span class="pl-c"> *</span>
-<span class="pl-c"> * 2. The BN object is created from the DAG. It automatically looks at the </span>
-<span class="pl-c"> * distribution type of each variable and their parents to initialize the </span>
-<span class="pl-c"> * Distributions objects that are stored inside (i.e. Multinomial, Normal, </span>
-<span class="pl-c"> * CLG, etc). The parameters defining these distributions are properly </span>
-<span class="pl-c"> * initialized.</span>
+<span class="pl-c"> * 2. The BN object is created from the DAG. It automatically looks at the distribution tye</span>
+<span class="pl-c"> * of each variable and their parents to initialize the Distributions objects that are stored</span>
+<span class="pl-c"> * inside (i.e. Multinomial, Normal, CLG, etc). The parameters defining these distributions are</span>
+<span class="pl-c"> * properly initialized.</span>
 <span class="pl-c"> *</span>
-<span class="pl-c"> * 3. The network is printed and we can have look at the kind of </span>
-<span class="pl-c"> * distributions stored in the BN object.</span>
+<span class="pl-c"> * 3. The network is printed and we can have look at the kind of distributions stored in the BN object.</span>
 <span class="pl-c"> */</span>
-<span class="pl-smi">BayesianNetwork</span> bn <span class="pl-k">=</span> <span class="pl-smi">BayesianNetwork</span><span class="pl-k">.</span>newBayesianNetwork(dag);
+<span class="pl-smi">BayesianNetwork</span> bn <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">BayesianNetwork</span>(dag);
 <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(bn<span class="pl-k">.</span>toString());
 
 
 <span class="pl-c">/**</span>
 <span class="pl-c"> * 1. We iterate over the data set sample by sample.</span>
 <span class="pl-c"> *</span>
-<span class="pl-c"> * 2. For each sample or DataInstance object, we compute the log of the probability </span>
-<span class="pl-c"> * that the BN object assigns to this observation.</span>
+<span class="pl-c"> * 2. For each sample or DataInstance object, we compute the log of the probability that the BN object</span>
+<span class="pl-c"> * assigns to this observation.</span>
 <span class="pl-c"> *</span>
 <span class="pl-c"> * 3. We accumulate these log-probs and finally we print the log-prob of the data set.</span>
 <span class="pl-c"> */</span>
@@ -550,7 +547,7 @@ dag<span class="pl-k">.</span>getParentSet(g)<span class="pl-k">.</span>addParen
 }
 <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(logProb);
 
-<span class="pl-smi">BayesianNetworkWriter</span><span class="pl-k">.</span>saveToFile(bn, <span class="pl-s"><span class="pl-pds">"</span>networks/huginStaticBNExample.bn<span class="pl-pds">"</span></span>);</pre></div>
+<span class="pl-smi">BayesianNetworkWriter</span><span class="pl-k">.</span>saveToFile(bn, <span class="pl-s"><span class="pl-pds">"</span>networks/BNExample.bn<span class="pl-pds">"</span></span>);</pre></div>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
@@ -564,16 +561,14 @@ dag<span class="pl-k">.</span>getParentSet(g)<span class="pl-k">.</span>addParen
 <span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/syntheticData.arff<span class="pl-pds">"</span></span>);
 
 <span class="pl-c">/**</span>
-<span class="pl-c"> * 1. Once the data is loaded, we create a random variable for each of the attributes </span>
-<span class="pl-c"> * (i.e. data columns) in our data.</span>
+<span class="pl-c"> * 1. Once the data is loaded, we create a random variable for each of the attributes (i.e. data columns)</span>
+<span class="pl-c"> * in our data.</span>
 <span class="pl-c"> *</span>
-<span class="pl-c"> * 2. StaticVariables is the class for doing that. It takes a list of Attributes and </span>
-<span class="pl-c"> * internally creates all the variables. We create the variables using StaticVariables </span>
-<span class="pl-c"> * class to guarantee that each variable has a different ID number and make it </span>
-<span class="pl-c"> * transparent for the user.</span>
+<span class="pl-c"> * 2. {@link Variables} is the class for doing that. It takes a list of Attributes and internally creates</span>
+<span class="pl-c"> * all the variables. We create the variables using Variables class to guarantee that each variable</span>
+<span class="pl-c"> * has a different ID number and make it transparent for the user.</span>
 <span class="pl-c"> *</span>
-<span class="pl-c"> * 3. We can extract the Variable objects by using the method </span>
-<span class="pl-c"> * getVariableByName();</span>
+<span class="pl-c"> * 3. We can extract the Variable objects by using the method getVariableByName();</span>
 <span class="pl-c"> */</span>
 <span class="pl-smi">Variables</span> variables <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Variables</span>(data<span class="pl-k">.</span>getAttributes());
 
@@ -587,16 +582,14 @@ dag<span class="pl-k">.</span>getParentSet(g)<span class="pl-k">.</span>addParen
 <span class="pl-smi">Variable</span> i <span class="pl-k">=</span> variables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>I<span class="pl-pds">"</span></span>);
 
 <span class="pl-c">/**</span>
-<span class="pl-c"> * 1. We create the hidden variable. For doing that we make use of the class </span>
-<span class="pl-c"> * VariableBuilder. When a variable is created from an Attribute object, it </span>
-<span class="pl-c"> * contains all the information we need (e.g. the name, the type, etc). But </span>
-<span class="pl-c"> * hidden variables does not have an associated attribute and, for this </span>
-<span class="pl-c"> * reason, we use now this VariableBuilder to provide this information to</span>
-<span class="pl-c"> * StaticVariables object.</span>
+<span class="pl-c"> * 1. We create the hidden variable. For doing that we make use of the method "newMultionomialVariable". When</span>
+<span class="pl-c"> * a variable is created from an Attribute object, it contains all the information we need (e.g.</span>
+<span class="pl-c"> * the name, the type, etc). But hidden variables does not have an associated attribute</span>
+<span class="pl-c"> * and, for this reason, we use now this to provide this information.</span>
 <span class="pl-c"> *</span>
-<span class="pl-c"> * 2. Using VariableBuilder, we define a variable called HiddenVar, which is not </span>
-<span class="pl-c"> * observable (i.e. hidden), its state space is a finite set with two elements, </span>
-<span class="pl-c"> * and its distribution type is multinomial.</span>
+<span class="pl-c"> * 2. Using the "newMultionomialVariable" method, we define a variable called HiddenVar, which is</span>
+<span class="pl-c"> * not associated to any attribute and, then, it is a latent variable, its state space is a finite set with two elements, and its</span>
+<span class="pl-c"> * distribution type is multinomial.</span>
 <span class="pl-c"> *</span>
 <span class="pl-c"> * 3. We finally create the hidden variable using the method "newVariable".</span>
 <span class="pl-c"> */</span>
@@ -604,15 +597,14 @@ dag<span class="pl-k">.</span>getParentSet(g)<span class="pl-k">.</span>addParen
 <span class="pl-smi">Variable</span> hidden <span class="pl-k">=</span> variables<span class="pl-k">.</span>newMultionomialVariable(<span class="pl-s"><span class="pl-pds">"</span>HiddenVar<span class="pl-pds">"</span></span>, <span class="pl-smi">Arrays</span><span class="pl-k">.</span>asList(<span class="pl-s"><span class="pl-pds">"</span>TRUE<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>FALSE<span class="pl-pds">"</span></span>));
 
 <span class="pl-c">/**</span>
-<span class="pl-c"> * 1. Once we have defined your StaticVariables object, including the hidden </span>
-<span class="pl-c"> * variable, the next step is to create a DAG structure over this set of variables.</span>
+<span class="pl-c"> * 1. Once we have defined your {@link Variables} object, including the latent variable,</span>
+<span class="pl-c"> * the next step is to create a DAG structure over this set of variables.</span>
 <span class="pl-c"> *</span>
-<span class="pl-c"> * 2. To add parents to each variable, we first recover the ParentSet object by </span>
-<span class="pl-c"> * the method getParentSet(Variable var) and then call the method </span>
-<span class="pl-c"> * addParent(Variable var).</span>
+<span class="pl-c"> * 2. To add parents to each variable, we first recover the ParentSet object by the method</span>
+<span class="pl-c"> * getParentSet(Variable var) and then call the method addParent(Variable var).</span>
 <span class="pl-c"> *</span>
-<span class="pl-c"> * 3. We just put the hidden variable as parent of all the other variables. Following </span>
-<span class="pl-c"> * a naive-Bayes like structure.</span>
+<span class="pl-c"> * 3. We just put the hidden variable as parent of all the other variables. Following a naive-Bayes</span>
+<span class="pl-c"> * like structure.</span>
 <span class="pl-c"> */</span>
 <span class="pl-smi">DAG</span> dag <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">DAG</span>(variables);
 
@@ -633,22 +625,20 @@ dag<span class="pl-k">.</span>getParentSet(i)<span class="pl-k">.</span>addParen
 <span class="pl-c">/**</span>
 <span class="pl-c"> * 1. We now create the Bayesian network from the previous DAG.</span>
 <span class="pl-c"> *</span>
-<span class="pl-c"> * 2. The BN object is created from the DAG. It automatically looks at the </span>
-<span class="pl-c"> * distribution type of each variable and their parents to initialize the </span>
-<span class="pl-c"> * Distributions objects that are stored inside (i.e. Multinomial, Normal, </span>
-<span class="pl-c"> * CLG, etc). The parameters defining these distributions are properly </span>
-<span class="pl-c"> * initialized.</span>
+<span class="pl-c"> * 2. The BN object is created from the DAG. It automatically looks at the distribution type</span>
+<span class="pl-c"> * of each variable and their parents to initialize the Distributions objects that are stored</span>
+<span class="pl-c"> * inside (i.e. Multinomial, Normal, CLG, etc). The parameters defining these distributions are</span>
+<span class="pl-c"> * properly initialized.</span>
 <span class="pl-c"> *</span>
-<span class="pl-c"> * 3. The network is printed and we can have look at the kind of </span>
-<span class="pl-c"> * distributions stored in the BN object.</span>
+<span class="pl-c"> * 3. The network is printed and we can have look at the kind of distributions stored in the BN object.</span>
 <span class="pl-c"> */</span>
-<span class="pl-smi">BayesianNetwork</span> bn <span class="pl-k">=</span> <span class="pl-smi">BayesianNetwork</span><span class="pl-k">.</span>newBayesianNetwork(dag);
+<span class="pl-smi">BayesianNetwork</span> bn <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">BayesianNetwork</span>(dag);
 <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(bn<span class="pl-k">.</span>toString());
 
 <span class="pl-c">/**</span>
-<span class="pl-c"> * Finally the Bayesian network is saved to a file.</span>
+<span class="pl-c"> * Finally teh Bayesian network is saved to a file.</span>
 <span class="pl-c"> */</span>
-<span class="pl-smi">BayesianNetworkWriter</span><span class="pl-k">.</span>saveToFile(bn, <span class="pl-s"><span class="pl-pds">"</span>networks/huginStaticBNHiddenExample.bn<span class="pl-pds">"</span></span>);</pre></div>
+<span class="pl-smi">BayesianNetworkWriter</span><span class="pl-k">.</span>saveToFile(bn, <span class="pl-s"><span class="pl-pds">"</span>networks/BNHiddenExample.bn<span class="pl-pds">"</span></span>);</pre></div>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
