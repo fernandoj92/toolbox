@@ -73,7 +73,7 @@
 <li><a href="#compilation">Compiling &amp; Running from the command line</a></li>
 </ul>
 </li>
-<li><a href="#extension">Extending AMIDST with Github Fork &amp; Pull scheme</a></li>
+<li><a href="#extension">Contributing to AMIDST</a></li>
 <li>
 <a href="#examples">Code Examples</a>
 
@@ -145,6 +145,7 @@
 </ul>
 </li>
 <li><a href="http://amidst.github.io/toolbox/javadoc/index.html">API Java Doc</a></li>
+<li><a href="#cite">Citing AMIDST Toolbox</a></li>
 </ol>
 
 <h2>
@@ -257,7 +258,7 @@
 &lt;/dependency&gt;
 </code></pre>
 </li>
-<li><p><strong>Contributing to AMDIST</strong> is based on the <a href="https://help.github.com/articles/using-pull-requests/">Fork &amp; Pull</a> collaboration model. Read this <a href="https://guides.github.com/activities/forking/">guide</a> for full details about how to fork a project and make a pull request. Once you have forked the project and make a local copy to you computer, just you can just open with Intellij the project by pointing at the pom file.Further details about how to contribute to this project are given this <a href="#extension">section</a>. </p></li>
+<li><p><strong>Contributing to AMDIST</strong> is based on the <a href="https://help.github.com/articles/using-pull-requests/">Fork &amp; Pull</a> collaboration model. Read this <a href="https://guides.github.com/activities/forking/">guide</a> for full details about how to fork a project and make a pull request. Once you have forked the project and make a local copy to you computer, just you can just open with Intellij the project by pointing at the pom file. Further details about how to contribute to this project are given this <a href="#extension">section</a>. </p></li>
 </ul>
 
 <p><a href="#documentation">[Back to Top]</a></p>
@@ -338,16 +339,26 @@ which points to file "maven_startup.sh"</p>
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h2>
-<a id="extending-amidst-with-github-fork--pull-scheme" class="anchor" href="#extending-amidst-with-github-fork--pull-scheme" aria-hidden="true"><span class="octicon octicon-link"></span></a>Extending AMIDST with Github Fork &amp; Pull scheme<a name="extension"></a>
+<a id="contributing-to-amidst-" class="anchor" href="#contributing-to-amidst-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributing to AMIDST <a name="extension"></a>
 </h2>
 
 <p>Developers are expected to contribute to this open software following the <a href="https://help.github.com/articles/using-pull-requests/">Fork &amp; Pull</a> collaboration model. Read this <a href="https://guides.github.com/activities/forking/">guide</a> for full details about how to fork a project and make a pull request.</p>
 
-<p>Some of these collaboration approaches should be followed depending the kind of contribution you are aiming at:</p>
+<p>We establish the following categorization for the contributions to the toolbox. Each one is associated with a different collaboration schemes which is also detailed below.  </p>
 
 <ul>
-<li><p><strong>Basic Contributions</strong> encompasses those contributions to the code that do not imply any major change or addition. For example, fixing a bug, adding methods to existing classes, adding new utility classes, etc. This contributions are made through a <a href="https://help.github.com/articles/using-pull-requests/">pull request</a>, which will be examined by the core group of developers of the project. </p></li>
-<li><p><strong>Major Extensions</strong> refers to those contributions which aims to be a new functionality of the toolbox. For example, a new inference/learning algorithm, new PGMs, etc. These extensions or new functionalities will be integrated as new Maven modules will be located in the folder <em>extensions</em> under the root project folder. Contributing with a new extension will be based on the following three steps: (i) create a new Maven module using IntelliJ (follow this <a href="https://www.jetbrains.com/idea/help/creating-maven-module.html">link</a> for details); (ii) code your new algorithm inside this module; and (iii) make a <a href="https://help.github.com/articles/using-pull-requests/">pull request</a> to add the new functionality to the project repository. </p></li>
+<li><p>(A) <strong>Basic Contributions</strong> encompasses those contributions to the code that do not imply any major change or addition. For example, fixing a bug, adding methods to existing classes, adding new utility classes, etc. This contributions are made through a <a href="https://help.github.com/articles/using-pull-requests/">pull request</a>, which will be examined by the core group of developers of the project. </p></li>
+<li>
+<p>(B) <strong>Major Extensions</strong> refers to those contributions which aims to be a new functionality of the toolbox. For example,new inference methods, new learning algorithms, new concept-drift detection methods, new PGMs, new links to other toolboxes, etc. These extensions or new functionalities will be integrated as new Maven modules and will be located in the folder <em>[project-root-folder]/extensions/</em>. Then, contributing with a new extension will be based on the following three steps: (i) create a new Maven module using IntelliJ (follow this <a href="https://www.jetbrains.com/idea/help/creating-maven-module.html">link</a> for details); then (ii) code your new algorithm inside this module; and (iii) make a <a href="https://help.github.com/articles/using-pull-requests/">pull request</a> to add the new functionality to the project repository. 
+    All the provided extensions should fulfill the following basic quality requirements to be accepted as extensions by the AMIDST core team. </p>
+
+<ul>
+<li><p>(1) They should contain a readme.txt file detailing the functionality and scope of the extension. It is also needs to specify if it is supported by a companion paper, student project, etc.</p></li>
+<li><p>(2) The code should be well documented following <a href="https://en.wikipedia.org/wiki/Javadoc">JavaDoc</a> standards. </p></li>
+<li><p>(3) It has to include <a href="www.junit.org/">JUnit</a> tests which verify the correctness of the results produced the provided code. </p></li>
+</ul>
+</li>
+<li><p>(C) <strong>Use-Cases</strong> refers to those contributions which do not add any specific functionality to the toolbox. They can be seen as examples of how this toolbox can be used. This category might include contributions related to student projects, research papers, industry applications, etc. The AMIDST core team will not supervise the quality of the contributions, this is responsibility of the contributors. They  will be integrated as independent Maven modules and will be placed in an different code repository on github, <a href="https://github.com/amidst/toolbox-use-cases/">https://github.com/amidst/toolbox-use-cases/</a>, where they are expected to be submitted using, again, a <a href="https://help.github.com/articles/using-pull-requests/">pull request</a> approach. </p></li>
 </ul>
 
 <p><a href="#documentation">[Back to Top]</a></p>
@@ -1308,6 +1319,12 @@ moa.DoTask EvaluatePrequentialRegression -l bayes.AmidstRegressor
 </code></pre>
 
 <p>Note that the simpler the dataset the less complex the model should be. In this case, \texttt{quake.arff} is a very simple and small dataset that should probably be learn with a more simple classifier, that is, a high-bias-low-variance classifier, in order to avoid overfitting. This aims at providing a simple running example.</p>
+
+<p><a href="#documentation">[Back to Top]</a></p>
+
+<h2>
+<a id="citing-amidst-toolbox-" class="anchor" href="#citing-amidst-toolbox-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Citing AMIDST Toolbox <a name="cite"></a>
+</h2>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
