@@ -84,8 +84,8 @@
 <a href="#bnexample">Bayesian Networks</a>
 
 <ul>
-<li><a href="#bnnohiddenexample">Creating Bayesian Networks with no hidden variables</a></li>
-<li><a href="#bnhiddenexample">Creating Bayesian Networks with hidden variables</a></li>
+<li><a href="#bnnohiddenexample">Creating Bayesian Networks</a></li>
+<li><a href="#bnhiddenexample">Creating Bayesian Networks with latent variables</a></li>
 <li><a href="#bnmodifyexample">Modifying Bayesian Networks</a></li>
 </ul>
 </li>
@@ -202,7 +202,7 @@
 <p>AMIDST leverages existing functionalities and algorithms by interfacing to existing software tools such as <a href="https://www.r-project.org/">R</a>, <a href="http://www.hugin.com">Hugin</a> and <a href="http://moa.cms.waikato.ac.nz">MOA</a> (Massive Online Analysis) \citep{BifetHolmesKirkbyPfahringer10}. This allows to efficiently well established systems and also broaden the AMIDST user-base. </p>
 
 <ul>
-<li><p><strong>HuginLink</strong> consists of a set of functionalities implemented to link the AMIDST toolbox with the <a href="http://www.hugin.com">Hugin</a> software \citep{Madsen2005Hugin}. This connection extends AMIDST by providing the main functionalities integrated in <a href="http://www.hugin.com">Hugin</a> software, such as exact inference algorithms and scalable structural learning algorithms \citep{Madsen2014}. </p></li>
+<li><p><strong>HuginLink</strong> consists of a set of functionalities implemented to link the AMIDST toolbox with <a href="http://www.hugin.com">Hugin</a> commercial software \citep{Madsen2005Hugin}. This connection extends AMIDST by providing some of the main functionalities of <a href="http://www.hugin.com">Hugin</a>, such as exact inference algorithms and scalable structural learning algorithms \citep{Madsen2014}. <a href="http://www.hugin.com">Hugin</a> is a third-party commercial software and to access to these functionalities it is needed a license to <a href="http://www.hugin.com">Hugin</a> software and to follow some specific installation steps (further information is given <a href="http://amidst.github.io/toolbox/#installhugin">here</a>).</p></li>
 <li><p><strong>MoaLink</strong> ensures an easy use of AMDIST functionalities within <a href="http://moa.cms.waikato.ac.nz">MOA</a> \citep{BifetHolmesKirkbyPfahringer10}.  The main idea is that any model deployed in AMIDST can be integrated and evaluated using MOA's graphical user interface. As a proof of concept, \textit{MoaLink} already provides a classification, a regression and a clustering method based on BN models with latent variables. These models are learnt in a streaming fashion using AMIDST learning engine. </p></li>
 <li><p><strong>RLink</strong> ....</p></li>
 </ul>
@@ -223,7 +223,7 @@
 <li><p><strong>Core module</strong> contains all the main functionalities of the toolbox. It is placed in the <em>core</em> folder. Go to the <a href="http://amidst.github.io/toolbox/javadoc/index.html">Java Doc</a> for details about the different Java classes. </p></li>
 <li><p><strong>Examples module</strong> contains basic code examples showing how to use the main functionalities of the toolbox. It is placed in the <em>examples</em> folder under the root project folder.</p></li>
 <li><p><strong>MoaLink module</strong> contains the code needed to use the AMIDST functionality within MOA. It is placed in the <em>moalink</em> folder  under the root project folder.</p></li>
-<li><p><strong>HuginLink module</strong> contains the code needed to use <a href="www.hugin.com">Hugin software</a> within AMIDST. It is placed in the <em>huginlink</em> folder under the root project folder. </p></li>
+<li><p><strong>HuginLink module</strong> contains the code needed to use <a href="www.hugin.com">Hugin</a> software within AMIDST. It is placed in the <em>huginlink</em> folder under the root project folder. </p></li>
 </ul>
 
 <p><a href="#documentation">[Back to Top]</a></p>
@@ -281,10 +281,26 @@
 <a id="installing-huginlink" class="anchor" href="#installing-huginlink" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installing HuginLink<a name="installhugin"></a>
 </h4>
 
-<p>We describe how to install <a href="http://www.hugin.com/productsservices/demo">Hugin Lite</a> which is a freely available demo version of <a href="http://www.hugin.com">Hugin Software</a>. For those with a full license, just follow the same steps. </p>
+<p>HuginLink is present in the toolbox as a independent Maven module. To use this module and, in consequence, access some of the functionalities provided by <a href="http://www.hugin.com/">Hugin</a> commercial software, we need to perform the following steps:</p>
 
-<p>Once you have installed <a href="http://www.hugin.com/productsservices/demo">Hugin Lite</a>, you will find inside the installation folder another folder called <em>Libraries</em> which contains the library files needed for the installation. Chose the file that fits with your operation system and copy it to the folder <em>./huginlink/huginlib/</em> inside the project root folder. For example, for a MAC OS X with 64 bits architecture the file needed is <em>libhapi82-64.jnilib</em>.
-Now, you can invoke the following example by using the script <em>run.sh</em> :</p>
+<ol>
+<li><p><strong>Install Hugin software</strong>. Here we we describe how to install <a href="http://www.hugin.com/productsservices/demo">Hugin Lite</a> which is a freely available demo version of <a href="http://www.hugin.com">Hugin</a> software. For those with a full license, just follow the same steps. </p></li>
+<li>
+<p><strong>Install the jar file</strong>. Inside the installation folder of <a href="http://www.hugin.com/productsservices/demo">Hugin Lite</a>, you will find a jar file. Copy this file to the folder [project-root-folder]/huginlink/huginlib/. Then, edit the file [project-root-folder]/huginlink/pom.xml to correctly reference to this jar file. The lines to edit are the following:</p>
+
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;com.hugin&lt;/groupId&gt;
+    &lt;artifactId&gt;hugin&lt;/artifactId&gt;
+    &lt;version&gt;8.2&lt;/version&gt;
+    &lt;scope&gt;system&lt;/scope&gt;
+    &lt;systemPath&gt;${project.basedir}/huginlib/hapi82-64.jar&lt;/systemPath&gt;
+&lt;/dependency&gt;
+</code></pre>
+</li>
+<li><p><strong>Install the binary file</strong>. Inside the installation folder you will find another folder called <em>Libraries</em> which contains the binary file needed for the installation. Choose the file that fits with your operating system and copy it to the folder [project-root-folder]/huginlink/huginlib/. For example, for a MAC OS X with 64 bits architecture the file needed is <em>libhapi82-64.jnilib</em>.</p></li>
+</ol>
+
+<p>Now, you can invoke the following example by using the script <em>run.sh</em> :</p>
 
 <pre><code>./run.sh eu.amidst.huginlink.examples.inference.HuginInferenceExample
 </code></pre>
@@ -450,7 +466,7 @@ states<span class="pl-k">.</span>getStatesNames()<span class="pl-k">.</span>forE
 </h2>
 
 <h3>
-<a id="creating-bayesian-networks-with-no-hidden-variables" class="anchor" href="#creating-bayesian-networks-with-no-hidden-variables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating Bayesian Networks with no hidden variables<a name="bnnohiddenexample"></a>
+<a id="creating-bayesian-networks" class="anchor" href="#creating-bayesian-networks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating Bayesian Networks<a name="bnnohiddenexample"></a>
 </h3>
 
 <p>In this example, we take a data set, create a BN and we compute the log-likelihood of all the samples
@@ -552,7 +568,7 @@ dag<span class="pl-k">.</span>getParentSet(g)<span class="pl-k">.</span>addParen
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
-<a id="creating-bayesian-networks-with-hidden-variables-" class="anchor" href="#creating-bayesian-networks-with-hidden-variables-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating Bayesian Networks with hidden variables <a name="bnhiddenexample"></a>
+<a id="creating-bayesian-networks-with-latent-variables-" class="anchor" href="#creating-bayesian-networks-with-latent-variables-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating Bayesian Networks with latent variables <a name="bnhiddenexample"></a>
 </h3>
 
 <p>In this example, we simply show how to create a BN model with hidden variables. We simply create a BN for clustering, i.e.,  a naive-Bayes like structure with a single common hidden variable acting as parant of all the observable variables.</p>
