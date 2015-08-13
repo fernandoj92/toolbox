@@ -120,8 +120,6 @@
 <a href="#conceptdriftexample">Concept Drift Methods</a>
 
 <ul>
-<li><a href="#mlfadingexample">Maximum Likelihood with Fading</a></li>
-<li><a href="#svbfadingexample">Streaming Variational Bayes with Fading</a></li>
 <li><a href="#nbconceptdriftexample">Naive Bayes with Virtual Concept Drift Detection</a></li>
 </ul>
 </li>
@@ -148,6 +146,8 @@
 <li><a href="http://amidst.github.io/toolbox/javadoc/index.html">API Java Doc</a></li>
 <li><a href="#cite">Citing AMIDST Toolbox</a></li>
 </ol>
+
+
 
 <h2>
 <a id="toolbox-functionalities" class="anchor" href="#toolbox-functionalities" aria-hidden="true"><span class="octicon octicon-link"></span></a>Toolbox Functionalities<a name="functionalities"></a>
@@ -1042,93 +1042,7 @@ parameterLearningAlgorithm<span class="pl-k">.</span>runLearning();
 <a id="concept-drift-methods-" class="anchor" href="#concept-drift-methods-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Concept Drift Methods <a name="conceptdriftexample"></a>
 </h2>
 
-<h3>
-<a id="maximum-likelihood-with-fading-" class="anchor" href="#maximum-likelihood-with-fading-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Maximum Likelihood with Fading <a name="mlfadingexample"></a>
-</h3>
 
-<p>This example shows how to adaptively learn the parameters of a Bayesian network from a stream of data using exponential forgetting with a given fading factor, directly inspired by the approach presented in</p>
-
-<blockquote>
-<p>Olesen, K. G., Lauritzen, S. L., &amp; Jensen, F. V. (1992, July). aHUGIN: A system creating adaptive causal probabilistic networks. In Proceedings of the Eighth international conference on Uncertainty in Artificial Intelligence (pp. 223-229). Morgan Kaufmann Publishers Inc.</p>
-</blockquote>
-
-<div class="highlight highlight-java"><pre><span class="pl-c">//We can open the data stream using the static class DataStreamLoader</span>
-<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> 
-             <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/WasteIncineratorSample.arff<span class="pl-pds">"</span></span>);
-
-<span class="pl-c">//We create a ParameterLearningAlgorithm object with </span>
-<span class="pl-c">//the MaximumLikelihoodFading builder</span>
-<span class="pl-smi">MaximumLikelihoodFading</span> parameterLearningAlgorithm <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">MaximumLikelihoodFading</span>();
-
-<span class="pl-c">//We fix the DAG structure</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setDAG(
-                <span class="pl-smi">MaximimumLikelihoodByBatchExample</span><span class="pl-k">.</span>getNaiveBayesStructure(data, <span class="pl-c1">0</span>));
-
-<span class="pl-c">//We fix the fading or forgeting factor</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setFadingFactor(<span class="pl-c1">0.9</span>);
-
-<span class="pl-c">//We set the batch size which will be employed to learn the model</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setBatchSize(<span class="pl-c1">100</span>);
-
-<span class="pl-c">//We set the data which is going to be used for leaning the parameters</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setDataStream(data);
-
-<span class="pl-c">//We perform the learning</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>runLearning();
-
-<span class="pl-c">//And we get the model</span>
-<span class="pl-smi">BayesianNetwork</span> bnModel <span class="pl-k">=</span> parameterLearningAlgorithm<span class="pl-k">.</span>getLearntBayesianNetwork();
-
-<span class="pl-c">//We print the model</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(bnModel<span class="pl-k">.</span>toString());</pre></div>
-
-<p><a href="#documentation">[Back to Top]</a></p>
-
-<h3>
-<a id="streaming-variational-bayes-with-fading-" class="anchor" href="#streaming-variational-bayes-with-fading-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Streaming Variational Bayes with Fading <a name="svbfadingexample"></a>
-</h3>
-
-<p>This example shows how to adaptively learn in the parameters of a Bayesian network from a stream of data with a Bayesian approach using a combination of the the following two methods,</p>
-
-<blockquote>
-<p>Broderick, T., Boyd, N., Wibisono, A., Wilson, A. C., &amp; Jordan, M. I. (2013). Streaming variational Bayes. 
-In Advances in Neural Information Processing Systems (pp. 1727-1735).</p>
-
-<p>Olesen, K. G., Lauritzen, S. L., &amp; Jensen, F. V. (1992, July). aHUGIN: A system creating adaptive causal probabilistic networks. In Proceedings of the Eighth international conference on Uncertainty in Artificial Intelligence (pp. 223-229). Morgan Kaufmann Publishers Inc.</p>
-</blockquote>
-
-<div class="highlight highlight-java"><pre><span class="pl-c">//We can open the data stream using the static class DataStreamLoader</span>
-<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> 
-           <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/WasteIncineratorSample.arff<span class="pl-pds">"</span></span>);
-
-<span class="pl-c">//We create a SVB object</span>
-<span class="pl-smi">SVBFading</span> parameterLearningAlgorithm <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">SVBFading</span>();
-
-<span class="pl-c">//We fix the DAG structure</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setDAG(<span class="pl-smi">SVBExample</span><span class="pl-k">.</span>getHiddenNaiveBayesStructure(data));
-
-<span class="pl-c">//We fix the fading or forgeting factor</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setFadingFactor(<span class="pl-c1">0.9</span>);
-
-<span class="pl-c">//We fix the size of the window</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setWindowsSize(<span class="pl-c1">100</span>);
-
-<span class="pl-c">//We can activate the output</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setOutput(<span class="pl-c1">true</span>);
-
-<span class="pl-c">//We set the data which is going to be used for leaning the parameters</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setDataStream(data);
-
-<span class="pl-c">//We perform the learning</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>runLearning();
-
-<span class="pl-c">//And we get the model</span>
-<span class="pl-smi">BayesianNetwork</span> bnModel <span class="pl-k">=</span> parameterLearningAlgorithm<span class="pl-k">.</span>getLearntBayesianNetwork();
-
-<span class="pl-c">//We print the model</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(bnModel<span class="pl-k">.</span>toString());</pre></div>
-
-<p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
 <a id="naive-bayes-with-virtual-concept-drift-detection-" class="anchor" href="#naive-bayes-with-virtual-concept-drift-detection-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Naive Bayes with Virtual Concept Drift Detection <a name="nbconceptdriftexample"></a>
