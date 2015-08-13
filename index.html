@@ -286,25 +286,15 @@
 <p>HuginLink is present in the toolbox as a independent Maven module. To use this module and, in consequence, access some of the functionalities provided by <a href="http://www.hugin.com/">Hugin</a> commercial software, we need to perform the following steps:</p>
 
 <ol>
+<li><p><strong>Install Hugin software</strong>. Here we we describe how to install <a href="http://www.hugin.com/productsservices/demo">Hugin Lite 8.2</a> which is a freely available demo version of <a href="http://www.hugin.com">Hugin</a> software. For those with a full license or who want to update HuginLink to link to a new version of <a href="http://www.hugin.com">Hugin</a> sofware, just follow the same steps.</p></li>
 <li>
-<strong>Install Hugin software</strong>. Here we we describe how to install <a href="http://www.hugin.com/productsservices/demo">Hugin Lite 8.2</a> which is a freely available demo version of <a href="http://www.hugin.com">Hugin</a> software. For those with a full license or who want to update HuginLink to link to a new version of <a href="http://www.hugin.com">Hugin</a> sofware, just follow the same steps.
-&lt;!---</li>
-<li>
-<p><strong>Install the jar file</strong>. Inside the installation folder of <a href="http://www.hugin.com/productsservices/demo">Hugin Lite</a>, you will find a jar file. Copy this file to the folder [project-root-folder]/huginlink/huginlib/. Then, edit the file [project-root-folder]/huginlink/pom.xml to correctly reference to this jar file. The lines to edit are the following:</p>
+<p><strong>Install the binary file</strong>. Inside the installation folder you will find a folder called <em>Libraries</em> which contains the binary file needed for the installation. Choose the file that fits with your operating system and copy it to the folder [project-root-folder]/huginlink/huginlib/. For example, for a MAC OS X with 64 bits architecture the file needed is <em>libhapi82-64.jnilib</em>. </p>
 
-<pre><code>&lt;dependency&gt;
-    &lt;groupId&gt;com.hugin&lt;/groupId&gt;
-    &lt;artifactId&gt;hugin&lt;/artifactId&gt;
-    &lt;version&gt;8.2&lt;/version&gt;
-    &lt;scope&gt;system&lt;/scope&gt;
-    &lt;systemPath&gt;${project.basedir}/huginlib/hapi82-64.jar&lt;/systemPath&gt;
-&lt;/dependency&gt;
-</code></pre>
-
-<p>--&gt;</p>
+<p>Finally, rename this binary the file to match it with the Java jar file already provided by the toolbox, <em>[project-root-folder]/huginlink/huginlib/hapi82_amidst-64.jar</em>. The final name of the binary file should be <em>libhapi82_amidst-64</em> while the extension should not be modify. </p>
 </li>
-<li><p><strong>Install the binary file</strong>. Inside the installation folder you will find a folder called <em>Libraries</em> which contains the binary file needed for the installation. Choose the file that fits with your operating system and copy it to the folder [project-root-folder]/huginlink/huginlib/. For example, for a MAC OS X with 64 bits architecture the file needed is <em>libhapi82-64.jnilib</em>. Finally, rename this binary the file to match it with the Java jar file already provided by the toolbox, <em>[project-root-folder]/huginlink/huginlib/hapi82_amidst-64.jar</em>. The final name of the binary file should be <em>libhapi82_amidst-64</em> while the extension should not be modify. </p></li>
 </ol>
+
+
 
 <p>Now, you can invoke the following example by using the script <em>run.sh</em> :</p>
 
