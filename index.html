@@ -132,6 +132,7 @@
 <li><a href="#huginglinkconversionexample">Models conversion between AMIDST and Hugin</a></li>
 <li><a href="#huginglinkioexample">I/O of Bayesian Networks with Hugin net format</a></li>
 <li><a href="#huginglinkinferenceexample">Invoking Hugin's inference engine</a></li>
+<li><a href="#huginglinkTANexample">Invoking Hugin's Parallel TAN</a></li>
 </ul>
 </li>
 <li>
@@ -1281,6 +1282,63 @@ inferenceAlgorithm<span class="pl-k">.</span>runInference();
    <span class="pl-k">+</span> inferenceAlgorithm<span class="pl-k">.</span>getExpectedValue(varMout, v <span class="pl-k">-</span><span class="pl-k">&gt;</span> (<span class="pl-c1">0.7</span> <span class="pl-k">&lt;</span> v <span class="pl-k">&amp;&amp;</span> v <span class="pl-k">&lt;</span> <span class="pl-c1">3.5</span>) <span class="pl-k">?</span> <span class="pl-c1">1.0</span> <span class="pl-k">:</span> <span class="pl-c1">0.0</span> ));</pre></div>
 
 <p><a href="#documentation">[Back to Top]</a></p>
+
+<h3>
+<a id="invoking-hugins-parallel-tan-" class="anchor" href="#invoking-hugins-parallel-tan-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Invoking Hugin's Parallel TAN <a name="huginglinkTANexample"></a>
+</h3>
+
+<p>This example we show how to perform inference using <a href="http://www.hugin.com">Hugin</a> inference engine within the AMIDST toolbox</p>
+
+<p>This example shows how to use <a href="http://www.hugin.com">Hugin</a>'s functionality to learn in parallel a TAN model. An important remark is that <a href="http://www.hugin.com">Hugin</a> only allows to learn the TAN model for a data set completely loaded into RAM memory. The case where our data set does not fit into memory, it solved in AMIDST in the following way. We learn the structure using a smaller data set produced by <a href="https://en.wikipedia.org/wiki/Reservoir_sampling">Reservoir sampling</a> and, then, we use AMIDST's <a href="http://amidst.github.io/toolbox/#pmlexample">ParallelMaximumLikelihood</a> to learn the parameters of the TAN model over the whole data set.</p>
+
+<p>For further details about the implementation of the parallel TAN algorithm look at the following paper:</p>
+
+<blockquote>
+<p>Madsen, A.L. et al. A New Method for Vertical Parallelisation of TAN Learning Based on Balanced Incomplete Block Designs. Probabilistic Graphical Models. Lecture Notes in Computer Science Volume 8754, 2014, pp 302-317.</p>
+</blockquote>
+
+<div class="highlight highlight-java"><pre><span class="pl-c">//We load a Bayesian network to generate a data stream</span>
+<span class="pl-c">//using BayesianNewtorkSampler class.</span>
+<span class="pl-k">int</span> sampleSize <span class="pl-k">=</span> <span class="pl-c1">100000</span>;
+<span class="pl-smi">BayesianNetwork</span> bn <span class="pl-k">=</span> <span class="pl-smi">BayesianNetworkLoader</span><span class="pl-k">.</span>loadFromFile(<span class="pl-s"><span class="pl-pds">"</span>networks/Pigs.bn<span class="pl-pds">"</span></span>);
+<span class="pl-smi">BayesianNetworkSampler</span> sampler <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">BayesianNetworkSampler</span>(bn);
+
+<span class="pl-c">//We fix the number of samples in memory used for performing the structural learning.</span>
+<span class="pl-c">//They are randomly sub-sampled using Reservoir sampling.</span>
+<span class="pl-k">int</span> samplesOnMemory <span class="pl-k">=</span> <span class="pl-c1">5000</span>;
+
+<span class="pl-c">//We make different trials with different number of cores</span>
+<span class="pl-k">ArrayList&lt;<span class="pl-smi">Integer</span>&gt;</span> vNumCores <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">ArrayList</span>(<span class="pl-smi">Arrays</span><span class="pl-k">.</span>asList(<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>, <span class="pl-c1">4</span>));
+
+<span class="pl-k">for</span> (<span class="pl-smi">Integer</span> numCores <span class="pl-k">:</span> vNumCores) {
+    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>Learning TAN: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> samplesOnMemory <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span> samples on memory, <span class="pl-pds">"</span></span> <span class="pl-k">+</span> numCores <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span> core/s ...<span class="pl-pds">"</span></span>);
+    <span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> sampler<span class="pl-k">.</span>sampleToDataStream(sampleSize);
+
+    <span class="pl-c">//The class ParallelTAN is created</span>
+    <span class="pl-smi">ParallelTAN</span> tan <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">ParallelTAN</span>();
+
+    <span class="pl-c">//We activate the parallel mode.</span>
+    tan<span class="pl-k">.</span>setParallelMode(<span class="pl-c1">true</span>);
+
+    <span class="pl-c">//We set the number of cores to be used for the structural learning</span>
+    tan<span class="pl-k">.</span>setNumCores(numCores);
+
+    <span class="pl-c">//We set the number of samples to be used for the learning the structure</span>
+    tan<span class="pl-k">.</span>setNumSamplesOnMemory(samplesOnMemory);
+
+    <span class="pl-c">//We set the root variable to be first variable</span>
+    tan<span class="pl-k">.</span>setNameRoot(bn<span class="pl-k">.</span>getVariables()<span class="pl-k">.</span>getListOfVariables()<span class="pl-k">.</span>get(<span class="pl-c1">0</span>)<span class="pl-k">.</span>getName());
+
+    <span class="pl-c">//We set the class variable to be the last variable</span>
+    tan<span class="pl-k">.</span>setNameTarget(bn<span class="pl-k">.</span>getVariables()<span class="pl-k">.</span>getListOfVariables()<span class="pl-k">.</span>get(bn<span class="pl-k">.</span>getVariables()<span class="pl-k">.</span>getListOfVariables()<span class="pl-k">.</span>size()<span class="pl-k">-</span><span class="pl-c1">1</span>)<span class="pl-k">.</span>getName());
+
+    <span class="pl-smi">Stopwatch</span> watch <span class="pl-k">=</span> <span class="pl-smi">Stopwatch</span><span class="pl-k">.</span>createStarted();
+
+    <span class="pl-c">//We just invoke this mode to learn the TAN model for the data stream</span>
+    <span class="pl-smi">BayesianNetwork</span> model <span class="pl-k">=</span> tan<span class="pl-k">.</span>learn(data);
+
+    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(watch<span class="pl-k">.</span>stop());
+}</pre></div>
 
 <h2>
 <a id="moalink-" class="anchor" href="#moalink-" aria-hidden="true"><span class="octicon octicon-link"></span></a>MoaLink <a name="moalinkexample"></a>
