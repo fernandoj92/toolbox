@@ -19,13 +19,22 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Created by andresmasegosa on 13/11/14.
+ *
+ * This class extends the abstract class {@link EF_UnivariateDistribution} and defines a Normal distribution in exponential family canonical form.
+ *
+ * <p> For further details about how exponential family models are considered in this toolbox, take a look at the following paper:
+ * <i>Representation, Inference and Learning of Bayesian Networks as Conjugate Exponential Family Models. Technical Report.</i>
+ * (<a href="http://amidst.github.io/toolbox/docs/ce-BNs.pdf">pdf</a>) </p>
  */
 public class EF_Normal extends EF_UnivariateDistribution {
 
     public static final int EXPECTED_MEAN = 0;
     public static final int EXPECTED_SQUARE = 1;
 
+    /**
+     * Creates a new EF_Normal distribution for a given variable.
+     * @param var1 a {@link Variable} object with a Normal distribution type.
+     */
     public EF_Normal(Variable var1) {
         if (!var1.isNormal() && !var1.isParameterVariable()) {
             throw new UnsupportedOperationException("Creating a Gaussian EF distribution for a non-gaussian variable.");
@@ -34,14 +43,17 @@ public class EF_Normal extends EF_UnivariateDistribution {
         this.parents = new ArrayList();
 
         this.var=var1;
-        this.naturalParameters = this.createZeroedNaturalParameters();
-        this.momentParameters = this.createZeroedMomentParameters();
+        this.naturalParameters = this.createZeroNaturalParameters();
+        this.momentParameters = this.createZeroMomentParameters();
 
         this.momentParameters.set(EXPECTED_MEAN,0);
         this.momentParameters.set(EXPECTED_SQUARE,1);
         this.setMomentParameters(momentParameters);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void fixNumericalInstability() {
 
@@ -52,11 +64,17 @@ public class EF_Normal extends EF_UnivariateDistribution {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double computeLogBaseMeasure(double val) {
         return -0.5*Math.log(2 * Math.PI);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double computeLogNormalizer() {
         double m0=this.momentParameters.get(EXPECTED_MEAN);
@@ -64,19 +82,28 @@ public class EF_Normal extends EF_UnivariateDistribution {
         return m0*m0/(2*(m1-m0*m0)) + 0.5*Math.log(m1-m0*m0);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Vector createZeroedVector() {
+    public Vector createZeroVector() {
         return new ArrayVector(2);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SufficientStatistics getSufficientStatistics(double val) {
-        SufficientStatistics vec = this.createZeroedSufficientStatistics();
+        SufficientStatistics vec = this.createZeroSufficientStatistics();
         vec.set(EXPECTED_MEAN, val);
         vec.set(EXPECTED_SQUARE, val * val);
         return vec;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Vector getExpectedParameters() {
         Vector vec = new ArrayVector(1);
@@ -84,11 +111,17 @@ public class EF_Normal extends EF_UnivariateDistribution {
         return vec;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double computeLogProbabilityOf(double val) {
         return this.naturalParameters.dotProduct(this.getSufficientStatistics(val)) + this.computeLogBaseMeasure(val) - this.computeLogNormalizer();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public EF_UnivariateDistribution deepCopy(Variable var) {
 
@@ -99,11 +132,17 @@ public class EF_Normal extends EF_UnivariateDistribution {
         return copy;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public EF_UnivariateDistribution deepCopy() {
         return this.deepCopy(this.var);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public EF_UnivariateDistribution randomInitialization(Random random) {
 
@@ -118,6 +157,9 @@ public class EF_Normal extends EF_UnivariateDistribution {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Normal toUnivariateDistribution() {
 
@@ -131,6 +173,9 @@ public class EF_Normal extends EF_UnivariateDistribution {
         return normal;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateNaturalFromMomentParameters() {
         double m0=this.momentParameters.get(EXPECTED_MEAN);
@@ -140,6 +185,9 @@ public class EF_Normal extends EF_UnivariateDistribution {
         this.naturalParameters.set(1, -0.5 / (m1 - m0 * m0));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateMomentFromNaturalParameters() {
         double n0 = this.naturalParameters.get(0);
@@ -148,21 +196,33 @@ public class EF_Normal extends EF_UnivariateDistribution {
         this.momentParameters.set(EXPECTED_SQUARE,-0.5/n1 + 0.25*Math.pow(n0/n1,2));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SufficientStatistics getSufficientStatistics(Assignment data) {
         return this.getSufficientStatistics(data.getValue(this.var));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int sizeOfSufficientStatistics() {
         return 2;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double computeLogBaseMeasure(Assignment dataInstance) {
         return this.computeLogBaseMeasure(dataInstance.getValue(this.var));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<EF_ConditionalDistribution> toExtendedLearningDistribution(ParameterVariables variables) {
         List<EF_ConditionalDistribution> conditionalDistributions = new ArrayList<>();
@@ -179,5 +239,4 @@ public class EF_Normal extends EF_UnivariateDistribution {
 
         return conditionalDistributions;
     }
-
   }

@@ -23,6 +23,14 @@ import java.util.Random;
 
 /**
  * The BayesianNetwork class represents a Bayesian network model.
+ *
+ * <p> For an example of use follow this link </p>
+ * <p> <a href="http://amidst.github.io/toolbox/CodeExamples.html#bnexample"> http://amidst.github.io/toolbox/CodeExamples.html#bnexample </a>  </p>
+ *
+ * <p> For further details about the implementation of this class using Java 8 functional-style programming look at the following paper: </p>
+ *
+ * <i> Masegosa et al. Probabilistic Graphical Models on Multi-Core CPUs using Java 8. IEEE-CIM (2015). </i>
+ *
  */
 public final class BayesianNetwork implements Serializable {
 
@@ -38,27 +46,8 @@ public final class BayesianNetwork implements Serializable {
     /**
      * Creates a new BayesianNetwork from a dag.
      * @param dag a directed acyclic graph.
-     * @return a BayesianNetwork.
      */
-    public static BayesianNetwork newBayesianNetwork(DAG dag) {
-        return new BayesianNetwork(dag);
-    }
-
-    /**
-     * Creates a new BayesianNetwork from a dag and a list of distributions.
-     * @param dag a directed acyclic graph.
-     * @param dists a list of conditional probability distributions.
-     * @return a BayesianNetwork.
-     */
-    public static BayesianNetwork newBayesianNetwork(DAG dag, List<ConditionalDistribution> dists) {
-        return new BayesianNetwork(dag, dists);
-    }
-
-    /**
-     * Creates a new BayesianNetwork from a dag.
-     * @param dag a directed acyclic graph.
-     */
-    private BayesianNetwork(DAG dag) {
+    public BayesianNetwork(DAG dag) {
         this.dag = dag;
         initializeDistributions();
     }
@@ -68,7 +57,7 @@ public final class BayesianNetwork implements Serializable {
      * @param dag a directed acyclic graph.
      * @param dists a list of conditional probability distributions.
      */
-    private BayesianNetwork(DAG dag, List<ConditionalDistribution> dists) {
+    public BayesianNetwork(DAG dag, List<ConditionalDistribution> dists) {
         this.dag = dag;
         this.distributions = dists;
     }
@@ -96,15 +85,15 @@ public final class BayesianNetwork implements Serializable {
      * @return the number of variables.
      */
     public int getNumberOfVars() {
-        return this.getDAG().getStaticVariables().getNumberOfVars();
+        return this.getDAG().getVariables().getNumberOfVars();
     }
 
     /**
      * Returns the set of variables in this BayesianNetwork.
      * @return set of variables of type {@link Variables}.
      */
-    public Variables getStaticVariables() {
-        return this.getDAG().getStaticVariables();
+    public Variables getVariables() {
+        return this.getDAG().getVariables();
     }
 
     /**
@@ -144,7 +133,7 @@ public final class BayesianNetwork implements Serializable {
 
         this.distributions = new ArrayList(this.getNumberOfVars());
 
-        for (Variable var : getStaticVariables()) {
+        for (Variable var : getVariables()) {
             ParentSet parentSet = this.getDAG().getParentSet(var);
             int varID = var.getVarID();
             this.distributions.add(varID, var.newConditionalDistribution(parentSet.getParents()));
@@ -161,7 +150,7 @@ public final class BayesianNetwork implements Serializable {
      */
     public double getLogProbabiltyOf(Assignment assignment) {
         double logProb = 0;
-        for (Variable var : this.getStaticVariables()) {
+        for (Variable var : this.getVariables()) {
             if (assignment.getValue(var) == Utils.missingValue()) {
                 throw new UnsupportedOperationException("This method can not compute the probabilty of a partial assignment.");
             }
@@ -188,7 +177,7 @@ public final class BayesianNetwork implements Serializable {
         StringBuilder str = new StringBuilder();
         str.append("Bayesian Network:\n");
 
-        for (Variable var : this.getStaticVariables()) {
+        for (Variable var : this.getVariables()) {
 
             if (this.getDAG().getParentSet(var).getNumberOfParents() == 0) {
                 str.append("P(" + var.getName() + ") follows a ");
@@ -230,7 +219,7 @@ public final class BayesianNetwork implements Serializable {
     public boolean equalBNs(BayesianNetwork bnet, double threshold) {
         boolean equals = true;
         if (this.getDAG().equals(bnet.getDAG())){
-            for (Variable var : this.getStaticVariables()) {
+            for (Variable var : this.getVariables()) {
                 equals = equals && this.getConditionalDistribution(var).equalDist(bnet.getConditionalDistribution(var), threshold);
             }
         }

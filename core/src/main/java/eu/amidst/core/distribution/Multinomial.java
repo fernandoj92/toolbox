@@ -28,6 +28,10 @@ import java.util.Random;
 
 /**
  * This class extends the abstract class {@link UnivariateDistribution} and defines the univariate multinomial distribution.
+ *
+ * <p> For an example of use follow this link </p>
+ * <p> <a href="http://amidst.github.io/toolbox/CodeExamples.html#bnmodifyexample"> http://amidst.github.io/toolbox/CodeExamples.html#bnmodifyexample </a>  </p>
+ *
  */
 public class Multinomial extends UnivariateDistribution  {
 
@@ -190,7 +194,7 @@ public class Multinomial extends UnivariateDistribution  {
     public EF_Multinomial toEFUnivariateDistribution() {
         EF_Multinomial efMultinomial = new EF_Multinomial(this.getVariable());
 
-        MomentParameters momentParameters = efMultinomial.createZeroedMomentParameters();
+        MomentParameters momentParameters = efMultinomial.createZeroMomentParameters();
 
         for (int i = 0; i < this.getVariable().getNumberOfStates(); i++) {
             momentParameters.set(i, this.getProbabilityOfState(i));

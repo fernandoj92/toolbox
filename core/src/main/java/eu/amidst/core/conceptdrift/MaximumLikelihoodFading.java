@@ -20,21 +20,37 @@ import eu.amidst.core.exponentialfamily.SufficientStatistics;
 import eu.amidst.core.learning.parametric.ParallelMaximumLikelihood;
 
 /**
- * Created by andresmasegosa on 9/6/15.
+ * This class extends the {@link ParallelMaximumLikelihood} class and implements the {@link FadingLearner} interface.
+ * It defines the Maximum Likelihood Fading approach.
+ *
+ *
+ * <p> For an example of use follow this link </p>
+ * <p> <a href="http://amidst.github.io/toolbox/CodeExamples.html#mlfadingexample"> http://amidst.github.io/toolbox/CodeExamples.html#mlfadingexample </a>  </p>
  */
 public class MaximumLikelihoodFading extends ParallelMaximumLikelihood implements FadingLearner {
 
+    /** Represents the fading factor or rate. */
     double fadingFactor;
 
+    /**
+     * Returns the fading factor.
+     * @return a {@code double} that represents the fading factor.
+     */
     public double getFadingFactor() {
         return fadingFactor;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setFadingFactor(double fadingFactor) {
         this.fadingFactor = fadingFactor;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double updateModel(DataOnMemory<DataInstance> batch) {
 
@@ -50,15 +66,16 @@ public class MaximumLikelihoodFading extends ParallelMaximumLikelihood implement
         return Double.NaN;
     }
 
-
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void runLearning() {
 
         efBayesianNetwork = new EF_BayesianNetwork(dag);
 
         dataInstanceCount = new AtomicDouble(0);
-        sumSS = efBayesianNetwork.createZeroedSufficientStatistics();
+        sumSS = efBayesianNetwork.createZeroSufficientStatistics();
         for (DataOnMemory<DataInstance> batch : dataStream.iterableOverBatches(batchSize)){
             SufficientStatistics batchSS = batch.stream()
                     .map(efBayesianNetwork::getSufficientStatistics)
@@ -71,7 +88,9 @@ public class MaximumLikelihoodFading extends ParallelMaximumLikelihood implement
         }
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setParallelMode(boolean parallelMode) {
         throw new UnsupportedOperationException("Non Parallel Mode Supported.");

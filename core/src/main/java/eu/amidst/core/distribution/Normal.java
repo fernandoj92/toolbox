@@ -24,6 +24,10 @@ import java.util.Random;
 
 /**
  * This class extends the abstract class {@link UnivariateDistribution} and defines the univariate Normal distribution.
+ *
+ * <p> For an example of use follow this link </p>
+ * <p> <a href="http://amidst.github.io/toolbox/CodeExamples.html#bnmodifyexample"> http://amidst.github.io/toolbox/CodeExamples.html#bnmodifyexample </a>  </p>
+ *
  */
 public class Normal extends UnivariateDistribution {
 
@@ -176,7 +180,7 @@ public class Normal extends UnivariateDistribution {
     public EF_Normal toEFUnivariateDistribution() {
 
         EF_Normal efNormal = new EF_Normal(this.getVariable());
-        MomentParameters momentParameters = efNormal.createZeroedMomentParameters();
+        MomentParameters momentParameters = efNormal.createZeroMomentParameters();
         momentParameters.set(EF_Normal.EXPECTED_MEAN, this.getMean());
         momentParameters.set(EF_Normal.EXPECTED_SQUARE, this.getMean() * this.getMean() + this.getSd() * this.getSd());
         efNormal.setMomentParameters(momentParameters);

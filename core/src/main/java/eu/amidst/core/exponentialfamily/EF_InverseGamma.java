@@ -19,7 +19,12 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * Created by ana@cs.aau.dk on 23/02/15.
+ *
+ * This class extends the abstract class {@link EF_UnivariateDistribution} and defines an inverse Gamma distribution in exponential family canonical form.
+ *
+ * <p> For further details about how exponential family models are considered in this toolbox take a look at the following paper:
+ *  <i>Representation, Inference and Learning of Bayesian Networks as Conjugate Exponential Family Models. Technical Report.</i>
+ * (<a href="http://amidst.github.io/toolbox/docs/ce-BNs.pdf">pdf</a>) </p>
  */
 public class EF_InverseGamma extends EF_UnivariateDistribution {
 
@@ -27,6 +32,10 @@ public class EF_InverseGamma extends EF_UnivariateDistribution {
     public static final int INVX = 1;
     public static final double DELTA = 0.0001;
 
+    /**
+     * Creates a new EF_InverseGamma distribution for a given {@link Variable} object.
+     * @param var1 a {@link Variable} object.
+     */
     public EF_InverseGamma(Variable var1) {
 
         if (!var1.isInverseGammaParameter())
@@ -35,27 +44,36 @@ public class EF_InverseGamma extends EF_UnivariateDistribution {
         this.parents = new ArrayList();
 
         this.var = var1;
-        this.naturalParameters = this.createZeroedNaturalParameters();
-        this.momentParameters = this.createZeroedMomentParameters();
+        this.naturalParameters = this.createZeroNaturalParameters();
+        this.momentParameters = this.createZeroMomentParameters();
 
         this.naturalParameters.set(0, -2.1); //alpha = 1.1
         this.naturalParameters.set(1, -1);   //beta = 1
         this.setNaturalParameters(naturalParameters);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double computeLogBaseMeasure(double val) {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SufficientStatistics getSufficientStatistics(double val) {
-        SufficientStatistics vec = this.createZeroedSufficientStatistics();
+        SufficientStatistics vec = this.createZeroSufficientStatistics();
         vec.set(LOGX, Math.log(val));
         vec.set(INVX, 1.0 / val);
         return vec;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public EF_UnivariateDistribution deepCopy(Variable var) {
         EF_InverseGamma copy = new EF_InverseGamma(var);
@@ -65,6 +83,9 @@ public class EF_InverseGamma extends EF_UnivariateDistribution {
         return copy;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public EF_UnivariateDistribution randomInitialization(Random random) {
         double alpha = random.nextGaussian() * 2 + 1;
@@ -78,11 +99,17 @@ public class EF_InverseGamma extends EF_UnivariateDistribution {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <E extends UnivariateDistribution> E toUnivariateDistribution() {
         throw new UnsupportedOperationException("Inverse Gamma is not included yet in the Distributions package.");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateNaturalFromMomentParameters() {
         double m0 = this.getMomentParameters().get(0);
@@ -99,6 +126,9 @@ public class EF_InverseGamma extends EF_UnivariateDistribution {
         this.naturalParameters.set(1, newbeta);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateMomentFromNaturalParameters() {
         double alpha = -this.naturalParameters.get(0) - 1;
@@ -107,11 +137,17 @@ public class EF_InverseGamma extends EF_UnivariateDistribution {
         this.momentParameters.set(1, alpha / beta);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int sizeOfSufficientStatistics() {
         return 2;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double computeLogNormalizer() {
         double alpha = -this.naturalParameters.get(0) - 1;
@@ -119,12 +155,17 @@ public class EF_InverseGamma extends EF_UnivariateDistribution {
         return Gamma.logGamma(alpha) - alpha * Math.log(beta);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Vector createZeroedVector() {
+    public Vector createZeroVector() {
         return new ArrayVector(2);
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Vector getExpectedParameters() {
         //if ((-this.naturalParameters.get(0)-2)<=0){
@@ -134,10 +175,12 @@ public class EF_InverseGamma extends EF_UnivariateDistribution {
         vec.set(0, -this.naturalParameters.get(1)/(-this.naturalParameters.get(0)-1));
         return vec;
     }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void fixNumericalInstability() {
 
     }
-
-
 }

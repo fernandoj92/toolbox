@@ -21,19 +21,34 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Created by andresmasegosa on 06/01/15.
+ * This class the abstract class {@link EF_Distribution} and defines a "Bayesian extended" model for a given Bayesian network.
+ * This extended model is basically defined to deal with Bayesian learning approach.
+ * In such settings, given a BN model, we need to consider new random variables acting as a prior distributions over the parameters
+ * of this BN model. This results in a new extended BN model including the new parameter prior random variables.
+ *
+ * <p> For further details about how exponential family models are considered in this toolbox take a look at the following paper:
+ * <i>Representation, Inference and Learning of Bayesian Networks as Conjugate Exponential Family Models. Technical Report.</i>
+ * (<a href="http://amidst.github.io/toolbox/docs/ce-BNs.pdf">pdf</a>) </p>
+ *
  */
 public class EF_LearningBayesianNetwork extends EF_Distribution {
 
+    /** Represents the list of distributions representing this EF_LearningBayesianNetwork model. */
     List<EF_ConditionalDistribution> distributionList;
+
+    /** Represents the parameter variables included in this EF_LearningBayesianNetwork model. */
     ParameterVariables parametersVariables;
 
+    /**
+     * Creates a new EF_LearningBayesianNetwork object from a given {@link DAG} object.
+     * @param dag a {@link DAG} object.
+     */
     public EF_LearningBayesianNetwork(DAG dag){
 
-        parametersVariables = new ParameterVariables(dag.getStaticVariables().getNumberOfVars());
+        parametersVariables = new ParameterVariables(dag.getVariables().getNumberOfVars());
 
         distributionList =
-                dag.getStaticVariables()
+                dag.getVariables()
                         .getListOfVariables()
                         .stream()
                         .map(var -> var.getDistributionType().newEFConditionalDistribution(dag.getParentSet(var).getParents()).toExtendedLearningDistribution(parametersVariables))
@@ -46,6 +61,10 @@ public class EF_LearningBayesianNetwork extends EF_Distribution {
     }
 
 
+    /**
+     * Creates a new EF_LearningBayesianNetwork object from a given list {@link EF_ConditionalDistribution} objects.
+     * @param distributions a list of {@link EF_ConditionalDistribution} objects.
+     */
     public EF_LearningBayesianNetwork(List<EF_ConditionalDistribution> distributions){
 
         parametersVariables = new ParameterVariables(distributions.size());
@@ -62,10 +81,19 @@ public class EF_LearningBayesianNetwork extends EF_Distribution {
         this.momentParameters = null;
     }
 
+    /**
+     * Returns the set of parameter variables included in this EF_LearningBayesianNetwork model.
+     * @return A {@link ParameterVariables} object.
+     */
     public ParameterVariables getParametersVariables() {
         return parametersVariables;
     }
 
+    /**
+     * Converts the distributions of this EF_LearningBayesianNetwork model into a list of {@link ConditionalDistribution} objects.
+     * This conversion also removes the parameter variables by replacing them with their expected value.
+     * @return a {@code List} of {@link ConditionalDistribution} objects.
+     */
     public List<ConditionalDistribution> toConditionalDistribution(){
         List<ConditionalDistribution> condDistList = new ArrayList<>();
 
@@ -84,67 +112,91 @@ public class EF_LearningBayesianNetwork extends EF_Distribution {
             condDistList.add(distLearning.toConditionalDistribution(expectedParameters));
         }
 
-
         condDistList = condDistList.stream().sorted((a, b) -> a.getVariable().getVarID() - b.getVariable().getVarID()).collect(Collectors.toList());
 
         return condDistList;
     }
 
-    public EF_BayesianNetwork toEFBayesianNetwork(){
-        EF_BayesianNetwork ef_bn = new EF_BayesianNetwork();
-        List<EF_ConditionalDistribution> distributions = new ArrayList<>();
-        distributions.addAll(this.distributionList);
-        ef_bn.setDistributionList(distributions);
-
-        return ef_bn;
-    }
-
+    /**
+     * Returns the list of {@link EF_ConditionalDistribution} objects.
+     * @return a {@code List} of {@link EF_ConditionalDistribution} objects.
+     */
     public List<EF_ConditionalDistribution> getDistributionList() {
         return distributionList;
     }
 
-
+    /**
+     * Returns the {@link EF_ConditionalDistribution} object associated with a given variable.
+     * @param var a {@link Variable} object.
+     * @param <E> the subtype of {@link EF_ConditionalDistribution} we are retrieving.
+     * @return a {@link EF_ConditionalDistribution} object.
+     */
     public <E extends EF_ConditionalDistribution> E getDistribution(Variable var) {
         return (E)distributionList.get(var.getVarID());
     }
 
+    /**
+     * Sets the {@link EF_ConditionalDistribution} for a given variable.
+     * @param var a {@link Variable} object.
+     * @param dist the {@link EF_ConditionalDistribution} object to be set.
+     */
     public void setDistribution(Variable var, EF_ConditionalDistribution dist) {
         distributionList.set(var.getVarID(), dist);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateNaturalFromMomentParameters() {
-        throw new UnsupportedOperationException("Method not implemented yet!");
+        throw new UnsupportedOperationException("This method does not apply in this case!");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateMomentFromNaturalParameters() {
-        throw new UnsupportedOperationException("Method not implemented yet!");
+        throw new UnsupportedOperationException("This method does not apply in this case!");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SufficientStatistics getSufficientStatistics(Assignment data) {
-        throw new UnsupportedOperationException("Method not implemented yet!");
+        throw new UnsupportedOperationException("This method does not apply in this case!");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int sizeOfSufficientStatistics() {
-        throw new UnsupportedOperationException("Method not implemented yet!");
+        throw new UnsupportedOperationException("This method does not apply in this case!");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double computeLogBaseMeasure(Assignment dataInstance) {
-        throw new UnsupportedOperationException("Method not implemented yet!");
+        throw new UnsupportedOperationException("This method does not apply in this case!");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double computeLogNormalizer() {
-        throw new UnsupportedOperationException("Method not implemented yet!");
+        throw new UnsupportedOperationException("This method does not apply in this case!");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Vector createZeroedVector() {
-        throw new UnsupportedOperationException("Method not implemented yet!");
+    public Vector createZeroVector() {
+        throw new UnsupportedOperationException("This method does not apply in this case!");
     }
-
 }

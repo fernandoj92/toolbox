@@ -20,23 +20,44 @@ import eu.amidst.core.variables.Variable;
 import java.util.function.Function;
 
 /**
- * Created by andresmasegosa on 30/01/15.
+ * This class defines the Inference Engine for Bayesian Network models.
+ *
+ * <p> For an example of use follow this link
+ * <a href="http://amidst.github.io/toolbox/CodeExamples.html#inferenceengingeexample"> http://amidst.github.io/toolbox/CodeExamples.html#inferenceengingeexample </a>  </p>
  */
 public final class InferenceEngine {
 
+    /** Represents the used {@link InferenceAlgorithm}. */
     private static InferenceAlgorithm inferenceAlgorithm = new VMP();
 
+    /**
+     * Sets the inference algorithm for this InferenceEngine.
+     * @param inferenceAlgorithm an {@link InferenceAlgorithm} object.
+     */
     public static void setInferenceAlgorithm(InferenceAlgorithm inferenceAlgorithm) {
         InferenceEngine.inferenceAlgorithm = inferenceAlgorithm;
     }
 
+    /**
+     * Returns the expected value given an input {@link Variable}, {@link BayesianNetwork}, and a {@code Function}.
+     * @param var an input {@link Variable}.
+     * @param bayesianNetwork a {@link BayesianNetwork} object.
+     * @param function an input {@code Function}.
+     * @return a {@code double} that represents the expected value.
+     */
     public static double getExpectedValue(Variable var, BayesianNetwork bayesianNetwork, Function<Double,Double> function) {
         inferenceAlgorithm.setModel(bayesianNetwork);
         inferenceAlgorithm.runInference();
         return inferenceAlgorithm.getExpectedValue(var,function);
     }
 
-
+    /**
+     * Returns the posterior distribution for a given input {@link Variable}, {@link BayesianNetwork}, and a {@link Assignment}.
+     * @param var an input {@link Variable}.
+     * @param bayesianNetwork a {@link BayesianNetwork} object.
+     * @param assignment an {@link Assignment} object.
+     * @return a {@link UnivariateDistribution} object.
+     */
     public static <E extends UnivariateDistribution> E getPosterior(Variable var, BayesianNetwork bayesianNetwork, Assignment assignment) {
         inferenceAlgorithm.setModel(bayesianNetwork);
         inferenceAlgorithm.setEvidence(assignment);
@@ -44,6 +65,12 @@ public final class InferenceEngine {
         return inferenceAlgorithm.getPosterior(var);
     }
 
+    /**
+     * Returns the posterior distribution for a given input {@link Variable} and a {@link BayesianNetwork}.
+     * @param var an input {@link Variable}.
+     * @param bayesianNetwork a {@link BayesianNetwork} object.
+     * @return a {@link UnivariateDistribution} object.
+     */
     public static <E extends UnivariateDistribution> E getPosterior(Variable var, BayesianNetwork bayesianNetwork) {
         inferenceAlgorithm.setModel(bayesianNetwork);
         inferenceAlgorithm.runInference();
@@ -59,11 +86,11 @@ public final class InferenceEngine {
 
         HashMapAssignment assignment = new HashMapAssignment(1);
 
-        Variable varB = bn.getStaticVariables().getVariableById(0);
+        Variable varB = bn.getVariables().getVariableById(0);
 
         assignment.setValue(varB, 0.7);
 
-        Variable varA = bn.getStaticVariables().getVariableById(1);
+        Variable varA = bn.getVariables().getVariableById(1);
 
         Normal posteriorOfA = InferenceEngine.getPosterior(varA, bn, assignment);
 

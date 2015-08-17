@@ -23,14 +23,26 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 /**
- * Created by ana@cs.aau.dk on 08/12/14.
+ *
+ * This class extends the abstract class {@link EF_ConditionalDistribution} and defines a Conditional Linear Gaussian (CLG) distribution in exponential family canonical form.
+ *
+ * <p> For further details about how exponential family models are considered in this toolbox, take a look at the following paper:
+ * <i>Representation, Inference and Learning of Bayesian Networks as Conjugate Exponential Family Models. Technical Report.</i>
+ * (<a href="http://amidst.github.io/toolbox/docs/ce-BNs.pdf">pdf</a>) </p>
  */
 public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
 
+    /** Represents the size of the sufficient statistics in this EF_Normal_NormalParents distribution. */
     int sizeSS;
 
+    /** Represents the number of parents. */
     int nOfParents;
 
+    /**
+     * Creates a new EF_Normal_NormalParents distribution.
+     * @param var_ the main variable.
+     * @param parents_ the list of Normal parent variables.
+     */
     public EF_Normal_NormalParents(Variable var_, List<Variable> parents_) {
 
         this.var = var_;
@@ -52,6 +64,9 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
         this.naturalParameters = this.createEmtpyCompoundVector();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateNaturalFromMomentParameters() {
 
@@ -78,7 +93,6 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
 
         double beta_0 = mean_X - beta.dotProduct(mean_Y);
         double variance = cov_XX - beta.dotProduct(cov_XY);
-
 
         /*
          * Third step: natural parameters (5 in total)
@@ -125,11 +139,17 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateMomentFromNaturalParameters() {
         //throw new UnsupportedOperationException("Method not implemented yet!");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SufficientStatistics getSufficientStatistics(Assignment data) {
         CompoundVector vectorSS = this.createEmtpyCompoundVector();
@@ -149,6 +169,9 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
         return vectorSS;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int sizeOfSufficientStatistics() {
         return sizeSS;
@@ -156,11 +179,17 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
 
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double computeLogBaseMeasure(Assignment dataInstance) {
         return -0.5*Math.log(2*Math.PI);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double computeLogNormalizer() {
         CompoundVector globalNaturalParameters = (CompoundVector)this.naturalParameters;
@@ -172,21 +201,24 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
         return (beta_0*beta_0)/(2*variance) + 0.5*Math.log(variance);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public CompoundVector createZeroedVector() {
+    public CompoundVector createZeroVector() {
         return new CompoundVector(nOfParents);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getExpectedLogNormalizer(Variable parent, Map<Variable, MomentParameters> momentChildCoParents) {
         throw new UnsupportedOperationException("No Implemented. This method is no really needed");
     }
 
     /**
-     * Of the second form. Needed to calculate the lower bound.
-     *
-     * @param momentParents
-     * @return
+     * {@inheritDoc}
      */
     @Override
     public double getExpectedLogNormalizer(Map<Variable, MomentParameters> momentParents) {
@@ -223,9 +255,7 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
 
 
     /**
-     * Of the second form.
-     * @param momentParents
-     * @return
+     * {@inheritDoc}
      */
     @Override
     public NaturalParameters getExpectedNaturalFromParents(Map<Variable, MomentParameters> momentParents) {
@@ -246,13 +276,7 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
     }
 
     /**
-     * It is the message to one node to its parent @param parent, taking into account the suff. stat. if it is observed
-     * or the moment parameters if not, and incorporating the message (with moment param.) received from all co-parents.
-     * (Third form EF equations).
-     *
-     * @param parent
-     * @param momentChildCoParents
-     * @return
+     * {@inheritDoc}
      */
     @Override
     public NaturalParameters getExpectedNaturalToParent(Variable parent, Map<Variable, MomentParameters> momentChildCoParents) {
@@ -281,6 +305,9 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ConditionalLinearGaussian toConditionalDistribution() {
         ConditionalLinearGaussian normal_normal = new ConditionalLinearGaussian(this.getVariable(), this.getConditioningVariables());
@@ -294,11 +321,19 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
         return normal_normal;
     }
 
+    /**
+     * Returns the variance of this EF_Normal_NormalParents distribution.
+     * @return a positive {@code double} value that represents the variance.
+     */
     public double getVariance(){
         double theta_Minus1 = ((CompoundVector)this.naturalParameters).getcovbaseMatrix().getEntry(0,0);
         return -0.5/theta_Minus1;
     }
 
+    /**
+     * Returns an array with all the beta coefficient values, including beta0, of this EF_Normal_NormalParents distribution.
+     * @return an {@code array} of {@code double} values that represents beta coefficient values.
+     */
     public double[] getAllBetaValues(){
         CompoundVector globalNaturalParameters = (CompoundVector)this.naturalParameters;
         double[] theta_beta0beta = globalNaturalParameters.getXYbaseMatrix().toArray();
@@ -310,11 +345,17 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
     }
 
 
-
+    /**
+     * Creates an empty compound parameter vector.
+     * @return a {@link CompoundVector} object.
+     */
     public CompoundVector createEmtpyCompoundVector() {
         return new CompoundVector(nOfParents);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<EF_ConditionalDistribution> toExtendedLearningDistribution(ParameterVariables variables) {
         List<EF_ConditionalDistribution> conditionalDistributions = new ArrayList<>();
@@ -487,8 +528,6 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
         public RealMatrix getTheta_BetaBetaRM(){
             return getcovbaseMatrix().getSubMatrix(1, nOfParents, 1, nOfParents);
         }
-
-
 
         @Override
         public int size() {

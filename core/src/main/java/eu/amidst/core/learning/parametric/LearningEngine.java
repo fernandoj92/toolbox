@@ -18,6 +18,10 @@ import eu.amidst.core.models.DAG;
 
 /**
  * This class defines the {@link eu.amidst.core.models.BayesianNetwork} parameter learning engine.
+ *
+ * <p> For an example of use follow this link </p>
+ * <p> <a href="http://amidst.github.io/toolbox/CodeExamples.html#learningexample"> http://amidst.github.io/toolbox/CodeExamples.html#learningexample </a>  </p>
+ *
  */
 public final class LearningEngine {
 

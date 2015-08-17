@@ -26,7 +26,10 @@ import java.util.stream.IntStream;
 
 /**
  * This class implements the {@link BayesianParameterLearningAlgorithm} interface.
- * It defines the Parallel implementation of the Streaming Variational Bayes (SVB) algorithm.
+ * It defines the parallel implementation of the Streaming Variational Bayes (SVB) algorithm.
+ *
+ * <p> For an example of use follow this link
+ * <a href="http://amidst.github.io/toolbox/CodeExamples.html#psvbexample"> http://amidst.github.io/toolbox/CodeExamples.html#psvbexample </a>  </p>
  */
 public class ParallelSVB implements BayesianParameterLearningAlgorithm{
 
@@ -106,7 +109,7 @@ public class ParallelSVB implements BayesianParameterLearningAlgorithm{
             //svbEngines[i].setTransitionMethod(this.SVBEngine.getTransitionMethod());
 
             svbEngines[i].getPlateuStructure().getVMP().setOutput(activateOutput);
-            svbEngines[i].getPlateuStructure().getVMP().setTestELBO(this.SVBEngine.getPlateuStructure().getVMP().isTestELBO());
+            svbEngines[i].getPlateuStructure().getVMP().setTestELBO(this.SVBEngine.getPlateuStructure().getVMP().getTestELBO());
             svbEngines[i].getPlateuStructure().getVMP().setMaxIter(this.SVBEngine.getPlateuStructure().getVMP().getMaxIter());
             svbEngines[i].getPlateuStructure().getVMP().setThreshold(this.SVBEngine.getPlateuStructure().getVMP().getThreshold());
             svbEngines[i].initLearning();

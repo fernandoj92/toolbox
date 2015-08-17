@@ -7,9 +7,6 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 
-*.iml
-*/*.iml
-
 # IDE noise #
 .idea/
 
@@ -19,7 +16,8 @@ buildNumber.properties
 *.el
 
 # Package Files #
-*.jar
+#*.jar
 *.war
 *.ear
 
+*.jnilib

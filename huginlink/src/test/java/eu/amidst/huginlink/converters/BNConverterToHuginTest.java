@@ -40,7 +40,7 @@ public class BNConverterToHuginTest {
         //Create the structure by hand
 
         DAG dag = new DAG(modelHeader);
-        Variables variables = dag.getStaticVariables();
+        Variables variables = dag.getVariables();
 
         Variable A, B, C, D, E, G, H, I;
 
@@ -69,7 +69,7 @@ public class BNConverterToHuginTest {
         dag.getParentSet(G).addParent(C);
         dag.getParentSet(G).addParent(D);
 
-        BayesianNetwork bn = BayesianNetwork.newBayesianNetwork(dag);
+        BayesianNetwork bn = new BayesianNetwork(dag);
 
         //****************************************** Distributions *****************************************************
 
@@ -229,7 +229,7 @@ public class BNConverterToHuginTest {
 
         for (int i = 0; i < numVars; i++) {
 
-            Variable amidstVar = amidstBN.getStaticVariables().getVariableById(i);
+            Variable amidstVar = amidstBN.getVariables().getVariableById(i);
             Node huginVar = (Node) huginBN.getNodes().get(i);
             this.testName(amidstVar,huginVar);
             this.testVariableType(amidstVar,huginVar);
@@ -270,7 +270,7 @@ public class BNConverterToHuginTest {
         //-----------------------------------------------------------------------------
         ArrayList<Integer> multinomialParentsIndexes = new ArrayList();
         for (int j=0;j<parentsHuginVar.size();j++) {
-            Node huginParent = (Node)parentsHuginVar.get(j);
+            Node huginParent = parentsHuginVar.get(j);
             if (huginParent.getKind().compareTo(NetworkModel.H_KIND_DISCRETE) == 0) {
                 multinomialParentsIndexes.add(j);
             }
@@ -278,7 +278,7 @@ public class BNConverterToHuginTest {
         Collections.reverse(multinomialParentsIndexes);
         ArrayList<Integer> parentsIndexes = new ArrayList();
         for (int j=0;j<parentsHuginVar.size();j++) {
-            Node huginParent = (Node)parentsHuginVar.get(j);
+            Node huginParent = parentsHuginVar.get(j);
             if (huginParent.getKind().compareTo(NetworkModel.H_KIND_DISCRETE) == 0) {
                 parentsIndexes.add(multinomialParentsIndexes.get(0));
                 multinomialParentsIndexes.remove(0);

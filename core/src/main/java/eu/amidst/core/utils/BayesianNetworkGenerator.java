@@ -107,7 +107,7 @@ public final class BayesianNetworkGenerator{
                 .filter(parentSet -> !parentSet.getMainVar().equals(classVar) && !parentSet.getMainVar().equals(globalHiddenVar))
                 .forEach(w -> {w.addParent(classVar); w.addParent(globalHiddenVar);});
 
-        BayesianNetwork network = BayesianNetwork.newBayesianNetwork(dag);
+        BayesianNetwork network = new BayesianNetwork(dag);
 
         network.randomInitialization(new Random(seed));
 
@@ -138,7 +138,7 @@ public final class BayesianNetworkGenerator{
                 .filter(parentSet -> parentSet.getMainVar().getVarID()!=classVar.getVarID())
                 .forEach(w -> w.addParent(classVar));
 
-        BayesianNetwork network = BayesianNetwork.newBayesianNetwork(dag);
+        BayesianNetwork network = new BayesianNetwork(dag);
 
         network.randomInitialization(new Random(seed));
 
@@ -217,7 +217,7 @@ public final class BayesianNetworkGenerator{
         if (dag.containCycles())
             throw new IllegalStateException("DAG with cycles");
 
-        BayesianNetwork network = BayesianNetwork.newBayesianNetwork(dag);
+        BayesianNetwork network = new BayesianNetwork(dag);
 
         network.randomInitialization(new Random(seed));
 

@@ -11,8 +11,6 @@
 
 package eu.amidst.core.inference.messagepassing;
 
-
-
 import eu.amidst.core.distribution.UnivariateDistribution;
 import eu.amidst.core.exponentialfamily.EF_BayesianNetwork;
 import eu.amidst.core.exponentialfamily.EF_UnivariateDistribution;
@@ -22,7 +20,6 @@ import eu.amidst.core.utils.Vector;
 import eu.amidst.core.variables.Assignment;
 import eu.amidst.core.variables.HashMapAssignment;
 import eu.amidst.core.variables.Variable;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -30,66 +27,111 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * Created by andresmasegosa on 03/02/15.
+ * This class implements the interface {@link InferenceAlgorithm} and defines the Message Passing algorithm.
  */
 public abstract class MessagePassingAlgorithm<E extends Vector> implements InferenceAlgorithm {
 
+    /** Represents the {@link BayesianNetwork} model. */
     protected BayesianNetwork model;
+
+    /** Represents the {@link EF_BayesianNetwork} model. */
     protected EF_BayesianNetwork ef_model;
+
+    /** Represents an {@link Assignment} object. */
     protected Assignment assignment = new HashMapAssignment(0);
+
+    /** Represents the list of {@link Node}s. */
     protected List<Node> nodes;
+
+    /** Represents a {@code Map} object that maps variables to nodes. */
     protected Map<Variable,Node> variablesToNode;
-    protected boolean parallelMode = false;
+
+    /** Represents the probability of evidence. */
     protected double probOfEvidence = Double.NaN;
+
+    /** Represents a {@link Random} object. */
     protected Random random = new Random(0);
+
+    /** Represents the initial seed. */
     protected int seed=0;
+
+    /** Represents the maximum number of iterations. */
     protected int maxIter = 100;
+
+    /** Represents a threshold. */
     protected double threshold = 0.0001;
+
+    /** Represents the output. */
     protected boolean output = false;
+
+    /** Represents the number of iterations. */
     protected int nIter = 0;
 
+    /** Represents the evidence lower bound. */
     protected double local_elbo = Double.NEGATIVE_INFINITY;
+
+    /** Represents the number of local iterations. */
     protected int local_iter = 0;
 
+    /**
+     * Sets the output for this MessagePassingAlgorithm.
+     * @param output a {@code boolean} that represents the output value to be set.
+     */
     public void setOutput(boolean output) {
         this.output = output;
     }
 
+    /**
+     * Sets the threshold for this MessagePassingAlgorithm.
+     * @param threshold a {@code double} that represents the threshold value to be set.
+     */
     public void setThreshold(double threshold) {
         this.threshold = threshold;
     }
 
+    /**
+     * Returns the threshold of this MessagePassingAlgorithm.
+     * @return the threshold of this MessagePassingAlgorithm.
+     */
     public double getThreshold() {
         return threshold;
     }
 
+    /**
+     * Sets the maximum number of iterations for this MessagePassingAlgorithm.
+     * @param maxIter a {@code double} that represents the  maximum number of iterations to be set.
+     */
     public void setMaxIter(int maxIter) {
         this.maxIter = maxIter;
     }
 
+    /**
+     * Returns the maximum number of iterations of this MessagePassingAlgorithm.
+     * @return the maximum number of iterations of this MessagePassingAlgorithm.
+     */
     public int getMaxIter() {
         return maxIter;
     }
 
+    /**
+     * Resets the exponential family distributions of all nodes.
+     */
     public void resetQs(){
         this.nodes.stream().forEach(node -> {node.resetQDist(random);});
     }
 
-    public boolean isParallelMode() {
-        return parallelMode;
-    }
-
-    public void setParallelMode(boolean parallelMode) {
-        this.parallelMode = parallelMode;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setSeed(int seed) {
         this.seed=seed;
         random = new Random(seed);
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void runInference() {
 
@@ -111,8 +153,8 @@ public abstract class MessagePassingAlgorithm<E extends Vector> implements Infer
                 //if (childrenMessage.isPresent())
                 //    selfMessage = Message.combine(childrenMessage.get(), selfMessage);
 
-                for (Node children: node.getChildren()){
-                    selfMessage = Message.combine(newMessageToParent(children, node), selfMessage);
+                for (Node child: node.getChildren()){
+                    selfMessage = Message.combine(newMessageToParent(child, node), selfMessage);
                 }
 
                 updateCombinedMessage(node, selfMessage);
@@ -134,16 +176,27 @@ public abstract class MessagePassingAlgorithm<E extends Vector> implements Infer
         nIter=local_iter;
     }
 
+    /**
+     * Returns the number of iterations of this MessagePassingAlgorithm.
+     * @return the number of iterations of this MessagePassingAlgorithm.
+     */
     public int getNumberOfIterations(){
         return nIter;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setModel(BayesianNetwork model_) {
         model = model_;
         this.setEFModel(new EF_BayesianNetwork(this.model));
     }
 
+    /**
+     * Sets the {@link EF_BayesianNetwork} model for this MessagePassing Algorithm.
+     * @param model the {@link EF_BayesianNetwork} model to be set.
+     */
     public void setEFModel(EF_BayesianNetwork model){
         ef_model = model;
 
@@ -163,27 +216,45 @@ public abstract class MessagePassingAlgorithm<E extends Vector> implements Infer
         }
     }
 
+    /**
+     * Returns the {@link EF_BayesianNetwork} model.
+     * @return the {@link EF_BayesianNetwork} model.
+     */
     public EF_BayesianNetwork getEFModel() {
         return ef_model;
     }
 
+    /**
+     * Returns the {@link Node} associated with a given {@link Variable}.
+     * @param variable a given {@link Variable} object
+     * @return a {@link Node} object.
+     */
     public Node getNodeOfVar(Variable variable){
         return this.variablesToNode.get(variable);
     }
 
+    /**
+     * Returns the list of nodes.
+     * @return a {@code List} of {@link Node}s.
+     */
     public List<Node> getNodes() {
         return nodes;
     }
 
+    /**
+     * Sets the list of nodes.
+     * @param nodes a {@code List} of {@link Node}s to be set.
+     */
     public void setNodes(List<Node> nodes) {
         this.nodes = nodes;
         variablesToNode = new ConcurrentHashMap();
         nodes.stream().forEach( node -> variablesToNode.put(node.getMainVariable(),node));
     }
 
+    /**
+     * Updates the set of children and parents for each node.
+     */
     public void updateChildrenAndParents(){
-
-
         for (Node node : nodes){
             node.setParents(
                     node.getPDist()
@@ -197,40 +268,81 @@ public abstract class MessagePassingAlgorithm<E extends Vector> implements Infer
                     .forEach(var -> this.getNodeOfVar(var).getChildren().add(node));
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BayesianNetwork getOriginalModel() {
         return this.model;
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setEvidence(Assignment assignment_) {
         this.assignment = assignment_;
         nodes.stream().forEach(node -> node.setAssignment(assignment));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <E extends UnivariateDistribution> E getPosterior(Variable var) {
         return this.getNodeOfVar(var).getQDist().toUnivariateDistribution();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getLogProbabilityOfEvidence() {
         return this.probOfEvidence;
     }
 
+    /**
+     * Returns the exponential family posterior of a given {@link Variable}.
+     * @param var a {@link Variable} object.
+     * @return an {@link EF_UnivariateDistribution} object.
+     */
     public <E extends EF_UnivariateDistribution> E getEFPosterior(Variable var) {
         return (E)this.getNodeOfVar(var).getQDist();
     }
 
+    /**
+     * Creates a new self message for a given {@link Node}.
+     * @param node a {@link Node} object.
+     * @return a {@link Message} object.
+     */
     public abstract Message<E> newSelfMessage(Node node);
 
-    public abstract Message<E> newMessageToParent(Node childrenNode, Node parentNode);
+    /**
+     * Creates a new message from  a given child {@link Node} to its parent.
+     * @param child a child {@link Node}.
+     * @param parent a parent {@link Node}.
+     * @return a {@link Message} object.
+     */
+    public abstract Message<E> newMessageToParent(Node child, Node parent);
 
+    /**
+     * Updates the combined message for a given {@link Node}.
+     * @param node a {@link Node} object.
+     * @param message a {@link Message} object.
+     */
     public abstract void updateCombinedMessage(Node node, Message<E> message);
 
+    /**
+     * Tests if the convergence is reached or not.
+     * @return {@code true} if the convergence is reached, {@code false} otherwise.
+     */
     public abstract boolean testConvergence();
 
+    /**
+     * Returns the log probability of the evidence.
+     * @return the log probability of the evidence
+     */
     public abstract double computeLogProbabilityOfEvidence();
 
 }

@@ -20,14 +20,20 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Created by andresmasegosa on 13/11/14.
+ *
+ * This class extends the abstract class {@link EF_UnivariateDistribution} and defines a Multinomial distribution in exponential family canonical form.
+ *
+ * <p> For further details about how exponential family models are considered in this toolbox, take a look at the following paper:
+ * <i>Representation, Inference and Learning of Bayesian Networks as Conjugate Exponential Family Models. Technical Report.</i>
+ * (<a href="http://amidst.github.io/toolbox/docs/ce-BNs.pdf">pdf</a>) </p>
  */
 public class EF_Multinomial extends EF_UnivariateDistribution {
 
     static double THRESHOLD = 1e-10;
+
     /**
-     * The class constructor.
-     * @param var The variable of the distribution.
+     * Creates a new EF_Multinomial distribution for a given {@link Variable} object.
+     * @param var a {@link Variable} object with a Multinomial distribution type.
      */
     public EF_Multinomial(Variable var) {
 
@@ -39,8 +45,8 @@ public class EF_Multinomial extends EF_UnivariateDistribution {
 
         this.var=var;
         int nstates= var.getNumberOfStates();
-        this.naturalParameters = this.createZeroedNaturalParameters();
-        this.momentParameters = this.createZeroedMomentParameters();
+        this.naturalParameters = this.createZeroNaturalParameters();
+        this.momentParameters = this.createZeroMomentParameters();
 
         for (int i=0; i<nstates; i++){
             this.naturalParameters.set(i,-Math.log(nstates));
@@ -49,12 +55,17 @@ public class EF_Multinomial extends EF_UnivariateDistribution {
 
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double computeLogBaseMeasure(double val) {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double computeLogNormalizer() {
         double sum = 0;
@@ -64,28 +75,43 @@ public class EF_Multinomial extends EF_UnivariateDistribution {
         return Math.log(sum);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Vector createZeroedVector() {
+    public Vector createZeroVector() {
         return new ArrayVector(this.var.getNumberOfStates());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SufficientStatistics getSufficientStatistics(double val) {
-        SufficientStatistics vec = this.createZeroedSufficientStatistics();
+        SufficientStatistics vec = this.createZeroSufficientStatistics();
         vec.set((int) val, 1);
         return vec;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Vector getExpectedParameters() {
         return this.momentParameters;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double computeLogProbabilityOf(double val) {
         return this.naturalParameters.dotProduct(this.getSufficientStatistics(val)) + this.computeLogBaseMeasure(val) - this.computeLogNormalizer();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateNaturalFromMomentParameters() {
         int nstates= var.getNumberOfStates();
@@ -99,11 +125,17 @@ public class EF_Multinomial extends EF_UnivariateDistribution {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void fixNumericalInstability() {
         this.naturalParameters = Utils.logNormalize(this.naturalParameters); //To avoid numerical problems!
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateMomentFromNaturalParameters() {
         int nstates= var.getNumberOfStates();
@@ -112,11 +144,17 @@ public class EF_Multinomial extends EF_UnivariateDistribution {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int sizeOfSufficientStatistics() {
         return this.var.getNumberOfStates();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public EF_UnivariateDistribution deepCopy(Variable var) {
         EF_Multinomial copy = new EF_Multinomial(var);
@@ -125,6 +163,9 @@ public class EF_Multinomial extends EF_UnivariateDistribution {
         return copy;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public EF_UnivariateDistribution randomInitialization(Random random) {
         double[] probabilities = new double[this.var.getNumberOfStates()];
@@ -140,6 +181,9 @@ public class EF_Multinomial extends EF_UnivariateDistribution {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Multinomial toUnivariateDistribution() {
         Multinomial multinomial = new Multinomial(this.getVariable());
@@ -151,6 +195,9 @@ public class EF_Multinomial extends EF_UnivariateDistribution {
         return multinomial;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<EF_ConditionalDistribution> toExtendedLearningDistribution(ParameterVariables variables){
 
@@ -160,5 +207,4 @@ public class EF_Multinomial extends EF_UnivariateDistribution {
 
         return Arrays.asList(new EF_Multinomial_Dirichlet(this.var, varDirichlet), uni);
     }
-
 }

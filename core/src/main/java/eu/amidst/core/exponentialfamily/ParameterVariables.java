@@ -26,40 +26,78 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by afa on 02/07/14.
+ * This class is used to store and handle the creation of the parameter variables of
+ * an extended Bayesian network model {@link EF_LearningBayesianNetwork}.
  */
 public class ParameterVariables implements Iterable<Variable>, Serializable {
 
     private static final long serialVersionUID = 5077959998533923231L;
 
-    private List<Variable> allVariables;
+    /** Represents a list containing of the parameter variables. */
+    private List<Variable> allParameterVariables;
 
+    /** Represents a {@code Map} object that maps the name of a parameter variable to its index. */
     private Map<String, Integer> mapping;
 
+    /** Represents the base index.
+     * Parameter variables are indexed with numbers higher than the numbers of non-parameter variables
+     * to avoid collisions. The base index is defined as the initial index number of parameter variables. */
     int baseIndex;
 
+
+    /**
+     * Creates a new ParameterVariables object.
+     * @param numberOfVariables an {@code int} that represents the current number of non-parameter variables.
+     */
     public ParameterVariables(int numberOfVariables) {
-        this.allVariables = new ArrayList<>();
+        this.allParameterVariables = new ArrayList<>();
         this.mapping = new ConcurrentHashMap<>();
         this.baseIndex=numberOfVariables;
     }
 
+    /**
+     * Creates a new parameter Gaussian Variable from a given name.
+     * @param name a given name.
+     * @return a new gaussian {@link Variable}.
+     */
     public Variable newGaussianParameter(String name) {
         return this.newVariable(name, DistributionTypeEnum.NORMAL_PARAMETER, new RealStateSpace());
     }
 
+    /**
+     * Creates a new parameter inverse Gamma Variable from a given name.
+     * @param name a given name.
+     * @return a new gaussian {@link Variable}.
+     */
     public Variable newInverseGammaParameter(String name){
         return this.newVariable(name, DistributionTypeEnum.INV_GAMMA_PARAMETER, new RealStateSpace());
     }
 
+    /**
+     * Creates a new parameter Gamma Variable from a given name.
+     * @param name a given name.
+     * @return a new gaussian {@link Variable}.
+     */
     public Variable newGammaParameter(String name){
         return this.newVariable(name, DistributionTypeEnum.GAMMA_PARAMETER, new RealStateSpace());
     }
 
+    /**
+     * Creates a new parameter Dirichlet Variable from a given name.
+     * @param name a given name.
+     * @return a new gaussian {@link Variable}.
+     */
     public Variable newDirichletParameter(String name, int nOfStates) {
         return this.newVariable(name, DistributionTypeEnum.DIRICHLET_PARAMETER, new FiniteStateSpace(nOfStates));
     }
 
+    /**
+     * Creates a new parameter variable given its name, distribution type, and state space type.
+     * @param name the name of the variable.
+     * @param distributionTypeEnum the {@link DistributionTypeEnum} of the variable.
+     * @param stateSpaceType the {@link StateSpaceType} of the variable.
+     * @return a {@link Variable} object.
+     */
     private Variable newVariable(String name, DistributionTypeEnum distributionTypeEnum, StateSpaceType stateSpaceType) {
         VariableBuilder builder = new VariableBuilder();
         builder.setName(name);
@@ -70,25 +108,36 @@ public class ParameterVariables implements Iterable<Variable>, Serializable {
         return this.newVariable(builder);
     }
 
+    /**
+     * Creates a new paramater variable using the information provided by a {@link VariableBuilder} object.
+     * @param builder a {@link VariableBuilder} object.
+     * @return a {@link Variable} object.
+     */
     private Variable newVariable(VariableBuilder builder) {
-        ParameterVariable var = new ParameterVariable(builder, this.baseIndex + allVariables.size());
+        ParameterVariable var = new ParameterVariable(builder, this.baseIndex + allParameterVariables.size());
         if (mapping.containsKey(var.getName())) {
             throw new IllegalArgumentException("Attribute list contains duplicated names: " + var.getName());
         }
         this.mapping.put(var.getName(), var.getVarID());
-        allVariables.add(var);
+        allParameterVariables.add(var);
         return var;
-
     }
 
-    //public List<Variable> getListOfVariables() {
-    //    return this.allVariables;
-    //}
 
+    /**
+     * Returns the parameter variable given its index.
+     * @param varID an {@code int} that represents the index of the variable to be retrieved.
+     * @return a {@link Variable} object.
+     */
     public Variable getVariableById(int varID) {
-        return this.allVariables.get(varID - this.baseIndex);
+        return this.allParameterVariables.get(varID - this.baseIndex);
     }
 
+    /**
+     * Returns the parameter variable given its name.
+     * @param name an {@code String} that represents the name of the variable to be retrieved.
+     * @return a {@link Variable} object.
+     */
     public Variable getVariableByName(String name) {
         Integer index = this.mapping.get(name);
         if (index==null) {
@@ -99,21 +148,28 @@ public class ParameterVariables implements Iterable<Variable>, Serializable {
         }
     }
 
+    /**
+     * Returns the number of parameter variables.
+     * @return an {@code int} that represents the number of parameter variables.
+     */
     public int getNumberOfVars() {
-        return this.allVariables.size();
+        return this.allParameterVariables.size();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Iterator<Variable> iterator() {
-        return this.allVariables.iterator();
+        return this.allParameterVariables.iterator();
     }
 
-    public void block(){
-        this.allVariables = Collections.unmodifiableList(this.allVariables);
-    }
-
-    public List<Variable> getListOfVariables(){
-        return this.allVariables;
+    /**
+     * Returns a list including all the parameter variables.
+     * @return a {@code List} of {@link Variable} objects.
+     */
+    public List<Variable> getListOfParamaterVariables(){
+        return this.allParameterVariables;
     }
 
     //TODO Implements hashCode method!!

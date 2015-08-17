@@ -11,12 +11,17 @@
 
 package eu.amidst.core.conceptdrift;
 
-
 /**
- * Created by andresmasegosa on 1/7/15.
+ * This interface defines the Fading Learner.
+ * <p> For an example of use follow this link
+ * <a href="http://amidst.github.io/toolbox/CodeExamples.html#conceptdriftexample"> http://amidst.github.io/toolbox/CodeExamples.html#conceptdriftexample </a>  </p>
  */
 public interface FadingLearner {
 
+    /**
+     * Sets the fading rate.
+     * @param fading a {@code double} that represents the fading rate.
+     */
     void setFadingFactor(double fading);
 
 }

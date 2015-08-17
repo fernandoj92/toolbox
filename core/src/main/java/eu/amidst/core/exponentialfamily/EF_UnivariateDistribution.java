@@ -20,29 +20,91 @@ import java.util.Map;
 import java.util.Random;
 
 /**
- * Created by andresmasegosa on 12/11/14.
+ * This class extends the abstract class {@link EF_ConditionalDistribution} and defines the univariate distribution in exponential family form.
+ * It is considered as a special case of a conditional distribution with an empty list of conditioning variables.
+ *
+ * <p> For further details about how exponential family models are considered in this toolbox, take a look at the following paper:
+ * <i>Representation, Inference and Learning of Bayesian Networks as Conjugate Exponential Family Models. Technical Report.</i>
+ * (<a href="http://amidst.github.io/toolbox/docs/ce-BNs.pdf">pdf</a>) </p>
  */
 public abstract class EF_UnivariateDistribution extends EF_ConditionalDistribution{
 
+    /**
+     * Computes the logarithm of the base measure function for a given value.
+     * @param val a {@code double} value.
+     * @return a {@code double} value.
+     */
     public abstract double computeLogBaseMeasure(double val);
 
+    /**
+     * Returns the vector of sufficient statistics for a given value.
+     * @param val a {@code double} value.
+     * @return a {@link SufficientStatistics} object.
+     */
     public abstract SufficientStatistics getSufficientStatistics(double val);
 
+    /**
+     * Returns the vector of expected parameters of this EF_UnivariateDistribution.
+     * @return a {@code Vector} object.
+     */
     public abstract Vector getExpectedParameters();
 
+    /**
+     * Fixes the numerical instability problems when invoked in this EF_UnivariateDistribution.
+     */
     public abstract void fixNumericalInstability();
 
+    /**
+     * Returns a deep copy of this EF_UnivariateDistribution and changes the current main variable to the
+     * one given as input parameter.
+     * @param variable a {@link Variable} object.
+     * @return a {@link EF_UnivariateDistribution} object.
+     */
     public abstract EF_UnivariateDistribution deepCopy(Variable variable);
 
+    /**
+     * Randomly initializes this EF_UnivariateDistribution.
+     * @param rand a {@link Random} object.
+     * @return A {@link EF_UnivariateDistribution} object.
+     */
     public abstract EF_UnivariateDistribution randomInitialization(Random rand);
 
+    /**
+     * Converts this EF_UnivariateDistribution to its equivalent {@link UnivariateDistribution} object.
+     * @param <E> the subtype of distribution of the final created object.
+     * @return a {@link UnivariateDistribution} object.
+     */
     public abstract <E extends UnivariateDistribution> E toUnivariateDistribution();
 
+    /**
+     * Creates a deep copy of this this EF_UnivariateDistribution.
+     * @return a {@link EF_UnivariateDistribution} object.
+     */
+    public EF_UnivariateDistribution deepCopy(){
+        return this.deepCopy(this.var);
+    }
+
+    /**
+     * Returns the log probability of a given value according to this EF_UnivariateDistribution.
+     * @param val a {@code double} value. In case of finite state space distribution, the double value can be seen as an
+     *             integer indexing the different states.
+     * @return a positive {@code double} that represents the log probability value.
+     */
+    public double computeLogProbabilityOf(double val){
+        return this.naturalParameters.dotProduct(this.getSufficientStatistics(val)) + this.computeLogBaseMeasure(val) - this.computeLogNormalizer();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Variable> getConditioningVariables() {
         return Arrays.asList();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setNaturalParameters(NaturalParameters parameters) {
         this.naturalParameters = parameters;
@@ -50,46 +112,59 @@ public abstract class EF_UnivariateDistribution extends EF_ConditionalDistributi
         this.updateMomentFromNaturalParameters();
     }
 
-    public EF_UnivariateDistribution deepCopy(){
-        return this.deepCopy(this.var);
-    }
-
-    public double computeLogProbabilityOf(double val){
-        return this.naturalParameters.dotProduct(this.getSufficientStatistics(val)) + this.computeLogBaseMeasure(val) - this.computeLogNormalizer();
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double computeLogBaseMeasure(Assignment dataInstance) {
         return this.computeLogBaseMeasure(dataInstance.getValue(this.var));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SufficientStatistics getSufficientStatistics(Assignment data) {
         return this.getSufficientStatistics(data.getValue(this.var));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getExpectedLogNormalizer(Variable parent, Map<Variable, MomentParameters> momentChildCoParents) {
         throw new UnsupportedOperationException("This operation does not make sense for univarite distributons with no parents");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getExpectedLogNormalizer(Map<Variable, MomentParameters> momentParents) {
         return this.computeLogNormalizer();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NaturalParameters getExpectedNaturalFromParents(Map<Variable, MomentParameters> momentParents) {
-        NaturalParameters out = this.createZeroedNaturalParameters();
+        NaturalParameters out = this.createZeroNaturalParameters();
         out.copy(this.getNaturalParameters());
         return out;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NaturalParameters getExpectedNaturalToParent(Variable parent, Map<Variable, MomentParameters> momentChildCoParents) {
         throw new UnsupportedOperationException("This operation does not make sense for univarite distributons with no parents");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <E extends ConditionalDistribution> E toConditionalDistribution() {
         return (E)this.toUnivariateDistribution();

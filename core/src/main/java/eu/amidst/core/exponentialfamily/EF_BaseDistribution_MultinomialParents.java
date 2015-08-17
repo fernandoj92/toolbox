@@ -26,35 +26,61 @@
 package eu.amidst.core.exponentialfamily;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import eu.amidst.core.datastream.DataInstance;
-import eu.amidst.core.distribution.*;
+import eu.amidst.core.distribution.BaseDistribution_MultinomialParents;
+import eu.amidst.core.distribution.ConditionalDistribution;
+import eu.amidst.core.distribution.Distribution;
+import eu.amidst.core.utils.MultinomialIndex;
 import eu.amidst.core.utils.Vector;
 import eu.amidst.core.variables.Assignment;
 import eu.amidst.core.variables.DistributionTypeEnum;
 import eu.amidst.core.variables.Variable;
-import eu.amidst.core.utils.MultinomialIndex;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class EF_BaseDistribution_MultinomialParents<E extends EF_Distribution> extends EF_ConditionalDistribution {
+/**
+ * This class defines conditional distributions with a set of multinomial parents. It aims to exploit some underlying
+ * structure when representing them in exponential family.
+ *
+ * <p> For further details about how these models are considered in this toolbox look at the following paper </p>
+ * <p> <i>Representation, Inference and Learning of Bayesian Networks as Conjugate Exponential Family Models. Technical Report.</i>
+ * (<a href="http://amidst.github.io/toolbox/docs/ce-BNs.pdf">pdf</a>)
+ * </p>
+ *
+ * @param <E>, the type of EF_ConditionalDistribution of the base distribution.
+ */
+public class EF_BaseDistribution_MultinomialParents<E extends EF_ConditionalDistribution> extends EF_ConditionalDistribution {
 
-
+    /** Represents the list of base distributions. */
     private final List<E> distributions;
+
+    /** Represents the list of the multinomial parents. */
     private final List<Variable> multinomialParents;
 
+    /** Indicates whether the base distributions are conditional or univariate. */
     private boolean isBaseConditionalDistribution;
 
-    public List<Variable> getMultinomialParents() {
-        return multinomialParents;
-    }
-
+    /**
+     * Creates a new EF_BaseDistribution_MultinomialParents object from a list of multinomial parents and base distributions.
+     * @param multinomialParents1 a list of {@code Variable} objects.
+     * @param distributions1 a list of {@code EF_ConditionalDistribution} objects.
+     */
     public EF_BaseDistribution_MultinomialParents(List<Variable> multinomialParents1, List<E> distributions1) {
         this(multinomialParents1,distributions1,true);
     }
 
+    /**
+     * Creates a new EF_BaseDistribution_MultinomialParents object from a list of multinomial parents and base distributions.
+     * @param multinomialParents1 a list of {@code Variable} objects.
+     * @param distributions1 a list of {@code EF_ConditionalDistribution} objects.
+     * @param initializeMomentNaturalParameters a boolean value indicating whether the moment and natural parameters
+     *                                           of the base distributions should be initialized.
+     */
     public EF_BaseDistribution_MultinomialParents(List<Variable> multinomialParents1, List<E> distributions1, boolean initializeMomentNaturalParameters) {
 
         //if (multinomialParents1.size()==0) throw new IllegalArgumentException("Size of multinomial parents is zero");
@@ -100,35 +126,79 @@ public class EF_BaseDistribution_MultinomialParents<E extends EF_Distribution> e
 
         //Make them unmodifiable
         this.parents = Collections.unmodifiableList(this.parents);
-
     }
 
+    /**
+     * Returns the list of multinomial parents.
+     * @return a list of {@code Variable} objects.
+     */
+    public List<Variable> getMultinomialParents() {
+        return multinomialParents;
+    }
+
+    /**
+     * Returns whether the base distributions are conditional or not.
+     * @return {@code true} if the base distributions are conditional, {@code false} otherwise.
+     */
     public boolean isBaseConditionalDistribution() {
         return isBaseConditionalDistribution;
     }
 
+    /**
+     * Returns the base EF conditional distribution for a given indexed configuration of the multinomial parents.
+     * @param multinomialIndex a positive integer.
+     * @return a {@code EF_ConditionalDistribution} object.
+     */
     public EF_ConditionalDistribution getBaseEFConditionalDistribution(int multinomialIndex) {
         return (EF_ConditionalDistribution)this.getBaseEFDistribution(multinomialIndex);
     }
 
+    /**
+     * Gets the base EF univariate distribution for a given indexed configuration of the multinomial parents.
+     * @param multinomialIndex, a positive integer.
+     * @return a {@code EF_UnivariateDistribution} object.
+     */
     public EF_UnivariateDistribution getBaseEFUnivariateDistribution(int multinomialIndex) {
         return (EF_UnivariateDistribution)this.getBaseEFDistribution(multinomialIndex);
     }
 
+    /**
+     * Sets the base EF conditional distribution for a given indexed configuration of the multinomial parents.
+     * @param indexMultinomial a positive integer.
+     * @param baseDist a {@code EF_ConditionalDistribution} object.
+     */
     public void setBaseEFDistribution(int indexMultinomial, E baseDist) {
         this.distributions.set(indexMultinomial, baseDist);
     }
 
+    /**
+     * Returns a base EF distribution for a given indexed configuration of the multinomial parents.
+     * @param indexMultinomial a positive integer.
+     * @return a {@code EF_ConditionalDistribution} object.
+     */
     public E getBaseEFDistribution(int indexMultinomial) {
-
         return distributions.get(indexMultinomial);
     }
 
-    public E getBaseEFDistribution(DataInstance dataInstance) {
-        int position = MultinomialIndex.getIndexFromDataInstance(this.multinomialParents, dataInstance);
-        return getBaseEFDistribution(position);
+    /**
+     * Returns the number of configurations of the multinomial parents.
+     * @return an {@code int} value that represents the number of configurations of the multinomial parents.
+     */
+    public int numberOfConfigurations() {
+        return this.distributions.size();
     }
 
+    /**
+     * Returns the size of the sufficient statistics of the base EF distributions.
+     * @return an {@code int} value that represents the size of the sufficient statistics of the base EF distributions..
+     */
+    public int sizeOfBaseSufficientStatistics() {
+        return this.getBaseEFDistribution(0).sizeOfSufficientStatistics();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SufficientStatistics getSufficientStatistics(Assignment instance) {
 
@@ -146,19 +216,17 @@ public class EF_BaseDistribution_MultinomialParents<E extends EF_Distribution> e
 
     }
 
-    public int numberOfConfigurations() {
-        return this.distributions.size();
-    }
-
-    public int sizeOfBaseSufficientStatistics() {
-        return this.getBaseEFDistribution(0).sizeOfSufficientStatistics();
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int sizeOfSufficientStatistics() {
         return numberOfConfigurations() + numberOfConfigurations() * sizeOfBaseSufficientStatistics();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateNaturalFromMomentParameters() {
 
@@ -183,34 +251,52 @@ public class EF_BaseDistribution_MultinomialParents<E extends EF_Distribution> e
         return;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateMomentFromNaturalParameters() {
-        throw new UnsupportedOperationException("Method not implemented yet!");
+        throw new UnsupportedOperationException("This method does not apply in this case!");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double computeLogBaseMeasure(Assignment dataInstance) {
         int position = MultinomialIndex.getIndexFromVariableAssignment(this.multinomialParents, dataInstance);
         return this.getBaseEFDistribution(position).computeLogBaseMeasure(dataInstance);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double computeLogNormalizer() {
         return 0;
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Vector createZeroedVector() {
+    public Vector createZeroVector() {
         return this.createCompoundVector();
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getExpectedLogNormalizer(Variable parent, Map<Variable, MomentParameters> momentChildCoParents) {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getExpectedLogNormalizer(Map<Variable, MomentParameters> momentParents) {
 
@@ -241,6 +327,9 @@ public class EF_BaseDistribution_MultinomialParents<E extends EF_Distribution> e
         return expectedLogNormalizer;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NaturalParameters getExpectedNaturalFromParents(Map<Variable, MomentParameters> momentParents) {
 
@@ -259,7 +348,7 @@ public class EF_BaseDistribution_MultinomialParents<E extends EF_Distribution> e
             if (this.isBaseConditionalDistribution) {
                 paritalExpectedNatural = this.getBaseEFConditionalDistribution(i).getExpectedNaturalFromParents(momentParents);
             }else{
-                paritalExpectedNatural = this.getBaseEFUnivariateDistribution(i).createZeroedNaturalParameters();
+                paritalExpectedNatural = this.getBaseEFUnivariateDistribution(i).createZeroNaturalParameters();
                 paritalExpectedNatural.copy(this.getBaseEFUnivariateDistribution(i).getNaturalParameters());
             }
 
@@ -274,6 +363,9 @@ public class EF_BaseDistribution_MultinomialParents<E extends EF_Distribution> e
         return expectedNaturalFromParents;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NaturalParameters getExpectedNaturalToParent(Variable parent, Map<Variable, MomentParameters> momentChildCoParents) {
         NaturalParameters expectedNaturalToParents = null;
@@ -285,7 +377,7 @@ public class EF_BaseDistribution_MultinomialParents<E extends EF_Distribution> e
 
 
         if (indexOfMultinomialParent!=-1) {
-            expectedNaturalToParents =  new EF_Multinomial(parent).createZeroedNaturalParameters();//  new ArrayVector(parent.getNumberOfStates());
+            expectedNaturalToParents =  new EF_Multinomial(parent).createZeroNaturalParameters();//  new ArrayVector(parent.getNumberOfStates());
 
             int nConf = MultinomialIndex.getNumberOfPossibleAssignments(this.multinomialParents);
 
@@ -311,7 +403,7 @@ public class EF_BaseDistribution_MultinomialParents<E extends EF_Distribution> e
                         localSum += paritalExpectedNatural.dotProduct(momentChildCoParents.get(this.getVariable()));
                         localSum -= this.getBaseEFConditionalDistribution(i).getExpectedLogNormalizer(momentChildCoParents);
                     } else {
-                        paritalExpectedNatural = this.getBaseEFUnivariateDistribution(i).createZeroedNaturalParameters();
+                        paritalExpectedNatural = this.getBaseEFUnivariateDistribution(i).createZeroNaturalParameters();
                         paritalExpectedNatural.copy(this.getBaseEFUnivariateDistribution(i).getNaturalParameters());
                         localSum += paritalExpectedNatural.dotProduct(momentChildCoParents.get(this.getVariable()));
                         localSum -= this.getBaseEFUnivariateDistribution(i).computeLogNormalizer();
@@ -329,8 +421,6 @@ public class EF_BaseDistribution_MultinomialParents<E extends EF_Distribution> e
 
             if (!this.isBaseConditionalDistribution())
                 throw new IllegalArgumentException("Parent Variable is no multinomial and based distribution has no parents");
-
-
 
             //int indexOfNonMultinomialParent = this..getBaseEFConditionalDistribution(0).getConditioningVariables().indexOf(parent);
             //if (indexOfMultinomialParent==-1)
@@ -358,7 +448,7 @@ public class EF_BaseDistribution_MultinomialParents<E extends EF_Distribution> e
                 if (this.isBaseConditionalDistribution) {
                     paritalExpectedNatural = this.getBaseEFConditionalDistribution(i).getExpectedNaturalToParent(parent, momentChildCoParents);
                 } else {
-                    paritalExpectedNatural = this.getBaseEFUnivariateDistribution(i).createZeroedNaturalParameters();
+                    paritalExpectedNatural = this.getBaseEFUnivariateDistribution(i).createZeroNaturalParameters();
                     paritalExpectedNatural.copy(this.getBaseEFUnivariateDistribution(i).getNaturalParameters());
                 }
 
@@ -375,6 +465,9 @@ public class EF_BaseDistribution_MultinomialParents<E extends EF_Distribution> e
         return expectedNaturalToParents;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<EF_ConditionalDistribution> toExtendedLearningDistribution(ParameterVariables parameters) {
 
@@ -401,6 +494,9 @@ public class EF_BaseDistribution_MultinomialParents<E extends EF_Distribution> e
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <E extends ConditionalDistribution> E toConditionalDistribution() {
         BaseDistribution_MultinomialParents<Distribution> base = new BaseDistribution_MultinomialParents(this.var,this.getConditioningVariables());
@@ -418,9 +514,12 @@ public class EF_BaseDistribution_MultinomialParents<E extends EF_Distribution> e
     }
 
     private CompoundVector createCompoundVector() {
-        return new CompoundVector((EF_Distribution)this.getBaseEFDistribution(0), this.numberOfConfigurations());
+        return new CompoundVector(this.getBaseEFDistribution(0), this.numberOfConfigurations());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ConditionalDistribution toConditionalDistribution(Map<Variable, Vector> expectedValueParameterVariables) {
 
@@ -453,7 +552,7 @@ public class EF_BaseDistribution_MultinomialParents<E extends EF_Distribution> e
             nConf = nConf1;
             this.baseConf = new double[nConf];
             baseDist = baseDist1;
-            baseVectors = new SparseVector(baseDist1::createZeroedVector,nConf);
+            baseVectors = new SparseVector(baseDist1::createZeroVector,nConf);
             baseSSLength = baseDist.sizeOfSufficientStatistics();
 
         }
@@ -465,7 +564,7 @@ public class EF_BaseDistribution_MultinomialParents<E extends EF_Distribution> e
         public Vector getVectorByPosition(int position) {
             Vector vector =  this.baseVectors.getVectorByPosition(position);
             if (vector==null){
-                return this.baseDist.createZeroedVector();
+                return this.baseDist.createZeroVector();
             }else {
                 return vector;
             }
@@ -515,7 +614,7 @@ public class EF_BaseDistribution_MultinomialParents<E extends EF_Distribution> e
 
         public void sum(CompoundVector vector) {
             if (vector.size() != this.size())
-                throw new IllegalArgumentException("Error in variable Vector. Method copy. The parameter vec has a different size. ");
+                throw new IllegalArgumentException("Error in variable Vector. Method copy. The parameter vec has a different size.");
 
             for (int i = 0; i < baseConf.length; i++) {
                 baseConf[i] += vector.getBaseConf(i);
@@ -531,7 +630,7 @@ public class EF_BaseDistribution_MultinomialParents<E extends EF_Distribution> e
 
         public void copy(CompoundVector vector) {
             if (vector.size() != this.size())
-                throw new IllegalArgumentException("Error in variable Vector. Method copy. The parameter vec has a different size. ");
+                throw new IllegalArgumentException("Error in variable Vector. Method copy. The parameter vec has a different size.");
 
             System.arraycopy(vector.baseConf, 0, this.baseConf, 0, this.nConf);
             this.baseVectors.copy(vector.getBaseVectors());
@@ -552,7 +651,7 @@ public class EF_BaseDistribution_MultinomialParents<E extends EF_Distribution> e
 
         public double dotProduct(CompoundVector vector) {
             if (vector.size() != this.size())
-                throw new IllegalArgumentException("Error in variable Vector. Method copy. The parameter vec has a different size. ");
+                throw new IllegalArgumentException("Error in variable Vector. Method copy. The parameter vec has a different size.");
 
             double sum = 0;
 
@@ -640,7 +739,7 @@ public class EF_BaseDistribution_MultinomialParents<E extends EF_Distribution> e
 
         public void sum(SparseVector vector) {
             if (vector.size() != this.size())
-                throw new IllegalArgumentException("Error in variable Vector. Method copy. The parameter vec has a different size. ");
+                throw new IllegalArgumentException("Error in variable Vector. Method copy. The parameter vec has a different size.");
 
             vector.nonZeroEntries().forEach(entry -> {
                     Vector localVector = this.getVectorByPosition(entry.getKey());

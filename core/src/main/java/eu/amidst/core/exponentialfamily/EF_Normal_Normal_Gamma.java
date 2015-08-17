@@ -20,25 +20,40 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by ana@cs.aau.dk on 25/02/15.
+ *
+ * This class extends the abstract class {@link EF_ConditionalDistribution} and defines, in exponential family canonical form,
+ * a conditional Normal distribution given Normal parents (or CLG distribution) and given, as a parents too, a set of of Normal and Gamma
+ * parameter variables. It used for Bayesian learning tasks.
+ *
+ * <p> For further details about how exponential family models are considered in this toolbox, take a look at the following paper:
+ * <i>Representation, Inference and Learning of Bayesian Networks as Conjugate Exponential Family Models. Technical Report.</i>
+ * (<a href="http://amidst.github.io/toolbox/docs/ce-BNs.pdf">pdf</a>) </p>
  */
 public class EF_Normal_Normal_Gamma extends EF_ConditionalDistribution{
 
+    /** Represents the number of parents. */
     int nOfParents;
 
+    /** Represents the list of the conditioning non-parameter Normal variables. */
     List<Variable> realYVariables;
+
+    /** Represents the list of parameter Normal variables associated to the beta coefficient values. */
     List<Variable> betasVariables;
+
+    /** Represents the parameter Normal variable associated to the beta0 coefficient value. */
     Variable beta0Variable;
+
+    /** Represents the parameter Gamma variable associated to the variance of the CLG distribution. */
     Variable gammaVariable;
 
 
     /**
-     *
-     * @param var_ X variable
-     * @param parents_ Y real parent variables
-     * @param beta0 Beta0 parameter variable
-     * @param betas_ Beta parameter variables
-     * @param gamma Inverse-gamma parameter variable
+     * Creates a new EF_Normal_Normal_Gamma distribution.
+     * @param var_ the main variable.
+     * @param parents_ the Normal parent variables.
+     * @param beta0 the Beta0 parameter variable.
+     * @param betas_ the Beta parameter variables.
+     * @param gamma the Inverse-gamma parameter variable.
      */
     public EF_Normal_Normal_Gamma(Variable var_, List<Variable> parents_, Variable beta0, List<Variable> betas_, Variable gamma){
         this.var = var_;
@@ -78,10 +93,7 @@ public class EF_Normal_Normal_Gamma extends EF_ConditionalDistribution{
     }
 
     /**
-     * Of the second form (message from all parents to X variable). Needed to calculate the lower bound.
-     *
-     * @param momentParents
-     * @return
+     * {@inheritDoc}
      */
     @Override
     public double getExpectedLogNormalizer(Map<Variable, MomentParameters> momentParents) {
@@ -115,9 +127,7 @@ public class EF_Normal_Normal_Gamma extends EF_ConditionalDistribution{
 
 
     /**
-     * Of the second form (message from all parents to X variable).
-     * @param momentParents
-     * @return
+     * {@inheritDoc}
      */
     @Override
     public NaturalParameters getExpectedNaturalFromParents(Map<Variable, MomentParameters> momentParents) {
@@ -146,13 +156,7 @@ public class EF_Normal_Normal_Gamma extends EF_ConditionalDistribution{
     }
 
     /**
-     * It is the message to one node to its parent @param parent, taking into account the suff. stat. if it is observed
-     * or the moment parameters if not, and incorporating the message (with moment param.) received from all co-parents.
-     * (Third form EF equations).
-     *
-     * @param parent
-     * @param momentChildCoParents
-     * @return
+     * {@inheritDoc}
      */
     @Override
     public NaturalParameters getExpectedNaturalToParent(Variable parent, Map<Variable, MomentParameters> momentChildCoParents) {
@@ -236,51 +240,81 @@ public class EF_Normal_Normal_Gamma extends EF_ConditionalDistribution{
         return naturalParameters;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getExpectedLogNormalizer(Variable parent, Map<Variable, MomentParameters> momentChildCoParents) {
         throw new UnsupportedOperationException("No Implemented. This method is no really needed");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <E extends ConditionalDistribution> E toConditionalDistribution() {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateNaturalFromMomentParameters() {
         throw new UnsupportedOperationException("No Implemented. NormalInverseGamma distribution should only be used for learning, use EF_Normal_NormalParents for inference.");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateMomentFromNaturalParameters() {
         throw new UnsupportedOperationException("No Implemented. NormalInverseGamma distribution should only be used for learning, use EF_Normal_NormalParents for inference.");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SufficientStatistics getSufficientStatistics(Assignment data) {
         throw new UnsupportedOperationException("No Implemented. NormalInverseGamma distribution should only be used for learning, use EF_Normal_NormalParents for inference.");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int sizeOfSufficientStatistics() {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double computeLogBaseMeasure(Assignment dataInstance) {
         return -0.5*Math.log(2*Math.PI);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double computeLogNormalizer() {
         throw new UnsupportedOperationException("No Implemented. NormalInverseGamma distribution should only be used for learning, use EF_Normal_NormalParents for inference.");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Vector createZeroedVector() {
+    public Vector createZeroVector() {
         throw new UnsupportedOperationException("No Implemented. NormalInverseGamma distribution should only be used for learning, use EF_Normal_NormalParents for inference.");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ConditionalDistribution toConditionalDistribution(Map<Variable, Vector> expectedValueParameterVariables) {
 

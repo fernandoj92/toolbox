@@ -16,6 +16,14 @@ import java.util.List;
 
 /**
  * The DAG class represents the Directed Acyclic Graph of a {@link BayesianNetwork}.
+ *
+ * <p> For an example of use follow this link </p>
+ * <p> <a href="http://amidst.github.io/toolbox/CodeExamples.html#bnexample"> http://amidst.github.io/toolbox/CodeExamples.html#bnexample </a>  </p>
+ *
+ * <p> For further details about the implementation of this class using Java 8 functional-style programming look at the following paper: </p>
+ *
+ * <i> Masegosa et al. Probabilistic Graphical Models on Multi-Core CPUs using Java 8. IEEE-CIM (2015). </i>
+ *
  */
 public class DAG implements Serializable {
 
@@ -55,7 +63,7 @@ public class DAG implements Serializable {
      * Returns the set of Variables in this DAG.
      * @return Variables containing the set of variables in this DAG.
      */
-    public Variables getStaticVariables() {
+    public Variables getVariables() {
         return this.variables;
     }
 
@@ -138,8 +146,8 @@ public class DAG implements Serializable {
             return false;
         } else {
             boolean eqs = true;
-            for (Variable var : this.getStaticVariables()) {
-                if (!this.getParentSet(var).equals(dag.getParentSet(dag.getStaticVariables().getVariableByName(var.getName())))) {
+            for (Variable var : this.getVariables()) {
+                if (!this.getParentSet(var).equals(dag.getParentSet(dag.getVariables().getVariableByName(var.getName())))) {
                     eqs = false;
                     break;
                 }
@@ -155,7 +163,7 @@ public class DAG implements Serializable {
     public String toString() {
         StringBuilder str = new StringBuilder();
         str.append("DAG\n");
-        for (Variable var : this.getStaticVariables()) {
+        for (Variable var : this.getVariables()) {
             str.append(var.getName() + " has "+ this.getParentSet(var).getNumberOfParents() + " parent(s): " + this.getParentSet(var).toString() + "\n");
         }
         return str.toString();
