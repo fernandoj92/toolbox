@@ -1,40 +1,214 @@
----
-title: Code Examples
----
+# Scope
 
-# Code Examples<a name="examples"></a>
+This toolbox offers a collection of scalable and parallel algorithms for inference and learning of hybrid Bayesian networks from streaming data. For example, AMIDST provides parallel multi-core implementations for Bayesian parameter learning, using streaming variational Bayes and variational message passing. Additionally, AMIDST efficiently leverages existing functionalities and algorithms by interfacing to existing software tools such as [R](https://www.r-project.org/), [Hugin](http://www.hugin.com) and [MOA](http://moa.cms.waikato.ac.nz). AMIDST is an open source toolbox written in Java and is available under the Apache Software License 2.0.
 
+In the next figure we show a taxonomy of relevant data mining tools dealing with PGMs and data streams. To the best of our knowledge, there is no other software for mining data streams based on PGMs, most of the existing softwares based on PGMs are only focused on mining stationary data sets. Hence, the main goal of AMIDST is to fill this gap and produce a significant contribution within the areas of PGMs and mining streaming data.
 
-   * [Data Streams](#datastreamsexample)
-   * [Random Variables](#variablesexample)
-   * [Bayesian Networks](#bnexample)
-       * [Creating Bayesian Networks](#bnnohiddenexample)
-       * [Creating Bayesian Networks with latent variables](#bnhiddenexample)
-       * [Modifying Bayesian Networks](#bnmodifyexample)
-   * [I/O Functionality](#ioexample)
-       * [I/O of Data Streams](#iodatastreamsexample)
-       * [I/O of Bayesian Networks](#iobnsexample)
-   * [Inference Algorithms](#inferenceexample)
-       * [The Inference Engine](#inferenceengingeexample)
-       * [Variational Message Passing](#vmpexample)
-       * [Importance Sampling](#isexample)
-   * [Learning Algorithms](#learningexample)
-       * [Maximum Likelihood](#mlexample)
-       * [Parallel Maximum Likelihood](#pmlexample)
-       * [Streaming Variational Bayes](#svbexample)
-       * [Parallel Streaming Variational Bayes](#psvbexample)
-   * [Concept Drift Methods](#conceptdriftexample)
-       * [Naive Bayes with Virtual Concept Drift Detection](#nbconceptdriftexample)
-   * [HuginLink](#huginglinkexample)
-       * [Models conversion between AMIDST and Hugin](#huginglinkconversionexample)
-       * [I/O of Bayesian Networks with Hugin net format](#huginglinkioexample)
-       * [Invoking Hugin's inference engine](#huginglinkinferenceexample)
-       * [Invoking Hugin's Parallel TAN](#huginglinkTANexample)
-   * [MoaLink](#moalinkexample)
-       * [AMIDST Classifiers from MOA](#moalinkclassifiersexample)
-       * [AMIDST Regression from MOA](#moalinkregressionsexample)
+<p align="center">
+<img title="Taxonomy" src="https://github.com/amidst/toolbox/blob/master/doc/Taxonomy.png?raw=true" width="400">
+</p>
 
 
+# Scalability
+
+Scalability is a main concern for the AMIDST toolbox. As mentioned before, we exploit Java 8 functional programming style to provide parallel implementations of most of our algorithms. If more computation capacity is needed to process data streams, AMIDST users can also use more CPU cores. As an example, the following figure shows how the data processing capacity of our toolbox increases with the number of cores when learning a hybrid BN model with latent variables using the AMIDST's learning engine. More precisely we learn a PGM model with multinomial (blue nodes) and Gaussian (green nodes) variables, some of them are latent, non observable, variables (dashed nodes). As can be seen, using our variational learning engine AMIDST toolbox is able to process data in the order of gigabytes per hour depending on the number of available cores with large and complex PGMs with latent variables.
+
+<p align="center">
+<img src="https://github.com/amidst/toolbox/blob/master/doc/Scalability.png?raw=true" width="800">
+</p>
+
+
+# Documentation<a name="documentation"></a>
+
+Click in some of following links for further information:
+
+* [Toolbox Functionalities](#functionalities) describes which are the main functionalities (i.e. pgms, learning and inference algorithms, etc) included in the current version of the toolbox.
+
+* [Getting Started](#architecture) describes how to install the toolbox as well as its module's based architecture.
+* [Contributing to AMIDST](#extension) describes the steps need to contribute to this toolbox.
+
+* [Code Examples](#examples) provides a long list of code examples covering most the of the functionalities of the toolbox.
+* [API Java Doc](http://amidst.github.io/toolbox/javadoc/index.html) of the toolbox. 
+
+* [Citing AMIDST Toolbox](#cite) describes how to cite this toolbox in your research paper. 
+
+<!--- [Maximum Likelihood with Fading](#mlfadingexample) [Streaming Variational Bayes with Fading](#svbfadingexample) -->
+
+
+## Toolbox Functionalities<a name="functionalities"></a>
+
+The AMIDST is an open source Java 8 toolbox that makes use of functional programming style to provide parallel processing on mutli-core CPUs \citep{CIM2015}. AMIDST provides a collection of functionalities and algorithms for learning hybrid Bayesian networks from streaming data. In what follows, we describe the main functionalities that AMIDST toolbox supplies.
+
+[[Back to Top]](#documentation)
+
+###Data Streams<a name="datastreams"></a> 
+AMIDST provides parallel processing built-in functionalities for dealing with streaming data \citep{CIM2015}. It is possible to make several passes over the data samples if the stream can be stored on disk, otherwise the samples are discarded after being processed. The data format supported by AMIDST is Weka's ARFF (Attribute-Relation File Format) \citep{Hall2009}.
+
+[[Back to Top]](#documentation)
+
+###Probabilistic Graphical Models<a name="pgms"></a>
+AMIDST currently includes efficient implementations for representing Bayesian networks. AMIDST supports both discrete and continuous variables, and besides Multionomial, Gaussian and conditional linear Gaussian distributions, it also supports other distributions such as Gamma, Poission, Dirichlet, etc. as far as the final BN can be represented as a \textit{conjugate-exponential family model} \citep{WinnBishop2005}.  Other kind of probabilistic graphical models, such as dynamic BNs, are expected to be included in this toolbox.
+
+[[Back to Top]](#documentation)
+
+###Inference Engine<a name="inference"></a>
+AMIDST includes the implementation of the \textit{variational message passing} \citep{WinnBishop2005} algorithm, and the parallel implementation of the \textit{importance sampling} \citep{hammersley1964monte,CAEPIA2015} algorithm. It also supports exact inference by interfacing with [Hugin](http://www.hugin.com)'s junction tree inference algorithm \citep{Madsen2005Hugin}. 
+
+[[Back to Top]](#documentation)
+
+###Learning Engine<a name="learning"></a>  
+In AMIDST, a fully Bayesian approach is pursued, which means that the parameter learning reduces to the task of inference. AMIDST provides a multi-core parallel implementation of the \textit{streaming variational Bayes} algorithm \citep{broderick2013streaming}, using \textit{variational message passing} as underlying inference engine, which can deal with large models with latent variables. When the model does not contain latent variables, an efficient parallel implementation of \textit{maximum likelihood estimation} \citep{mlestimation} can be also used by exploiting an efficient vector-based representation of BNs as \textit{exponential family models} \citep{WinnBishop2005}. For structural learning, AMIDST currently supports standard PC and parallel TAN algorithms by interfacing with [Hugin](http://www.hugin.com) \citep{Madsen2005Hugin,Madsen2014}.
+
+[[Back to Top]](#documentation)
+
+###Concept drift<a name="conceptdrift"></a> 
+AMIDST also offers some support for dealing with concept drift while learning BNs from data streams. Firstly, we provide an extension of the \textit{streaming variational Bayes} algorithm \citep{broderick2013streaming} which exponentially down-weights the influence of \textit{old} data samples with the use of a fading factor (TODO). So, models learnt with this approach will be \textit{focused} in most recent data. In addition, AMIDST provides a probabilistic concept drift detector based on the use of latent variables \citep{IDA2015}.
+
+[[Back to Top]](#documentation)
+
+###Links to MOA, Hugin and R<a name="librarylinks"></a> 
+AMIDST leverages existing functionalities and algorithms by interfacing to existing software tools such as [R](https://www.r-project.org/), [Hugin](http://www.hugin.com) and [MOA](http://moa.cms.waikato.ac.nz) (Massive Online Analysis) \citep{BifetHolmesKirkbyPfahringer10}. This allows to efficiently well established systems and also broaden the AMIDST user-base. 
+
+* **HuginLink** consists of a set of functionalities implemented to link the AMIDST toolbox with [Hugin](http://www.hugin.com) commercial software \citep{Madsen2005Hugin}. This connection extends AMIDST by providing some of the main functionalities of [Hugin](http://www.hugin.com), such as exact inference algorithms and scalable structural learning algorithms \citep{Madsen2014}. [Hugin](http://www.hugin.com) is a third-party commercial software and to access to these functionalities it is needed a license of the software and to follow some specific installation steps (further information is given [here](http://amidst.github.io/toolbox/#installhugin)).
+
+* **MoaLink** ensures an easy use of AMDIST functionalities within [MOA](http://moa.cms.waikato.ac.nz) \citep{BifetHolmesKirkbyPfahringer10}.  The main idea is that any model deployed in AMIDST can be integrated and evaluated using MOA's graphical user interface. As a proof of concept, \textit{MoaLink} already provides a classification, a regression and a clustering method based on BN models with latent variables. These models are learnt in a streaming fashion using AMIDST learning engine. 
+
+* **RLink** ....
+
+[[Back to Top]](#documentation)
+
+## Getting Started <a name="architecture"></a>
+
+### Module's Based Architecture<a name="description"></a>
+AMIDST toolbox is an open source project under [Apache Software License 2.0](http://www.apache.org/licenses/LICENSE-2.0). It is written in Java and is based on [Apache Maven](https://en.wikipedia.org/wiki/Apache_Maven) for building and structuring the project. This toolbox is structured as [multi-module Maven project](http://books.sonatype.com/mvnex-book/reference/multimodule.html). Roughly speaking, a **Maven module** is an independent piece of software with explicit dependencies to other modules in the project and to other external libraries. Each module is placed in independent folders and contains an xml file describing its dependencies. In this current version, the toolbox is composed by the following four modules:
+
+* **Core module** contains all the main functionalities of the toolbox. It is placed in the *core* folder. Go to the [Java Doc](http://amidst.github.io/toolbox/javadoc/index.html) for details about the different Java classes. 
+
+* **Examples module** contains basic code examples showing how to use the main functionalities of the toolbox. It is placed in the *examples* folder under the root project folder.
+
+* **MoaLink module** contains the code needed to use the AMIDST functionality within MOA. It is placed in the *moalink* folder  under the root project folder.
+
+* **HuginLink module** contains the code needed to use [Hugin](www.hugin.com) software within AMIDST. It is placed in the *huginlink* folder under the root project folder. 
+
+[[Back to Top]](#documentation)
+
+### Java 8 Integration: Lambdas, streams, and functional-sytle programming<a name="java8"></a>
+
+This toolbox has been specifically designed for using the functional-style features provided by the Java 8 release. This design leverages these new features for developing easy-to-code parallel algorithms on mutli-core CPUs. As commented above, the main scalability properties of this toolbox rely on this functional-style approach introduced in Java 8. Our aim is that future developers can also exploit this specific design of the toolbox for easily developing new methods for dealing with massive data streams using PGMs.  
+
+Our paper [Probabilistic Graphical Models on Multi-Core CPUs using Java 8]() provides a deep discussion over the different design issues we had to face and how they were solved using Java 8 functional-style features. 
+
+[[Back to Top]](#documentation)
+
+### Installing AMIDST Toolbox <a name="installation"></a>
+
+The first step is to install [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).  We strongly recommend [IntelliJ](http://www.jetbrains.com/idea/download/) as IDE tool because it has direct support of Maven and Github. 
+
+Now, we detail two different installation settings based on Maven and IntelliJ. The first installation settings is for those who just want to use the AMIDST toolbox and do not plan to make contributions/extensions to this open software project. The second settings details how to proceed to be a contributor of this project. 
+
+* **Using AMIDST** simply requires to create a new **Maven Project** using IntelliJ where your code will be placed. Then edit the file "pom.xml" and add the following lines referring to the link the AMIDST jar library inside the dependencies plugin (follow this [link](http://books.sonatype.com/mvnex-book/reference/customizing-sect-add-depend.html) for further details) and then you are ready to rock. 
+
+        <dependency>
+            <groupId>eu.amidst.toolbox</groupId>
+            <artifactId>AMIDST</artifactId>
+            <version>1.0</version>
+        </dependency>
+ 
+* **Contributing to AMDIST** is based on the [Fork & Pull](https://help.github.com/articles/using-pull-requests/) collaboration model. Read this [guide](https://guides.github.com/activities/forking/) for full details about how to fork a project and make a pull request. Once you have forked the project and make a local copy to you computer, just you can just open with Intellij the project by pointing at the pom file. Further details about how to contribute to this project are given this [section](#extension). 
+
+[[Back to Top]](#documentation)
+
+#### Installing MOALink<a name="installmoa"></a>
+
+To use AMIDST functionality within [MOA](http://moa.cms.waikato.ac.nz) you just have to run the script \texttt{compileWithDependencies.sh} in the *moalink* directory. A file *moalink-1.0-SNAPSHOT-jar-with-dependencies.jar* will be generated in the \texttt{moalink/target} directory. Please place this jar file on your library path for [MOA](http://moa.cms.waikato.ac.nz). 
+
+With this jar file we can make use of the different learning and inference algorithms in AMIDST to learn more expressive Bayesian network models for classification, regression and clustering. AMIDST offers the possibility to add latent Gaussian and/or Multinomial variables to a base naive Bayes structure. Normally, the addition of these latent variables should provide classifiers with lower bias and higher variance, that is, more sophisticated classifiers that are able to lean more complex interdependencies in the data, but also more prone to overfit. The user should evaluate the complexity of his/her dataset and choose the number of latent Gaussian variables and states of the multinomial latent variable accordingly.
+
+With the following command, [MOA](http://moa.cms.waikato.ac.nz) gui can be invoked e.g (remember to place \texttt{compileWithDependencies.sh} under the lib folder reference in the *-cp* option):
+
+```
+java -Xmx512m -cp "../lib/*" -javaagent:../lib/sizeofag-1.0.0.jar moa.gui.GUI
+```
+
+Note that the above example should be slightly adapted to run on a Windows machine: e.g. use \textasciicircum~ instead of \textbackslash~ to escape brackets.
+
+#### Installing HuginLink<a name="installhugin"></a>
+
+HuginLink is present in the toolbox as a independent Maven module. To use this module and, in consequence, access some of the functionalities provided by [Hugin](http://www.hugin.com/) commercial software, we need to perform the following steps:
+
+1. **Install Hugin software**. Here we we describe how to install [Hugin Lite 8.2](http://www.hugin.com/productsservices/demo) which is a freely available demo version of [Hugin](http://www.hugin.com) software. For those with a full license or who want to update HuginLink to link to a new version of [Hugin](http://www.hugin.com) sofware, just follow the same steps.
+
+2. **Install the binary file**. Inside the installation folder you will find a folder called *Libraries* which contains the binary file needed for the installation. Choose the file that fits with your operating system and copy it to the folder [project-root-folder]/huginlink/huginlib/. For example, for a MAC OS X with 64 bits architecture the file needed is *libhapi82-64.jnilib*. 
+    
+    Finally, rename this binary the file to match it with the Java jar file already provided by the toolbox, *[project-root-folder]/huginlink/huginlib/hapi82_amidst-64.jar*. The final name of the binary file should be *libhapi82_amidst-64* while the extension should not be modify. 
+
+
+<!--- 2. **Install the jar file**. Inside the installation folder of [Hugin Lite](http://www.hugin.com/productsservices/demo), you will find a jar file. Copy this file to the folder [project-root-folder]/huginlink/huginlib/. Then, edit the file [project-root-folder]/huginlink/pom.xml to correctly reference to this jar file. The lines to edit are the following:
+
+        <dependency>
+            <groupId>com.hugin</groupId>
+            <artifactId>hugin</artifactId>
+            <version>8.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/huginlib/hapi82-64.jar</systemPath>
+        </dependency>
+-->
+
+Now, you can invoke the following example by using the script *run.sh* :
+
+    ./run.sh eu.amidst.huginlink.examples.inference.HuginInferenceExample
+
+
+We notice that ror running any code invoking the Hugin API, you have to provide the following option to the JVM  
+
+    -Djava.library.path="./huginlink/huginlib/" 
+
+
+### Compiling & Running from the command line<a name="compilation"></a>
+
+1. Install Maven: http://maven.apache.org/download.cgi  (follow specific instructions for your OS).
+
+2. Modify the file maven_startup.sh (which you can find in the root project folder) and fix the path of your maven (Line 5) and java installation (Line 9).
+
+3. Create (or modify if already exists) a file ".profile" or ".bash_profile" in you home directory and add the following line,
+which points to file "maven_startup.sh"
+
+        source <project-folder>/maven_startup.sh
+
+ Now after restarting the terminal, mvn should work.
+
+
+4. The script "compile.sh" (which you can find in the root project folder) just compiles the whole project.
+
+
+5. The script "run.sh" (which you can find in the root project folder) should be used to run some class. For example,
+
+        ./run.sh eu.amidst.core.examples.learning.ParallelMaximumLikelihoodExample
+
+[[Back to Top]](#documentation)
+
+## Contributing to AMIDST <a name="extension"></a>
+
+Developers are expected to contribute to this open software following the [Fork & Pull](https://help.github.com/articles/using-pull-requests/) collaboration model. Read this [guide](https://guides.github.com/activities/forking/) for full details about how to fork a project and make a pull request.
+
+We establish the following categorization for the contributions to the toolbox. Each one is associated with a different collaboration schemes which is also detailed below.  
+
+* (A) **Basic Contributions** encompasses those contributions to the code that do not imply any major change or addition. For example, fixing a bug, adding methods to existing classes, adding new utility classes, etc. This contributions are made through a [pull request](https://help.github.com/articles/using-pull-requests/), which will be examined by the core group of developers of the project. 
+
+* (B) **Major Extensions** refers to those contributions which aims to be a new functionality of the toolbox. For example,new inference methods, new learning algorithms, new concept-drift detection methods, new PGMs, new links to other toolboxes, etc. These extensions or new functionalities will be integrated as new Maven modules and will be located in the folder *[project-root-folder]/extensions/*. Then, contributing with a new extension will be based on the following three steps: (i) create a new Maven module using IntelliJ (follow this [link](https://www.jetbrains.com/idea/help/creating-maven-module.html) for details); then (ii) code your new algorithm inside this module; and (iii) make a [pull request](https://help.github.com/articles/using-pull-requests/) to add the new functionality to the project repository. 
+        All the provided extensions should fulfill the following basic quality requirements to be accepted as extensions by the AMIDST core team. 
+    * (1) They should contain a readme.txt file detailing the functionality and scope of the extension. It is also needs to specify if it is supported by a companion paper, student project, etc.
+
+    * (2) The code should be well documented following [JavaDoc](https://en.wikipedia.org/wiki/Javadoc) standards. 
+ 
+    * (3) It has to include [JUnit](www.junit.org/) tests which verify the correctness of the results produced the provided code. 
+
+* (C) **Use-Cases** refers to those contributions which do not add any specific functionality to the toolbox. They can be seen as examples of how this toolbox can be used. This category might include contributions related to student projects, research papers, industry applications, etc. The AMIDST core team will not supervise the quality of the contributions, this is responsibility of the contributors. They  will be integrated as independent Maven modules and will be placed in an different code repository on github, https://github.com/amidst/toolbox-use-cases/, where they are expected to be submitted using, again, a [pull request](https://help.github.com/articles/using-pull-requests/) approach. 
+
+[[Back to Top]](#documentation)
+
+
+## Code Examples<a name="examples"></a>
 
 ## Data Streams<a name="datastreamsexample"></a>
   
@@ -1028,5 +1202,10 @@ moa.DoTask EvaluatePrequentialRegression -l bayes.AmidstRegressor
 ```
 
 Note that the simpler the dataset the less complex the model should be. In this case, \texttt{quake.arff} is a very simple and small dataset that should probably be learn with a more simple classifier, that is, a high-bias-low-variance classifier, in order to avoid overfitting. This aims at providing a simple running example.
+
+[[Back to Top]](#documentation)
+
+## Citing AMIDST Toolbox <a name="cite"></a>
+
 
 [[Back to Top]](#documentation)
