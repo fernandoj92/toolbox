@@ -37,4 +37,4 @@ Click in some of following links for further information:
 
 Include a reference to the following paper:
 
-> Masegosa et al. AMIDST: Analysis of MassIve Data STreams using Probabilistic Graphical Models. JMLR 2015. 
+> AMIDST: Analysis of MassIve Data STreams using Probabilistic Graphical Models. JMLR 2015. 

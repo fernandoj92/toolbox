@@ -23,9 +23,9 @@ Our paper [Probabilistic Graphical Models on Multi-Core CPUs using Java 8]() pro
 
 ## Installing AMIDST Toolbox <a name="installation"></a>
 
-The first step is to install [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).  We strongly recommend [IntelliJ](http://www.jetbrains.com/idea/download/) as IDE tool because it has direct support of Maven and Github. 
+The first step is to install [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).  As second step, we strongly recommend [IntelliJ](http://www.jetbrains.com/idea/download/) as IDE tool because it has direct support of Maven and Github. 
 
-Now, we detail two different installation settings based on Maven and IntelliJ. The first installation settings is for those who just want to use the AMIDST toolbox and do not plan to make contributions/extensions to this open software project. The second settings details how to proceed to be a contributor of this project. 
+<!---  Now, we detail two different installation settings based on Maven and IntelliJ. The first installation settings is for those who just want to use the AMIDST toolbox and do not plan to make contributions/extensions to this open software project. The second settings details how to proceed to be a contributor of this project. 
 
 * **Using AMIDST** simply requires to create a new **Maven Project** using IntelliJ where your code will be placed. Then edit the file "pom.xml" and add the following lines referring to the link the AMIDST jar library inside the dependencies plugin (follow this [link](http://books.sonatype.com/mvnex-book/reference/customizing-sect-add-depend.html) for further details) and then you are ready to rock. 
 
@@ -34,8 +34,11 @@ Now, we detail two different installation settings based on Maven and IntelliJ. 
             <artifactId>AMIDST</artifactId>
             <version>1.0</version>
         </dependency>
+-->
  
-* **Contributing to AMDIST** is based on the [Fork & Pull](https://help.github.com/articles/using-pull-requests/) collaboration model. Read this [guide](https://guides.github.com/activities/forking/) for full details about how to fork a project and make a pull request. Once you have forked the project and make a local copy to you computer, just you can just open with Intellij the project by pointing at the pom file. Further details about how to contribute to this project are given this [section](#extension). 
+* **Contributing to AMDIST** is based on the [Fork & Pull](https://help.github.com/articles/using-pull-requests/) collaboration model. Read this [guide](https://guides.github.com/activities/forking/) for full details about how to fork a project and make a pull request. Once you have forked the project, you can clone to you computer and open it with Intellij by pointing at the pom file, and everything will be ready to start. 
+
+Further details about how to contribute to this project are given this [link](http://amidst.github.io/toolbox/ContributingToAMIDST.html). 
 
 
 
@@ -105,4 +108,3 @@ which points to file "maven_startup.sh"
 5. The script "run.sh" (which you can find in the root project folder) should be used to run some class. For example,
 
         ./run.sh eu.amidst.core.examples.learning.ParallelMaximumLikelihoodExample
-
