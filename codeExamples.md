@@ -1,3 +1,7 @@
+---
+title: Code Examples
+---
+
 # Code Examples<a name="examples"></a>
 
 
