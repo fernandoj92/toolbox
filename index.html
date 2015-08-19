@@ -46,9 +46,7 @@ a hybrid BN model with latent variables using the AMIDST's learning engine. More
 with multinomial (blue nodes) and Gaussian (green nodes) variables, some of them are latent, non observable, 
 variables (dashed nodes). As can be seen, using our variational learning engine AMIDST toolbox is able to 
 process data in the order of gigabytes per hour depending on the number of available cores with large and 
-complex PGMs with latent variables (these experiments were carried out on a Ubuntu Linux server with a x86_64 
-architecture and 32 cores. The size of the processed data set was measured according to the 
-<a href="www.cs.waikato.ac.nz/ml/weka/">Weka</a>'s ARFF format).</p>
+complex PGMs with latent variables[^1].</p>
 
 <p align="center">
 <img src="https://amidst.github.io/toolbox/docs/scalability.pdf" width="800">
@@ -81,6 +79,8 @@ architecture and 32 cores. The size of the processed data set was measured accor
 <a id="upcoming-developments" class="anchor" href="#upcoming-developments" aria-hidden="true"><span class="octicon octicon-link"></span></a>Upcoming Developments</h2>
 
 <p>AMIDST Toolbox is an expanding project and upcoming developments include the implementation of <a href="https://en.wikipedia.org/wiki/Dynamic_Bayesian_network">dynamic models</a> for handling streaming data, the integration of the toolbox in Big Data platforms like <a href="http://spark.apache.org">Spark</a> and <a href="http://flink.apache.org">Flink</a> to enlarge its scalability capacities, and a new link to <a href="http://static.amidst.eu/upload/dokumenter/Posters/PosterUseR.pdf">R</a> to expand the users base.</p>
+
+<p>[^1]: These experiments were carried out on a Ubuntu Linux server with a x86_64 architecture and 32 cores. The size of the processed data set was measured according to the <a href="www.cs.waikato.ac.nz/ml/weka/">Weka</a>'s ARFF format.</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/amidst/toolbox">AMIDST Toolbox 1.0</a> is maintained by <a href="https://github.com/amidst">amidst</a>.</span>
