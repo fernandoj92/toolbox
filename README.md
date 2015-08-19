@@ -10,7 +10,7 @@ Apache Software License 2.0.
 In the next figure we show a taxonomy of relevant data mining tools dealing with PGMs and data streams. To the best of our knowledge, there is no other software for mining data streams based on PGMs, most of the existing softwares based on PGMs are only focused on mining stationary data sets. Hence, the main goal of AMIDST is to fill this gap and produce a significant contribution within the areas of PGMs and mining streaming data.
 
 <p align="center">
-<img title="Taxonomy" src="https://amidst.github.io/toolbox/docs/taxonomy.pdf" width="500">
+<img title="Taxonomy" src="https://amidst.github.io/toolbox/docs/taxonomy.png" width="500">
 </p>
 
 # Scalability
@@ -29,7 +29,7 @@ architecture and 32 cores. The size of the processed data set was measured accor
 
 
 <p align="center">
-<img src="https://amidst.github.io/toolbox/docs/scalability.pdf" width="800">
+<img src="https://amidst.github.io/toolbox/docs/scalability.png" width="800">
 </p>
 
 
