@@ -23,9 +23,7 @@ a hybrid BN model with latent variables using the AMIDST's learning engine. More
 with multinomial (blue nodes) and Gaussian (green nodes) variables, some of them are latent, non observable, 
 variables (dashed nodes). As can be seen, using our variational learning engine AMIDST toolbox is able to 
 process data in the order of gigabytes per hour depending on the number of available cores with large and 
-complex PGMs with latent variables (these experiments were carried out on a Ubuntu Linux server with a x86_64 
-architecture and 32 cores. The size of the processed data set was measured according to the 
-[Weka](www.cs.waikato.ac.nz/ml/weka/)'s ARFF format).
+complex PGMs with latent variables(*).
 
 
 <p align="center">
@@ -54,6 +52,15 @@ Include a reference to the following paper:
 
 > AMIDST: Analysis of MassIve Data STreams using Probabilistic Graphical Models. Submitted to JMLR. 2015. 
 
+## AMIDST's Papers & Use-Cases
+
+In the following repository it is hosted the software code of some use-cases and scientific papers using AMIDST toolbox. AMIDST users are encouraged to upload their contributions to this repository following the indications given in this [link](http://amidst.github.io/toolbox/ContributingToAMIDST.html).
+
+[https://github.com/amidst/toolbox-usecases](https://github.com/amidst/toolbox-usecases)
+
+
 ## Upcoming Developments
 
 AMIDST Toolbox is an expanding project and upcoming developments include the implementation of [dynamic models](https://en.wikipedia.org/wiki/Dynamic_Bayesian_network) for handling streaming data, the integration of the toolbox in Big Data platforms like [Spark](http://spark.apache.org) and [Flink](http://flink.apache.org) to enlarge its scalability capacities, and a new link to [R](http://static.amidst.eu/upload/dokumenter/Posters/PosterUseR.pdf) to expand the users base.
+
+(*)These experiments were carried out on a Ubuntu Linux server with a x86_64 architecture and 32 cores. The size of the processed data set was measured according to the [Weka](www.cs.waikato.ac.nz/ml/weka/)'s ARFF format.
