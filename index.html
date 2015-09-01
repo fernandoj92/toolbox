@@ -12,7 +12,7 @@
   <body>
     <section class="page-header">
       <h1 class="project-name">AMIDST Toolbox 1.0</h1>
-      <h2 class="project-tagline">A Java Library for Analysis of MassIve Data Streams using Probabilistic Graphical Models</h2>
+      <h2 class="project-tagline">A Java Toolbox for Analysis of MassIve Data STreams using Probabilistic Graphical Models</h2>
       <a href="https://github.com/amidst/toolbox" class="btn">View on GitHub</a>
       <a href="https://github.com/amidst/toolbox/zipball/master" class="btn">Download .zip</a>
       <a href="https://github.com/amidst/toolbox/tarball/master" class="btn">Download .tar.gz</a>
@@ -23,13 +23,13 @@
 <a id="scope" class="anchor" href="#scope" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scope</h1>
 
 <p>This toolbox offers a collection of scalable and parallel algorithms for inference and learning of hybrid Bayesian 
-networks from streaming data. For example, AMIDST provides parallel multi-core implementations of Bayesian parameter 
+networks (BNs) from streaming data. For example, AMIDST provides parallel multi-core implementations of Bayesian parameter 
 learning, using streaming variational Bayes and variational message passing. Additionally, AMIDST efficiently leverages 
 existing functionalities and algorithms by interfacing to existing software tools such as <a href="http://www.hugin.com">Hugin</a> 
-and <a href="http://moa.cms.waikato.ac.nz">MOA</a>. AMIDST is an open source toolbox written in Java and is available under the 
-Apache Software License 2.0.</p>
+and <a href="http://moa.cms.waikato.ac.nz">MOA</a>. AMIDST is an open source Java toolbox released under the 
+Apache Software License version 2.0.</p>
 
-<p>In the next figure we show a taxonomy of relevant data mining tools dealing with PGMs and data streams. To the best of our knowledge, there is no other software for mining data streams based on PGMs, most of the existing softwares based on PGMs are only focused on mining stationary data sets. Hence, the main goal of AMIDST is to fill this gap and produce a significant contribution within the areas of PGMs and mining streaming data.</p>
+<p>The figure below shows a non-exhaustive taxonomy of relevant data mining tools dealing with probabilistic graphical models (PGMs) and data streams. To the best of our knowledge, existing software systems for PGMs only focus on mining stationary data sets, and hence, the main goal of AMIDST is to fill this gap and provide a significant contribution within the areas of PGMs and mining data streams.</p>
 
 <p align="center">
 <img title="Taxonomy" src="https://amidst.github.io/toolbox/docs/taxonomy.png" width="500">
@@ -38,17 +38,7 @@ Apache Software License 2.0.</p>
 <h1>
 <a id="scalability" class="anchor" href="#scalability" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scalability</h1>
 
-<p>Scalability is a main concern for the AMIDST toolbox. We exploit Java 8 functional 
-programming style to provide parallel implementations of most of our algorithms. If more computation capacity 
-is needed to process data streams, AMIDST users can also use more CPU cores. As an example, the following 
-figure shows how the data processing capacity of our toolbox increases with the number of cores when learning 
-a hybrid BN model with latent variables using the AMIDST's learning engine. More precisely, we learn a PGM model 
-with multinomial (blue nodes) and Gaussian (green nodes) variables, some of them are latent, non observable, 
-variables (dashed nodes). As can be seen, using our variational learning engine AMIDST toolbox is able to 
-process data in the order of gigabytes per hour depending on the number of available cores with large and 
-complex PGMs with latent variables (these experiments were carried out on a Ubuntu Linux server with a x86_64 
-architecture and 32 cores. The size of the processed data set was measured according to the 
-<a href="www.cs.waikato.ac.nz/ml/weka/">Weka</a>'s ARFF format).</p>
+<p>Scalability is a main concern for the AMIDST toolbox. Java 8 functional programming style is used to provide parallel implementations of the algorithms. If more computation capacity is needed to process data streams, AMIDST users can also use more CPU cores. As an example, the following figure shows how the data processing capacity of our toolbox increases given the number of CPU cores when learning an hybrid BN model (including a class variable C, two latent variables (dashed nodes), multinomial (blue nodes) and Gaussian (green nodes) observable variables) using the AMIDST's learning engine. As can be seen, using our variational learning engine, AMIDST toolbox is able to process data in the order of gigabytes (GB) per hour depending on the number of available CPU cores with large and complex PGMs with latent variables. Note that, these experiments were carried out on a Ubuntu Linux server with a x86_64 architecture and 32 cores. The size of the processed data set was measured according to the <a href="www.cs.waikato.ac.nz/ml/weka/">Weka</a>'s ARFF format.</p>
 
 <p align="center">
 <img src="https://amidst.github.io/toolbox/docs/scalability.png" width="800">
@@ -58,36 +48,30 @@ architecture and 32 cores. The size of the processed data set was measured accor
 <a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation<a name="documentation"></a>
 </h1>
 
-<p>Click in some of following links for further information:</p>
-
 <ul>
-<li><p><a href="http://amidst.github.io/toolbox/GettingStarted.html">Getting Started</a> describes how to install the toolbox, how this toolbox integrates with Java 8 new functional-style programming features, and why it is based on a module based architecture.</p></li>
-<li><p><a href="http://amidst.github.io/toolbox/ToolboxFunctionalities.html">Toolbox Functionalities</a> describes which are the main functionalities (i.e. pgms, learning and inference algorithms, etc) included in the current version of the toolbox.</p></li>
-<li><p><a href="http://amidst.github.io/toolbox/ContributingToAMIDST.html">Contributing to AMIDST</a> describes the steps needed to contribute to this toolbox. This toolbox is intended to be a highly collaborative project.</p></li>
+<li><p><a href="http://amidst.github.io/toolbox/GettingStarted.html">Getting Started</a>: describes how to install the toolbox, how this toolbox make use of Java 8 new functional style programming features, and why it is based on a module based architecture.</p></li>
+<li><p><a href="http://amidst.github.io/toolbox/ToolboxFunctionalities.html">Toolbox Functionalities</a> describes the main functionalities (i.e., PGMs, learning and inference engines, etc.) included in the current version of the toolbox.</p></li>
 <li><p><a href="http://amidst.github.io/toolbox/CodeExamples.html">Code Examples</a> provides a long list of code examples covering most the of the functionalities of the toolbox.</p></li>
 <li><p><a href="http://amidst.github.io/toolbox/javadoc/index.html">API Java Doc</a> of the toolbox. </p></li>
+<li><p><a href="http://amidst.github.io/toolbox/ContributingToAMIDST.html">Contributing to AMIDST</a> .</p></li>
 </ul>
 
 <h2>
-<a id="citing-amidst-toolbox" class="anchor" href="#citing-amidst-toolbox" aria-hidden="true"><span class="octicon octicon-link"></span></a>Citing AMIDST Toolbox</h2>
+<a id="contributing-to-amidst" class="anchor" href="#contributing-to-amidst" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributing to AMIDST</h2>
 
-<p>Include a reference to the following paper:</p>
-
-<blockquote>
-<p>AMIDST: Analysis of MassIve Data STreams using Probabilistic Graphical Models. Submitted to JMLR. 2015. </p>
-</blockquote>
+<p>AMIDST is an open source toolbox and the end-users are encouraged to upload their contributions (which may include basic contributions, major extensions, and/or use-cases) following the indications given in this <a href="http://amidst.github.io/toolbox/ContributingToAMIDST.html">link</a>.</p>
 
 <h2>
-<a id="amidsts-papers--use-cases" class="anchor" href="#amidsts-papers--use-cases" aria-hidden="true"><span class="octicon octicon-link"></span></a>AMIDST's Papers &amp; Use-Cases</h2>
+<a id="amidsts-publications--use-cases" class="anchor" href="#amidsts-publications--use-cases" aria-hidden="true"><span class="octicon octicon-link"></span></a>AMIDST's Publications &amp; Use-Cases</h2>
 
-<p>In the following repository it is hosted the software code of some use-cases and scientific papers using AMIDST toolbox. AMIDST users are encouraged to upload their contributions to this repository following the indications given in this <a href="http://amidst.github.io/toolbox/ContributingToAMIDST.html">link</a>.</p>
+<p>The following repository contains the source code and details about the publications and use-cases using the AMIDST toolbox. </p>
 
 <p><a href="https://github.com/amidst/toolbox-usecases">https://github.com/amidst/toolbox-usecases</a></p>
 
 <h2>
 <a id="upcoming-developments" class="anchor" href="#upcoming-developments" aria-hidden="true"><span class="octicon octicon-link"></span></a>Upcoming Developments</h2>
 
-<p>AMIDST Toolbox is an expanding project and upcoming developments include the implementation of <a href="https://en.wikipedia.org/wiki/Dynamic_Bayesian_network">dynamic models</a> for handling streaming data, the integration of the toolbox in Big Data platforms like <a href="http://spark.apache.org">Spark</a> and <a href="http://flink.apache.org">Flink</a> to enlarge its scalability capacities, and a new link to <a href="http://static.amidst.eu/upload/dokumenter/Posters/PosterUseR.pdf">R</a> to expand the users base.</p>
+<p>The AMIDST toolbox is an expanding project and upcoming developments include for instance the implementation of <a href="https://en.wikipedia.org/wiki/Dynamic_Bayesian_network">dynamic models</a> for handling data streams, the integration of the toolbox in Big Data platforms like <a href="http://spark.apache.org">Spark</a> and <a href="http://flink.apache.org">Flink</a> to enlarge its scalability capacities, and a new link to <a href="http://static.amidst.eu/upload/dokumenter/Posters/PosterUseR.pdf">R</a> to expand the AMIDST user-base.</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/amidst/toolbox">AMIDST Toolbox 1.0</a> is maintained by <a href="https://github.com/amidst">amidst</a>.</span>
