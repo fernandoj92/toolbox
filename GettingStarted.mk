@@ -1,26 +1,4 @@
-# Getting Started <a name="architecture"></a>
-
-## Module's Based Architecture<a name="description"></a>
-AMIDST toolbox is an open source project under [Apache Software License 2.0](http://www.apache.org/licenses/LICENSE-2.0). It is written in Java and is based on [Apache Maven](https://en.wikipedia.org/wiki/Apache_Maven) for building and structuring the project. This toolbox is structured as [multi-module Maven project](http://books.sonatype.com/mvnex-book/reference/multimodule.html). Roughly speaking, a **Maven module** is an independent piece of software with explicit dependencies to other modules in the project and to other external libraries. Each module is placed in independent folders and contains an xml file describing its dependencies. In this current version, the toolbox is composed by the following four modules:
-
-* **Core module** contains all the main functionalities of the toolbox. It is placed in the *core* folder under the root project folder. 
-
-* **Examples module** contains basic code examples showing how to use the main functionalities of the toolbox. It is placed in the *examples* folder under the root project folder.
-
-* **MoaLink module** contains the code needed to use the AMIDST functionality within [MOA](http://moa.cms.waikato.ac.nz/). It is placed in the *moalink* folder  under the root project folder.
-
-* **HuginLink module** contains the code needed to use [Hugin](www.hugin.com) software within AMIDST. It is placed in the *huginlink* folder under the root project folder. 
-
-
-
-## Java 8 Integration: Lambdas, streams, and functional-sytle programming<a name="java8"></a>
-
-This toolbox has been specifically designed for using the functional-style features provided by the Java 8 release. This design leverages these new features for developing easy-to-code parallel algorithms on mutli-core CPUs. As commented above, the main scalability properties of this toolbox rely on this functional-style approach introduced in Java 8. Our aim is that future developers can also exploit this specific design of the toolbox for easily developing new methods for dealing with massive data streams using PGMs.  
-
-The following paper provides a deep discussion over the different design issues we had to face and how they were solved using Java 8 functional-style features. 
-
-
-> Andres R. Masegosa, Ana M. Martinez, and Hanen Borchani. Probabilistic graphical models on multi-core CPUs using Java 8. IEEE Computational Intelligence Magazine, Special Issue on Computational Intelligence Software, Under review, 2015.
+# Getting Started! <a name="architecture"></a>
 
 ## Installing AMIDST Toolbox <a name="installation"></a>
 
@@ -144,3 +122,27 @@ which points to file "maven_startup.sh"
 5. The script "run.sh" (which you can find in the root project folder) should be used to run some class. For example,
 
         ./run.sh eu.amidst.core.examples.learning.ParallelMaximumLikelihoodExample
+
+
+## Java 8 Integration: Lambdas, streams, and functional-sytle programming<a name="java8"></a>
+
+This toolbox has been specifically designed for using the functional-style features provided by the Java 8 release. This design leverages these new features for developing easy-to-code parallel algorithms on mutli-core CPUs. As commented above, the main scalability properties of this toolbox rely on this functional-style approach introduced in Java 8. Our aim is that future developers can also exploit this specific design of the toolbox for easily developing new methods for dealing with massive data streams using PGMs.  
+
+The following paper provides a deep discussion over the different design issues we had to face and how they were solved using Java 8 functional-style features. 
+
+
+> Andres R. Masegosa, Ana M. Martinez, and Hanen Borchani. Probabilistic graphical models on multi-core CPUs using Java 8. IEEE Computational Intelligence Magazine, Special Issue on Computational Intelligence Software, Under review, 2015.
+
+
+## Module's Based Architecture<a name="description"></a>
+
+AMIDST toolbox is an open source project under [Apache Software License 2.0](http://www.apache.org/licenses/LICENSE-2.0). It is written in Java and is based on [Apache Maven](https://en.wikipedia.org/wiki/Apache_Maven) for building and structuring the project. This toolbox is structured as [multi-module Maven project](http://books.sonatype.com/mvnex-book/reference/multimodule.html). Roughly speaking, a **Maven module** is an independent piece of software with explicit dependencies to other modules in the project and to other external libraries. Each module is placed in independent folders and contains an xml file describing its dependencies. In this current version, the toolbox is composed by the following four modules:
+
+* **Core module** contains all the main functionalities of the toolbox. It is placed in the *core* folder under the root project folder. 
+
+* **Examples module** contains basic code examples showing how to use the main functionalities of the toolbox. It is placed in the *examples* folder under the root project folder.
+
+* **MoaLink module** contains the code needed to use the AMIDST functionality within [MOA](http://moa.cms.waikato.ac.nz/). It is placed in the *moalink* folder  under the root project folder.
+
+* **HuginLink module** contains the code needed to use [Hugin](www.hugin.com) software within AMIDST. It is placed in the *huginlink* folder under the root project folder. 
+

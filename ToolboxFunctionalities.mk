@@ -6,10 +6,10 @@ The AMIDST system is an open source Java 8 toolbox that makes use of a functiona
 AMIDST supports parallel processing by using built-in functionalities for dealing with streaming data. It is possible to make several passes over the data samples if the stream can be stored on disk, otherwise the samples are discarded after being processed. The data format supported by AMIDST is [Weka](www.cs.waikato.ac.nz/ml/weka/)’s attribute-relation file format (ARFF).
 
 ###Probabilistic Graphical Models<a name="pgms"></a>
-AMIDST currently includes implementations for representing BNs in both standard and as a conjugate exponential family model (Winn and Bishop, 2005). The toolbox supports both discrete and continuous variables having multionomial, Gaussian and conditional linear Gaussian distributions. It can be easily extended to also support other distributions in the exponential family such as Gamma, Poisson, Dirichlet, etc.
+AMIDST currently includes implementations for representing BNs in both standard way and as a conjugate exponential family model (Winn and Bishop, 2005). The toolbox supports both discrete and continuous variables having multionomial, Gaussian and conditional linear Gaussian distributions. It can be easily extended to also support other distributions in the exponential family such as Gamma, Poisson, Dirichlet, etc.
 
 ###Inference Engine<a name="inference"></a>
-AMIDST includes the variational message passing (Winn and Bishop, 2005) algorithm, 
+AMIDST includes an implementation of variational message passing (Winn and Bishop, 2005), 
 and a parallel implementation of the importance sampling (Hammersley and Handscomb, 1964; Salmeron et al., 2015) 
 algorithm for BNs. It also supports exact inference by interfacing with HUGIN’s junction tree inference algorithm 
 (Madsen et al., 2005).
