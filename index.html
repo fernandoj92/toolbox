@@ -20,35 +20,81 @@
 
     <section class="main-content">
       <h1>
-<a id="contributing-to-amidst-" class="anchor" href="#contributing-to-amidst-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributing to AMIDST <a name="extension"></a>
+<a id="toolbox-functionalities" class="anchor" href="#toolbox-functionalities" aria-hidden="true"><span class="octicon octicon-link"></span></a>Toolbox Functionalities<a name="functionalities"></a>
 </h1>
 
-<p>Developers are expected to contribute to this open software following the <a href="https://help.github.com/articles/using-pull-requests/">Fork &amp; Pull</a> collaboration model. Read this <a href="https://guides.github.com/activities/forking/">guide</a> for full details about how to fork a project and make a pull request.</p>
+<p>The AMIDST system is an open source Java 8 toolbox that makes use of a functional programming style to support parallel processing on mutli-core CPUs (Masegosa et al., 2015). AMIDST provides a collection of functionalities and algorithms for learning hybrid Bayesian networks from streaming data. In what follows, we describe the main functionalities that the AMIDST toolbox supplies.</p>
 
-<p>We establish the following categorization for the contributions to the toolbox. Each one is associated with a different collaboration schemes which is also detailed below.  </p>
+<h3>
+<a id="data-streams" class="anchor" href="#data-streams" aria-hidden="true"><span class="octicon octicon-link"></span></a>Data Streams<a name="datastreams"></a>
+</h3>
 
-<h2>
-<a id="a-basic-contributions" class="anchor" href="#a-basic-contributions" aria-hidden="true"><span class="octicon octicon-link"></span></a>(A) Basic Contributions</h2>
+<p>AMIDST supports parallel processing by using built-in functionalities for dealing with streaming data. It is possible to make several passes over the data samples if the stream can be stored on disk, otherwise the samples are discarded after being processed. The data format supported by AMIDST is <a href="www.cs.waikato.ac.nz/ml/weka/">Weka</a>’s attribute-relation file format (ARFF).</p>
 
-<p>They encompass those contributions to the code that do not imply any major change or addition. For example, fixing a bug, adding methods to existing classes, adding new utility classes, etc. This contributions are made through a <a href="https://help.github.com/articles/using-pull-requests/">pull request</a>, which will be examined by the core group of developers of the project. </p>
+<h3>
+<a id="probabilistic-graphical-models" class="anchor" href="#probabilistic-graphical-models" aria-hidden="true"><span class="octicon octicon-link"></span></a>Probabilistic Graphical Models<a name="pgms"></a>
+</h3>
 
-<h2>
-<a id="b-major-extensions" class="anchor" href="#b-major-extensions" aria-hidden="true"><span class="octicon octicon-link"></span></a>(B) Major Extensions</h2>
+<p>AMIDST currently includes implementations for representing BNs in both standard way and as a conjugate exponential family model (Winn and Bishop, 2005). The toolbox supports both discrete and continuous variables having multionomial, Gaussian and conditional linear Gaussian distributions. It can be easily extended to also support other distributions in the exponential family such as Gamma, Poisson, Dirichlet, etc.</p>
 
-<p>They refer to those contributions which aim to include a new functionality in the toolbox. For example, new inference methods, new learning algorithms, new concept-drift detection methods, new PGMs, new links to other toolboxes, etc. These extensions or new functionalities will be integrated as new Maven modules and will be located in the folder <em>[project-root-folder]/extensions/</em>. Then, contributing with a new extension will be based on the following three steps: (i) create a new Maven module using IntelliJ (follow this <a href="https://www.jetbrains.com/idea/help/creating-maven-module.html">link</a> for details); then (ii) code your new algorithm inside this module; and (iii) make a <a href="https://help.github.com/articles/using-pull-requests/">pull request</a> to add the new functionality to the project repository. </p>
+<h3>
+<a id="inference-engine" class="anchor" href="#inference-engine" aria-hidden="true"><span class="octicon octicon-link"></span></a>Inference Engine<a name="inference"></a>
+</h3>
 
-<p>All the provided extensions should fulfill the following basic quality requirements to be accepted as extensions by the AMIDST core team. </p>
+<p>AMIDST includes an implementation of variational message passing (Winn and Bishop, 2005), 
+and a parallel implementation of the importance sampling (Hammersley and Handscomb, 1964; Salmeron et al., 2015) 
+algorithm for BNs. It also supports exact inference by interfacing with HUGIN’s junction tree inference algorithm 
+(Madsen et al., 2005).</p>
+
+<h3>
+<a id="learning-engine" class="anchor" href="#learning-engine" aria-hidden="true"><span class="octicon octicon-link"></span></a>Learning Engine<a name="learning"></a>
+</h3>
+
+<p>In AMIDST, a fully Bayesian approach is pursued, which means that parameter learning reduces to the 
+task of inference. AMIDST provides a multi-core parallel implementation of the streaming variational 
+Bayes algorithm (Broderick et al., 2013), using variational message passing as the underlying inference 
+engine, that deals with large latent variable models. When the model does not contain latent variables, one may alternatively use an efficient parallel implementation of maximum likelihood estimation (Scholz, 2004) that exploits a vector-based representation of BNs as exponential family models (Winn and Bishop, 2005). For structural learning, AMIDST currently supports the standard PC and parallel version of the TAN algorithm by interfacing with the HUGIN software (Madsen et al., 2014).</p>
+
+<h3>
+<a id="concept-drift" class="anchor" href="#concept-drift" aria-hidden="true"><span class="octicon octicon-link"></span></a>Concept drift<a name="conceptdrift"></a>
+</h3>
+
+<p>AMIDST also offers some support for dealing with concept drift while learning BNs from data streams. More precisely, the toolbox supports a novel probabilistic approach based on latent variables (Borchani et al., 2015) for detecting and adapting to concept drifts.</p>
+
+<h3>
+<a id="links-to-moa-and-hugin" class="anchor" href="#links-to-moa-and-hugin" aria-hidden="true"><span class="octicon octicon-link"></span></a>Links to MOA and Hugin<a name="librarylinks"></a>
+</h3>
+
+<p>AMIDST leverages existing functionalities and algorithms by interfacing to software tools such as 
+<a href="http://www.hugin.com">Hugin</a>, and <a href="http://moa.cms.waikato.ac.nz">MOA</a> (Massive Online Analysis). 
+This allows the toolbox to efficiently exploit well-established systems and also broaden the AMIDST 
+user-base. </p>
 
 <ul>
-<li><p>They should contain a readme.txt file detailing the functionality and scope of the extension. It also needs to specify if it is supported by a companion paper, student project, etc.</p></li>
-<li><p>The code should be well documented following <a href="https://en.wikipedia.org/wiki/Javadoc">JavaDoc</a> standards. </p></li>
-<li><p>It has to include <a href="www.junit.org/">JUnit</a> tests which verify the correctness of the results produced by the provided code. </p></li>
+<li><p><strong>HuginLink</strong> consists of a set of functionalities implemented to link the AMIDST toolbox with <a href="http://www.hugin.com">Hugin</a> commercial software. This connection extends AMIDST by providing some of the main functionalities of <a href="http://www.hugin.com">Hugin</a>, such as exact inference algorithms and scalable structural learning algorithms (Madsen et al., 2014). <a href="http://www.hugin.com">Hugin</a> is a third-party commercial software and to access to these functionalities it is needed a license of the software and to follow some specific installation steps (further information is given <a href="http://amidst.github.io/toolbox/#installhugin">here</a>).</p></li>
+<li><p><strong>MoaLink</strong> ensures an easy use of AMDIST functionalities within <a href="http://moa.cms.waikato.ac.nz">MOA</a>.  The main idea is that any model deployed in AMIDST can be integrated and evaluated using MOA's graphical user interface. As a proof of concept, \textit{MoaLink} already provides a classification, a regression and a clustering method based on BN models with latent variables. These models are learnt in a streaming fashion using AMIDST learning engine. </p></li>
 </ul>
 
-<h2>
-<a id="c-use-cases" class="anchor" href="#c-use-cases" aria-hidden="true"><span class="octicon octicon-link"></span></a>(C) Use-Cases</h2>
+<h3>
+<a id="bibliography" class="anchor" href="#bibliography" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bibliography</h3>
 
-<p>They refers to those contributions which do not add any specific functionality to the toolbox. They can be seen as examples of how this toolbox can be used. This category might include contributions related to student projects, research papers, industry applications, etc. The AMIDST core team will not supervise the quality of the contributions, this is responsibility of the contributors. They  will be integrated as independent Maven modules and will be placed in a different code repository on github, <a href="https://github.com/amidst/toolbox-use-cases/">https://github.com/amidst/toolbox-use-cases/</a>, where they are expected to be submitted using, again, a <a href="https://help.github.com/articles/using-pull-requests/">pull request</a> approach. </p>
+<p>Hanen Borchani, Ana M. Martınez, Andres R. Masegosa, and et al. Modeling concept drift: A probabilistic graphical model based approach. In The Fourteenth International Symposium on Intelligent Data Analysis, volume in press, 2015.</p>
+
+<p>Tamara Broderick, Nicholas Boyd, Andre Wibisono, Ashia C. Wilson, and Michael I. Jor- dan. Streaming variational Bayes. In Advances in Neural Information Processing Systems, pages 1727–1735, 2013.</p>
+
+<p>J.M. Hammersley and D.C. Handscomb. Monte Carlo Methods. Methuen &amp; Co, London, UK, 1964.</p>
+
+<p>Anders L. Madsen, Frank Jensen, Uffe B. Kjærulff, and Michael Lang. HUGIN-the tool for Bayesian networks and influence diagrams. International Journal of Artificial Intelligence Tools, 14(3):507–543, 2005.</p>
+
+<p>Anders L. Madsen, Frank Jensen, Antonio Salmeron, and et al. A new method for vertical parallelisation of TAN learning Based on balanced incomplete block designs. In The Seventh European Workshop on Probabilistic Graphical Models, pages 302–317, 2014.</p>
+
+<p>Andres R. Masegosa, Ana M. Martınez, and Hanen Borchani. Probabilistic graphical models on multi-core CPUs using Java 8. IEEE Computational Intelligence Magazine, Special Issue on Computational Intelligence Software, Under review, 2015.</p>
+
+<p>Antonio Salmeron, Darıo Ramos-Lopez, Hanen Borchani, and et al. Parallel importance sampling in conditional linear Gaussian networks. In Conferencia de la Asociaci ́on Espan ̃ola para la Inteligencia Artificial, volume in press, 2015.</p>
+
+<p>F. W. Scholz. Maximum Likelihood Estimation. John Wiley &amp; Sons, Inc., 2004.</p>
+
+<p>John M. Winn and Christopher M. Bishop. Variational message passing. Journal of Machine Learning Research, 6:661–694, 2005.</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/amidst/toolbox">AMIDST Toolbox 1.0</a> is maintained by <a href="https://github.com/amidst">amidst</a>.</span>
