@@ -12,6 +12,7 @@ import eu.amidst.core.exponentialfamily.MomentParameters;
 import eu.amidst.core.exponentialfamily.NaturalParameters;
 import eu.amidst.core.exponentialfamily.SufficientStatistics;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +20,10 @@ import java.util.Map;
  * This class implements the interfaces {@link MomentParameters}, {@link NaturalParameters}, and {@link SufficientStatistics}.
  * It handles some key compound vector utility methods.
  */
-public class KeyCompoundVector<E> implements MomentParameters, NaturalParameters, SufficientStatistics {
+public class KeyCompoundVector<E> implements MomentParameters, NaturalParameters, SufficientStatistics, Serializable {
+
+    /** Represents the serial version ID for serializing the object. */
+    private static final long serialVersionUID = -3436599636425587512L;
 
     /** Represents the total size of this KeyCompoundVector. */
     int size;
@@ -138,7 +142,7 @@ public class KeyCompoundVector<E> implements MomentParameters, NaturalParameters
      * Returns the dot product of this KeyCompoundVector and an input KeyCompoundVector, defined as
      * the sum of the pairwise products of the values of the two KeyCompoundVectors.
      * @param vec an input KeyCompoundVector.
-     * @return a {@double} that represents the dot product of the two KeyCompoundVectors.
+     * @return a double that represents the dot product of the two KeyCompoundVectors.
      */
     public double dotProduct(KeyCompoundVector vec) {
         return this.baseVectors.values().stream().mapToDouble(w -> w.getVector().dotProduct(vec.getVectorByPosition(w.getIndex()))).sum();

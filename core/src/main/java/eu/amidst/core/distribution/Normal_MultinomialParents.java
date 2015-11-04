@@ -13,7 +13,7 @@ import eu.amidst.core.exponentialfamily.EF_Normal;
 import eu.amidst.core.utils.MultinomialIndex;
 import eu.amidst.core.variables.Assignment;
 import eu.amidst.core.variables.Variable;
-import java.util.Collections;
+
 import java.util.List;
 import java.util.Random;
 
@@ -31,14 +31,14 @@ public class Normal_MultinomialParents extends ConditionalDistribution {
     private BaseDistribution_MultinomialParents<Normal> base;
 
     /**
-     * Creates a new Normal_MultinomialParents distribution for a given BaseDistribution_MultinomialParents<Normal>.
+     * Creates a new Normal_MultinomialParents distribution for a given BaseDistribution_MultinomialParents&lt;Normal&gt;.
      * @param base_ an array of {@link Normal} distributions, one for each configuration of the Multinomial parents.
      */
     public Normal_MultinomialParents(BaseDistribution_MultinomialParents<Normal> base_) {
         this.base=base_;
         this.var=this.base.getVariable();
         this.parents=this.base.getConditioningVariables();
-        this.parents = Collections.unmodifiableList(this.parents);
+        //this.parents = Collections.unmodifiableList(this.parents);
     }
 
     /**
@@ -51,7 +51,7 @@ public class Normal_MultinomialParents extends ConditionalDistribution {
         this.parents = parents1;
         this.base = new BaseDistribution_MultinomialParents<>(var1,parents1);
         //Make them unmodifiable
-        this.parents = Collections.unmodifiableList(this.parents);
+        //this.parents = Collections.unmodifiableList(this.parents);
     }
 
     /**
@@ -61,6 +61,24 @@ public class Normal_MultinomialParents extends ConditionalDistribution {
      */
     public Normal getNormal(int position) {
         return base.getBaseDistribution(position);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setVar(Variable var) {
+        this.var = var;
+        this.base.setVar(var);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setConditioningVariables(List<Variable> parents) {
+        this.parents = parents;
+        this.base.setConditioningVariables(parents);
     }
 
     /**

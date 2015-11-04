@@ -15,6 +15,7 @@ package eu.amidst.core.exponentialfamily;
 import eu.amidst.core.utils.Vector;
 import eu.amidst.core.variables.Assignment;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -26,7 +27,10 @@ import java.util.List;
  * (<a href="http://amidst.github.io/toolbox/docs/ce-BNs.pdf">pdf</a>)
  * </p>
  */
-public abstract class EF_Distribution {
+public abstract class EF_Distribution implements Serializable {
+
+    /** Represents the serial version ID for serializing the object. */
+    private static final long serialVersionUID = -3436599636425587512L;
 
     /** Represents the vector of natural parameters. */
     protected NaturalParameters naturalParameters;
@@ -147,6 +151,13 @@ public abstract class EF_Distribution {
     public SufficientStatistics createZeroSufficientStatistics() {
         return (SufficientStatistics) this.createZeroVector();
     }
+
+    /**
+     * Creates the initial sufficient statistics vector (i.e., a vector with the initial counts).
+     * It is used to implement MAP learning.
+     * @return a {@link SufficientStatistics} object.
+     */
+    public abstract SufficientStatistics createInitSufficientStatistics();
 
     /**
      * Creates a zero natural parameter vector (i.e., a vector filled with zeros).

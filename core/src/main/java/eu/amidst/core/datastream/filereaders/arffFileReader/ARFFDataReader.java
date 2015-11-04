@@ -16,6 +16,7 @@ import eu.amidst.core.variables.StateSpaceTypeEnum;
 import eu.amidst.core.variables.stateSpaceTypes.FiniteStateSpace;
 import eu.amidst.core.variables.stateSpaceTypes.RealStateSpace;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -57,7 +58,7 @@ public class ARFFDataReader implements DataFileReader {
      * @param line a {@code String} starting with "@attribute" and including the name of the Attribute and its state space type.
      * @return an {@link Attribute} object.
      */
-    private static Attribute createAttributeFromLine(int index, String line){
+    public static Attribute createAttributeFromLine(int index, String line){
         String[] parts = line.split(" |\t");
 
         if (!parts[0].trim().startsWith("@attribute"))
@@ -158,8 +159,11 @@ public class ARFFDataReader implements DataFileReader {
      * {@inheritDoc}
      */
     @Override
-    public boolean doesItReadThisFileExtension(String fileExtension) {
-        return fileExtension.equals(".arff");
+    public boolean doesItReadThisFile(String fileName) {
+        if (new File(fileName).isDirectory())
+            return false;
+        String[] parts = fileName.split("\\.");
+        return parts[parts.length-1].equals("arff");
     }
 
     /**
@@ -170,7 +174,12 @@ public class ARFFDataReader implements DataFileReader {
     public Stream<DataRow> stream() {
         //if (streamString ==null) {
             try {
-                streamString = Files.lines(pathFile).filter(w -> !w.isEmpty()).filter(w -> !w.startsWith("%")).skip(this.dataLineCount).filter(w -> !w.isEmpty()).map(line -> new DataRowWeka(this.attributes, line));
+                streamString = Files.lines(pathFile)
+                                .filter(w -> !w.isEmpty())
+                                .filter(w -> !w.startsWith("%"))
+                                .skip(this.dataLineCount)
+                                .filter(w -> !w.isEmpty())
+                                .map(line -> new DataRowWeka(this.attributes, line));
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -186,78 +195,4 @@ public class ARFFDataReader implements DataFileReader {
         streamString = null;
     }
 
-    /**
-     * This class implements the interface {@link DataRow} and defines a Weka data row.
-     */
-    private static class DataRowWeka implements DataRow{
-
-        /** Represents an {@code array} of double. */
-        double[] data;
-
-        /** Represents the list of {@link Attributes}. */
-        Attributes atts;
-
-        /**
-         * Creates a new DataRowWeka from a given line and list of attributes.
-         * @param atts_ an input list of the list of {@link Attributes}.
-         * @param line a {@code String} including the values of the corresponding input attributes.
-         */
-        public DataRowWeka(Attributes atts_, String line){
-            atts = atts_;
-            data = new double[atts.getNumberOfAttributes()];
-            String[] parts = line.split(",");
-            if (parts.length!=atts.getNumberOfAttributes())
-                throw new IllegalStateException("The number of columns does not match the number of attributes.");
-
-            for (int i = 0; i < parts.length; i++) {
-                if(parts[i].equals("?")){
-                    data[i] = Double.NaN;
-                }
-                else {
-                    switch (atts.getList().get(i).getStateSpaceType().getStateSpaceTypeEnum()) {
-                        case REAL:
-                            data[i] = Double.parseDouble(parts[i]);
-                            break;
-                        case FINITE_SET:
-                            FiniteStateSpace finiteStateSpace = atts.getList().get(i).getStateSpaceType();
-                            data[i] = finiteStateSpace.getIndexOfState(parts[i]);
-                    }
-                }
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public double getValue(Attribute att) {
-            return data[att.getIndex()];
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void setValue(Attribute att, double value) {
-            this.data[att.getIndex()]=value;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Attributes getAttributes() {
-            return atts;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public double[] toArray() {
-            return data;
-        }
-
-
-    }
 }

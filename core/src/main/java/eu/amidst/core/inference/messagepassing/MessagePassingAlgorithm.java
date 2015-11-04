@@ -20,6 +20,8 @@ import eu.amidst.core.utils.Vector;
 import eu.amidst.core.variables.Assignment;
 import eu.amidst.core.variables.HashMapAssignment;
 import eu.amidst.core.variables.Variable;
+
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -29,7 +31,10 @@ import java.util.stream.Collectors;
 /**
  * This class implements the interface {@link InferenceAlgorithm} and defines the Message Passing algorithm.
  */
-public abstract class MessagePassingAlgorithm<E extends Vector> implements InferenceAlgorithm {
+public abstract class MessagePassingAlgorithm<E extends Vector> implements InferenceAlgorithm, Serializable{
+
+    /** Represents the serial version ID for serializing the object. */
+    private static final long serialVersionUID = 4107783324901370839L;
 
     /** Represents the {@link BayesianNetwork} model. */
     protected BayesianNetwork model;
@@ -56,7 +61,7 @@ public abstract class MessagePassingAlgorithm<E extends Vector> implements Infer
     protected int seed=0;
 
     /** Represents the maximum number of iterations. */
-    protected int maxIter = 100;
+    protected int maxIter = 1000;
 
     /** Represents a threshold. */
     protected double threshold = 0.0001;
@@ -149,13 +154,15 @@ public abstract class MessagePassingAlgorithm<E extends Vector> implements Infer
 
                 Message<E> selfMessage = newSelfMessage(node);
 
-                //Optional<Message<NaturalParameters>> childrenMessage = node.getChildren().parallelStream().map(children -> children.newMessageToParent(node)).reduce(Message::combine);
-                //if (childrenMessage.isPresent())
-                //    selfMessage = Message.combine(childrenMessage.get(), selfMessage);
+                selfMessage =   node.getChildren()
+                                .stream()
+                                .filter(children -> children.isActive())
+                                .map(children -> newMessageToParent(children,node))
+                                .reduce(selfMessage, Message::combine);
 
-                for (Node child: node.getChildren()){
-                    selfMessage = Message.combine(newMessageToParent(child, node), selfMessage);
-                }
+                //for (Node child: node.getChildren()){
+                //    selfMessage = Message.combine(newMessageToParent(child, node), selfMessage);
+                //}
 
                 updateCombinedMessage(node, selfMessage);
                 done &= node.isDone();
@@ -304,6 +311,7 @@ public abstract class MessagePassingAlgorithm<E extends Vector> implements Infer
 
     /**
      * Returns the exponential family posterior of a given {@link Variable}.
+     * @param <E> a class extending {@link EF_UnivariateDistribution}
      * @param var a {@link Variable} object.
      * @return an {@link EF_UnivariateDistribution} object.
      */

@@ -17,13 +17,14 @@ import eu.amidst.core.datastream.DataStream;
 import eu.amidst.core.io.DataStreamLoader;
 import eu.amidst.core.learning.parametric.bayesian.ParallelSVB;
 import eu.amidst.core.models.BayesianNetwork;
+import eu.amidst.core.utils.DAGGenerator;
 
 /**
  *
  * This example shows how to learn the parameters of a Bayesian network from a stream of data with a Bayesian
  * approach using a **parallel** version of the following algorithm
  *
- * <i> Broderick, T., Boyd, N., Wibisono, A., Wilson, A. C., & Jordan, M. I. (2013). Streaming variational Bayes.
+ * <i> Broderick, T., Boyd, N., Wibisono, A., Wilson, A. C., and Jordan, M. I. (2013). Streaming variational Bayes.
  * In Advances in Neural Information Processing Systems (pp. 1727-1735). </i>
  *
  *
@@ -43,7 +44,7 @@ public class ParallelSVBExample {
         parameterLearningAlgorithm.setNCores(4);
 
         //We fix the DAG structure, which is a Naive Bayes with a global latent binary variable
-        parameterLearningAlgorithm.setDAG(SVBExample.getHiddenNaiveBayesStructure(data));
+        parameterLearningAlgorithm.setDAG(DAGGenerator.getHiddenNaiveBayesStructure(data.getAttributes(), "H", 2));
 
         //We fix the size of the window
         parameterLearningAlgorithm.getSVBEngine().setWindowsSize(100);

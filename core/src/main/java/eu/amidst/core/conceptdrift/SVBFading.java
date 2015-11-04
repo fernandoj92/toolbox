@@ -16,9 +16,13 @@ import eu.amidst.core.datastream.DataOnMemory;
 import eu.amidst.core.datastream.DataStream;
 import eu.amidst.core.learning.parametric.bayesian.BayesianParameterLearningAlgorithm;
 import eu.amidst.core.conceptdrift.utils.Fading;
+import eu.amidst.core.learning.parametric.bayesian.DataPosterior;
 import eu.amidst.core.learning.parametric.bayesian.SVB;
 import eu.amidst.core.models.BayesianNetwork;
 import eu.amidst.core.models.DAG;
+import eu.amidst.core.variables.Variable;
+
+import java.util.List;
 
 /**
  *
@@ -51,6 +55,19 @@ public class SVBFading implements BayesianParameterLearningAlgorithm, FadingLear
 
     public void setWindowsSize(int windowsSize) {
         this.svb.setWindowsSize(windowsSize);
+    }
+
+    @Override
+    public List<DataPosterior> computePosterior(DataOnMemory<DataInstance> batch) {
+        throw new UnsupportedOperationException("Method not implemented");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<DataPosterior> computePosterior(DataOnMemory<DataInstance> batch, List<Variable> latentVariables) {
+        throw new UnsupportedOperationException("Method not implemented");
     }
 
     @Override

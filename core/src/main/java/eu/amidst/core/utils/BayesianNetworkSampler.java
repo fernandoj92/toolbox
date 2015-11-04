@@ -11,15 +11,17 @@ package eu.amidst.core.utils;
 
 import com.google.common.base.Stopwatch;
 import eu.amidst.core.datastream.Attribute;
-import eu.amidst.core.io.DataStreamWriter;
-import eu.amidst.core.models.BayesianNetwork;
-import eu.amidst.core.io.BayesianNetworkLoader;
-import eu.amidst.core.variables.Assignment;
-import eu.amidst.core.variables.HashMapAssignment;
-import eu.amidst.core.variables.Variable;
 import eu.amidst.core.datastream.Attributes;
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataStream;
+import eu.amidst.core.io.BayesianNetworkLoader;
+import eu.amidst.core.io.DataStreamWriter;
+import eu.amidst.core.models.BayesianNetwork;
+import eu.amidst.core.variables.Assignment;
+import eu.amidst.core.variables.HashMapAssignment;
+import eu.amidst.core.variables.Variable;
+
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -30,7 +32,10 @@ import java.util.stream.Stream;
  * This class implements the interface {@link eu.amidst.core.utils.AmidstOptionsHandler}.
  * It defines a sampler of data from a {@link BayesianNetwork}.
  */
-public class BayesianNetworkSampler implements AmidstOptionsHandler {
+public class BayesianNetworkSampler implements AmidstOptionsHandler, Serializable {
+
+    /** Represents the serial version ID for serializing the object. */
+    private static final long serialVersionUID = 4107783324901370839L;
 
     /** Represents the {@link BayesianNetwork} object from which the data will be sampled. */
     private BayesianNetwork network;
@@ -71,6 +76,7 @@ public class BayesianNetworkSampler implements AmidstOptionsHandler {
                 .map(this::filter);
     }
 
+
     /**
      * Sets a given {@link Variable} object as hidden.
      * @param var a given {@link Variable} object.
@@ -82,7 +88,7 @@ public class BayesianNetworkSampler implements AmidstOptionsHandler {
     /**
      * Sets a given {@link Variable} object as noisy.
      * @param var a given {@link Variable} object.
-     * @param noiseProb a {@double} that represents the noise probability.
+     * @param noiseProb a double that represents the noise probability.
      */
     public void setMARVar(Variable var, double noiseProb){ this.marNoise.put(var,noiseProb);}
 
@@ -159,13 +165,20 @@ public class BayesianNetworkSampler implements AmidstOptionsHandler {
 
             @Override
             public Stream<DataInstance> stream() {
-                class TemporalDataInstance implements DataInstance{
+                class TemporalDataInstance implements DataInstance, Serializable {
+
+                    /** Represents the serial version ID for serializing the object. */
+                    private static final long serialVersionUID = -3436599636425587512L;
 
                     Assignment assignment;
-                    TemporalDataInstance(Assignment assignment1){
-                        this.assignment=assignment1;
-                    }
+                    Attributes attributes;
+                    List<Variable> variables;
 
+                    TemporalDataInstance(Assignment assignment1, Attributes atts){
+                        this.assignment=assignment1;
+                        this.attributes = atts;
+                        this.variables = sampler.network.getVariables().getListOfVariables();
+                    }
                     @Override
                     public double getValue(Variable var) {
                         return this.assignment.getValue(var);
@@ -178,7 +191,7 @@ public class BayesianNetworkSampler implements AmidstOptionsHandler {
 
                     @Override
                     public Attributes getAttributes() {
-                        return null;
+                        return attributes;
                     }
 
                     @Override
@@ -188,20 +201,27 @@ public class BayesianNetworkSampler implements AmidstOptionsHandler {
 
                     @Override
                     public double getValue(Attribute att) {
-                        return this.assignment.getValue(sampler.network.getVariables().getVariableByName(att.getName()));
+                         return this.assignment.getValue(variables.get(att.getIndex()));
                     }
 
                     @Override
                     public void setValue(Attribute att, double value) {
-                        this.assignment.setValue(sampler.network.getVariables().getVariableByName(att.getName()), value);
+                        if (!att.isSpecialAttribute())
+                            this.assignment.setValue(variables.get(att.getIndex()), value);
                     }
 
                     @Override
                     public double[] toArray() {
                         throw new UnsupportedOperationException("Operation not supported for an Assignment object");
                     }
+
+                    @Override
+                    public String toString(){
+                        return this.outputString();
+                    }
                 }
-                return this.sampler.getSampleStream(this.nSamples).map(a -> new TemporalDataInstance(a));
+
+                return this.sampler.getSampleStream(this.nSamples).map(a -> new TemporalDataInstance(a,this.atts));
             }
 
             @Override

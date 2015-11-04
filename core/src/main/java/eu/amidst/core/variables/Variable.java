@@ -60,7 +60,7 @@ public interface Variable {
     }
 
     /**
-     * Returns the number of states of this Variable.
+     * Returns the number of states of this Variable, in case it has a finite state space. Otherwise it returns -1.
      * @return the number of states of this Variable.
      */
     int getNumberOfStates();
@@ -128,6 +128,13 @@ public interface Variable {
     default <E extends ConditionalDistribution> E newConditionalDistribution(List<Variable> parents){
         return this.getDistributionType().newConditionalDistribution(parents);
     }
+
+
+    /**
+     * Returns the associated, properly created, VariableBuilder object.
+     * @return A {@link VariableBuilder} object.
+     */
+    VariableBuilder getVariableBuilder();
 
     /**
      * {@inheritDoc}

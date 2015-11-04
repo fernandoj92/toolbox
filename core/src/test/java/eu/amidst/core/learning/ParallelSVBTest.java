@@ -16,6 +16,7 @@ import eu.amidst.core.datastream.DataStream;
 import eu.amidst.core.inference.messagepassing.VMP;
 import eu.amidst.core.io.BayesianNetworkLoader;
 import eu.amidst.core.learning.parametric.LearningEngine;
+import eu.amidst.core.learning.parametric.ParallelMaximumLikelihood;
 import eu.amidst.core.learning.parametric.bayesian.ParallelSVB;
 import eu.amidst.core.learning.parametric.bayesian.SVB;
 import eu.amidst.core.models.BayesianNetwork;
@@ -100,6 +101,43 @@ public class ParallelSVBTest extends TestCase {
 
     }
 
+    public static void testAsiaNcoreHidden() throws IOException, ClassNotFoundException{
+
+        BayesianNetwork asianet = BayesianNetworkLoader.loadFromFile("networks/asia.bn");
+        asianet.randomInitialization(new Random(0));
+        System.out.println("\nAsia network \n ");
+
+        BayesianNetworkSampler sampler = new BayesianNetworkSampler(asianet);
+        sampler.setSeed(0);
+        sampler.setHiddenVar(asianet.getVariables().getVariableById(6));
+        DataStream<DataInstance> data = sampler.sampleToDataStream(10000);
+
+        SVB svb = new SVB();
+        svb.setWindowsSize(1000);
+        svb.setSeed(5);
+        VMP vmp = svb.getPlateuStructure().getVMP();
+        vmp.setTestELBO(true);
+        vmp.setMaxIter(100);
+        vmp.setThreshold(0.0001);
+
+        ParallelSVB parallelSVB = new ParallelSVB();
+        parallelSVB.setOutput(true);
+        parallelSVB.setSVBEngine(svb);
+
+        parallelSVB.setDAG(asianet.getDAG());
+        parallelSVB.setDataStream(data);
+        parallelSVB.runLearning();
+
+        System.out.println(parallelSVB.getLogMarginalProbability());
+
+        BayesianNetwork learnAsianet = parallelSVB.getLearntBayesianNetwork();
+
+        System.out.println(asianet.toString());
+        System.out.println(learnAsianet.toString());
+        //assertTrue(asianet.equalBNs(learnAsianet, 0.05));
+
+    }
+
     public static void testWasteIncinerator1Core() throws IOException, ClassNotFoundException{
 
         BayesianNetwork normalVarBN = BayesianNetworkLoader.loadFromFile("networks/WasteIncinerator.bn");
@@ -112,6 +150,11 @@ public class ParallelSVBTest extends TestCase {
         sampler.setSeed(1);
         DataStream<DataInstance> data = sampler.sampleToDataStream(10000);
 
+        ParallelMaximumLikelihood parallelMaximumLikelihood = new ParallelMaximumLikelihood();
+        parallelMaximumLikelihood.setBatchSize(1000);
+        parallelMaximumLikelihood.setParallelMode(true);
+        parallelMaximumLikelihood.setLaplace(false);
+        LearningEngine.setParameterLearningAlgorithm(parallelMaximumLikelihood);
         BayesianNetwork learntNormalVarBN = LearningEngine.learnParameters(normalVarBN.getDAG(), data);
 
         System.out.println(normalVarBN.toString());
@@ -147,45 +190,63 @@ public class ParallelSVBTest extends TestCase {
 
     public static void testWasteIncineratorNCore() throws IOException, ClassNotFoundException{
 
-        BayesianNetwork normalVarBN = BayesianNetworkLoader.loadFromFile("networks/WasteIncinerator.bn");
-        //normalVarBN.randomInitialization(new Random(0));
+        String[] bns = {"networks/Normal.bn",
+        "networks/Normal_1NormalParents.bn",
+        "networks/Normal_NormalParents.bn",
+        "networks/Normal_MultinomialParents.bn",
+        "networks/WasteIncinerator.bn"
+        };
 
-        System.out.println("\n Waste Incinerator \n ");
+
+        for (int i = 4; i < bns.length; i++) {
+            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"+bns[i]+"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+            BayesianNetwork normalVarBN = BayesianNetworkLoader.loadFromFile(bns[i]);
+            //normalVarBN.randomInitialization(new Random(0));
+
+            System.out.println("\n Waste Incinerator \n ");
 
 
-        BayesianNetworkSampler sampler = new BayesianNetworkSampler(normalVarBN);
-        sampler.setSeed(1);
-        DataStream<DataInstance> data = sampler.sampleToDataStream(10000);
+            BayesianNetworkSampler sampler = new BayesianNetworkSampler(normalVarBN);
+            sampler.setSeed(1);
+            DataStream<DataInstance> data = sampler.sampleToDataStream(10000);
 
-        BayesianNetwork learntNormalVarBN = LearningEngine.learnParameters(normalVarBN.getDAG(), data);
+            ParallelMaximumLikelihood parallelMaximumLikelihood = new ParallelMaximumLikelihood();
+            parallelMaximumLikelihood.setBatchSize(1000);
+            parallelMaximumLikelihood.setParallelMode(true);
+            parallelMaximumLikelihood.setLaplace(false);
+            LearningEngine.setParameterLearningAlgorithm(parallelMaximumLikelihood);
+            BayesianNetwork learntNormalVarBN = LearningEngine.learnParameters(normalVarBN.getDAG(), data);
 
-        System.out.println(normalVarBN.toString());
-        System.out.println(learntNormalVarBN.toString());
-        assertTrue(normalVarBN.equalBNs(learntNormalVarBN, 0.2));
+            System.out.println(normalVarBN.toString());
+            System.out.println(learntNormalVarBN.toString());
+            assertTrue(normalVarBN.equalBNs(learntNormalVarBN, 0.2));
 
-        SVB svb = new SVB();
-        svb.setWindowsSize(1000);
-        svb.setSeed(5);
-        VMP vmp = svb.getPlateuStructure().getVMP();
-        vmp.setTestELBO(true);
-        vmp.setMaxIter(1000);
-        vmp.setThreshold(0.0001);
+            SVB svb = new SVB();
+            svb.setWindowsSize(1000);
+            svb.setSeed(5);
+            VMP vmp = svb.getPlateuStructure().getVMP();
+            vmp.setTestELBO(true);
+            vmp.setMaxIter(1000);
+            vmp.setThreshold(0.0001);
 
-        ParallelSVB parallelSVB = new ParallelSVB();
-        parallelSVB.setSVBEngine(svb);
+            ParallelSVB parallelSVB = new ParallelSVB();
+            parallelSVB.setOutput(true);
+            parallelSVB.setSVBEngine(svb);
 
-        parallelSVB.setDAG(normalVarBN.getDAG());
-        parallelSVB.setDataStream(data);
-        parallelSVB.runLearning();
+            parallelSVB.setDAG(normalVarBN.getDAG());
+            parallelSVB.setDataStream(data);
+            parallelSVB.runLearning();
 
-        System.out.println(parallelSVB.getLogMarginalProbability());
+            System.out.println(parallelSVB.getLogMarginalProbability());
 
-        learntNormalVarBN = parallelSVB.getLearntBayesianNetwork();
+            learntNormalVarBN = parallelSVB.getLearntBayesianNetwork();
 
-        System.out.println(normalVarBN.toString());
-        System.out.println(learntNormalVarBN.toString());
-        assertTrue(normalVarBN.equalBNs(learntNormalVarBN, 0.2));
-
+            System.out.println(normalVarBN.toString());
+            System.out.println(learntNormalVarBN.toString());
+            assertTrue(normalVarBN.equalBNs(learntNormalVarBN, 0.2));
+        }
     }
 
 }

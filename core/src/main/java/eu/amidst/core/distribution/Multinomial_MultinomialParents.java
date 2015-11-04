@@ -26,7 +26,7 @@ import eu.amidst.core.exponentialfamily.EF_Multinomial;
 import eu.amidst.core.utils.MultinomialIndex;
 import eu.amidst.core.variables.Assignment;
 import eu.amidst.core.variables.Variable;
-import java.util.Collections;
+
 import java.util.List;
 import java.util.Random;
 
@@ -47,14 +47,14 @@ public class Multinomial_MultinomialParents extends ConditionalDistribution {
     private BaseDistribution_MultinomialParents<Multinomial> base;
 
     /**
-     * Creates a new Multinomial_MultinomialParents distribution for a given BaseDistribution_MultinomialParents<Multinomial>.
+     * Creates a new Multinomial_MultinomialParents distribution for a given BaseDistribution_MultinomialParents&lt;Multinomial&gt;.
      * @param base_ an array of {@link Multinomial} objects, one for each configuration of the parents.
      */
     public Multinomial_MultinomialParents(BaseDistribution_MultinomialParents<Multinomial> base_) {
         this.base=base_;
         this.var=this.base.getVariable();
         this.parents=this.base.getConditioningVariables();
-        this.parents = Collections.unmodifiableList(this.parents);
+        //this.parents = Collections.unmodifiableList(this.parents);
     }
 
     /**
@@ -68,7 +68,7 @@ public class Multinomial_MultinomialParents extends ConditionalDistribution {
         this.var = var1;
         this.parents = parents1;
         //Make them unmodifiable
-        this.parents = Collections.unmodifiableList(this.parents);
+        //this.parents = Collections.unmodifiableList(this.parents);
     }
 
     /**
@@ -114,6 +114,24 @@ public class Multinomial_MultinomialParents extends ConditionalDistribution {
      */
     public void setMultinomial(Assignment parentAssignment, Multinomial multinomialDistribution) {
         this.base.setBaseDistribution(parentAssignment, multinomialDistribution);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setVar(Variable var) {
+        this.var = var;
+        this.base.setVar(var);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setConditioningVariables(List<Variable> parents) {
+        this.parents = parents;
+        this.base.setConditioningVariables(parents);
     }
 
     /**

@@ -9,14 +9,14 @@
 package eu.amidst.core.datastream;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 /**
  * This class acts as a container of the {@link Attribute} objects of a data set.
- * <p> See {@code eu.amidst.core.examples.datastream.DataStreamExample} for an example of use. <p>
+ * <p> See {@code eu.amidst.core.examples.datastream.DataStreamExample} for an example of use. </p>
  */
 
 public class Attributes implements Serializable, Iterable<Attribute> {
@@ -31,21 +31,60 @@ public class Attributes implements Serializable, Iterable<Attribute> {
     public static final String SEQUENCE_ID_ATT_NAME = "SEQUENCE_ID";
 
     /** Represents a list containing the Attribute objects. */
-    private List<Attribute> attributes;
+    private final List<Attribute> attributes;
+
+    /** Represents the attribute corresponding to sequence_id*/
+    private Attribute seq_id;
+
+    /** Represents the attribute corresponding to time_id*/
+    private Attribute time_id;
 
     /**
      * Creates a new Attributes from a given List of attribute objects.
      * @param attributes a non-empty list of Attribute objects.
      */
     public Attributes(List<Attribute> attributes){
-        this.attributes = Collections.unmodifiableList(attributes);
+        attributes.sort((a,b) -> a.getIndex() - b.getIndex());
+        this.attributes = attributes;//Collections.unmodifiableList(attributes);
+        this.time_id = null;
+        this.seq_id = null;
+        for(Attribute att: getFullListOfAttributes()){
+            String name = att.getName();
+            if(name.equals(Attributes.TIME_ID_ATT_NAME)){
+                this.time_id = att;
+                this.time_id.setSpecialAttribute(true);
+                this.time_id.setTimeId(true);
+                this.time_id.setNumberFormat(new DecimalFormat("#"));
+            }else if (name.equals(Attributes.SEQUENCE_ID_ATT_NAME)){
+                this.seq_id = att;
+                this.seq_id.setSpecialAttribute(true);
+                this.seq_id.setSeqId(true);
+                this.seq_id.setNumberFormat(new DecimalFormat("#"));
+            }
+        }
     }
 
     /**
-     * Returns the list of this Attributes.
+     * Returns the attribute sequence_id.
+     * @return an Attribute object or null if attribute sequence_id is not present.
+     */
+    public Attribute getSeq_id() {
+        return seq_id;
+    }
+
+    /**
+     * Returns the attribute time_id.
+     * @return an Attribute object or null if attribute time_id is not present.
+     */
+    public Attribute getTime_id() {
+        return time_id;
+    }
+
+    /**
+     * Returns the full list of all the Attributes, including the special ones (i.e. seq_id, time_id, etc...).
      * @return the list of this Attributes.
      */
-    public List<Attribute> getList(){
+    public List<Attribute> getFullListOfAttributes(){
         return attributes;
     }
 
@@ -62,11 +101,10 @@ public class Attributes implements Serializable, Iterable<Attribute> {
      * @return the list of this Attributes, except the TIME_ID and SEQUENCE_ID ones.
      */
     //TODO This method is not standard?!?
-    public List<Attribute> getListExceptTimeAndSeq(){
+    public List<Attribute> getListOfNonSpecialAttributes(){
         List<Attribute> attributeList = new ArrayList<>();
-        for(Attribute att: getList()){
-            String name = att.getName();
-            if(!name.equals(Attributes.TIME_ID_ATT_NAME) && !name.equals(Attributes.SEQUENCE_ID_ATT_NAME)){
+        for(Attribute att: getFullListOfAttributes()){
+            if (!att.isSpecialAttribute()){
                 attributeList.add(att);
             }
         }
@@ -80,7 +118,7 @@ public class Attributes implements Serializable, Iterable<Attribute> {
      * with the requested name, it throws an IllegalArgumentException.
      */
     public Attribute getAttributeByName(String name){
-        for(Attribute att: getList()){
+        for(Attribute att: getFullListOfAttributes()){
             if(att.getName().equals(name)){ return att;}
         }
         throw new IllegalArgumentException("Attribute "+name+" is not part of the list of Attributes");

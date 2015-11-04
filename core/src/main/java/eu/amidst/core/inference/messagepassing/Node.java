@@ -9,13 +9,14 @@
 package eu.amidst.core.inference.messagepassing;
 
 import eu.amidst.core.exponentialfamily.EF_ConditionalDistribution;
+import eu.amidst.core.exponentialfamily.EF_UnivariateDistribution;
 import eu.amidst.core.exponentialfamily.MomentParameters;
 import eu.amidst.core.exponentialfamily.SufficientStatistics;
 import eu.amidst.core.utils.Utils;
 import eu.amidst.core.variables.Assignment;
 import eu.amidst.core.variables.Variable;
-import eu.amidst.core.exponentialfamily.EF_UnivariateDistribution;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,10 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * This class defines and handles a Node used for message passing inference algorithms.
  */
-public class Node {
+public class Node implements Serializable{
+
+    /** Represents the serial version ID for serializing the object. */
+    private static final long serialVersionUID = 4107783324901370839L;
 
     /** Represents the list of parents of this Node. */
     List<Node> parents;
@@ -143,7 +147,7 @@ public class Node {
 
     /**
      * Sets this Node as either active or not active.
-     * @param active a {@boolean} value to be set.
+     * @param active a boolean value to be set.
      */
     public void setActive(boolean active) {
         this.active = active;
@@ -206,7 +210,6 @@ public class Node {
         if (this.assignment==null || Utils.isMissingValue(this.assignment.getValue(this.getMainVariable()))){
             this.observed=false;
             sufficientStatistics=null;
-            //if (this.isActive()) resetQDist();
         }else {
             this.observed=true;
             sufficientStatistics = this.QDist.getSufficientStatistics(assignment);
@@ -353,7 +356,7 @@ public class Node {
 
     /**
      * Sets this Node as either done or not.
-     * @param isDone a {@boolean} value to be set.
+     * @param isDone a boolean value to be set.
      */
     public void setIsDone(boolean isDone) {
         this.isDone = isDone;

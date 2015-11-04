@@ -12,12 +12,11 @@ import eu.amidst.core.distribution.ConditionalDistribution;
 import eu.amidst.core.distribution.Distribution;
 import eu.amidst.core.utils.Utils;
 import eu.amidst.core.variables.Assignment;
-import eu.amidst.core.variables.Variables;
 import eu.amidst.core.variables.Variable;
+import eu.amidst.core.variables.Variables;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -63,7 +62,24 @@ public final class BayesianNetwork implements Serializable {
     }
 
     /**
+     * Returns the name of the BN
+     * @return a String object
+     */
+    public String getName() {
+        return this.dag.getName();
+    }
+
+    /**
+     * Sets the name of the BN
+     * @param name, a String object
+     */
+    public void setName(String name) {
+        this.dag.setName(name);
+    }
+
+    /**
      * Returns the conditional probability distribution of a variable.
+     * @param <E> a class extending {@link ConditionalDistribution}.
      * @param var a variable of type {@link Variable}.
      * @return a conditional probability distribution.
      */
@@ -140,7 +156,7 @@ public final class BayesianNetwork implements Serializable {
             parentSet.blockParents();
         }
 
-        this.distributions = Collections.unmodifiableList(this.distributions);
+        //this.distributions = Collections.unmodifiableList(this.distributions);
     }
 
     /**

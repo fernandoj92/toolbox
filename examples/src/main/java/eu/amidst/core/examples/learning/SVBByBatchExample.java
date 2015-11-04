@@ -20,13 +20,14 @@ import eu.amidst.core.datastream.DataStream;
 import eu.amidst.core.io.DataStreamLoader;
 import eu.amidst.core.learning.parametric.bayesian.SVB;
 import eu.amidst.core.models.BayesianNetwork;
+import eu.amidst.core.utils.DAGGenerator;
 
 /**
  *
  * This example shows how to learn incrementally the parameters of a Bayesian network from a stream of data with a Bayesian
  * approach using the following algorithm
  *
- * <i> Broderick, T., Boyd, N., Wibisono, A., Wilson, A. C., & Jordan, M. I. (2013). Streaming variational bayes.
+ * <i> Broderick, T., Boyd, N., Wibisono, A., Wilson, A. C., and Jordan, M. I. (2013). Streaming variational bayes.
  * In Advances in Neural Information Processing Systems (pp. 1727-1735). </i>
  *
  *
@@ -44,7 +45,7 @@ public class SVBByBatchExample {
         SVB parameterLearningAlgorithm = new SVB();
 
         //We fix the DAG structure
-        parameterLearningAlgorithm.setDAG(SVBExample.getHiddenNaiveBayesStructure(data));
+        parameterLearningAlgorithm.setDAG(DAGGenerator.getHiddenNaiveBayesStructure(data.getAttributes(),"H",2));
 
         //We fix the size of the window, which must be equal to the size of the data batches we use for learning
         parameterLearningAlgorithm.setWindowsSize(5);

@@ -93,7 +93,7 @@ public class EF_InverseGamma extends EF_UnivariateDistribution {
 
         this.getNaturalParameters().set(0, -alpha - 1);
         this.getNaturalParameters().set(1, -beta);
-
+        this.fixNumericalInstability();
         this.updateMomentFromNaturalParameters();
 
         return this;
@@ -183,4 +183,22 @@ public class EF_InverseGamma extends EF_UnivariateDistribution {
     public void fixNumericalInstability() {
 
     }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SufficientStatistics createInitSufficientStatistics() {
+
+        ArrayVector vector = new ArrayVector(this.sizeOfSufficientStatistics());
+
+        double alpha = 1.0;
+        double beta = 1.0;
+        vector.set(0, Math.log(beta) - Gamma.digamma(alpha));
+        vector.set(1, alpha / beta);
+
+        return vector;
+    }
+
 }

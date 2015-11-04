@@ -34,6 +34,22 @@ public class DataOnMemoryListContainer <E extends DataInstance> implements DataO
     }
 
     /**
+     * Creates a new DataOnMemoryListContainer initialized with the Attributes object of the data set.
+     * @param attributes_ a list of attributes
+     */
+
+    /**
+     * Creates a new DataOnMemoryListContainer initialized with the Attributes object of the data set.
+     * @param attributes_ a list of attributes
+     * @param instanceList a list of data instances stored in the object.
+     */
+    public DataOnMemoryListContainer(Attributes attributes_, List<E> instanceList){
+        this.instanceList=instanceList;
+        this.attributes=attributes_;
+    }
+
+
+    /**
      * Adds a new DataInstance.
      * @param data the data instance to be added.
      */
@@ -45,7 +61,7 @@ public class DataOnMemoryListContainer <E extends DataInstance> implements DataO
      * @param data the data instance to be added.
      */
     public void set(int id, E data){
-        this.instanceList.set(id,data);
+        this.instanceList.set(id, data);
     }
 
     /**
@@ -113,4 +129,16 @@ public class DataOnMemoryListContainer <E extends DataInstance> implements DataO
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString(){
+        StringBuilder builder = new StringBuilder();
+        for (E e : instanceList) {
+            builder.append(e.toString());
+            builder.append("\n");
+        }
+        return builder.toString();
+    }
 }
