@@ -23,11 +23,13 @@ Scalability is a main concern for the AMIDST toolbox. Java 8 functional programm
 
 # Documentation<a name="documentation"></a>
 
-* [Getting Started!](http://amidst.github.io/toolbox/GettingStarted.html) explains how to install the AMIDST toolbox, how this toolbox make use of Java 8 new functional style programming features, and why it is based on a module based architecture.
+* [Getting Started!](http://amidst.github.io/toolbox/GettingStarted.html) explains how to install the AMIDST toolbox, how this toolbox makes use of Java 8 new functional style programming features, and why it is based on a module based architecture.
 
-* [Toolbox Functionalities](http://amidst.github.io/toolbox/ToolboxFunctionalities.html) describes the main functionalities (i.e., data streams, PGMs, learning and inference engines, etc.) of the AMIDST toolbox.
+* [Toolbox Functionalities](http://amidst.github.io/toolbox/ToolboxFunctionalities.html) describes the main functionalities (i.e., data streams, BNs, DBNs, static and dynamic learning and inference engines, etc.) of the AMIDST toolbox.
 
 * [Code Examples](http://amidst.github.io/toolbox/CodeExamples.html) includes a list of source code examples explaining how to use some functionalities of the AMIDST toolbox.
+
+* [Dynamic Code Examples](http://amidst.github.io/toolbox/DynamicCodeExamples.html) includes some source code examples of functionalities related to Dynamic Bayesian networks.
 
 * [API JavaDoc](http://amidst.github.io/toolbox/javadoc/index.html) of the AMIDST toolbox. 
 
@@ -41,4 +43,4 @@ The following repository [https://github.com/amidst/toolbox-usecases](https://gi
 
 # Upcoming Developments
 
-The AMIDST toolbox is an expanding project and upcoming developments include for instance the implementation of [dynamic models](https://en.wikipedia.org/wiki/Dynamic_Bayesian_network) for handling data streams, the integration of the toolbox in Big Data platforms like [Spark](http://spark.apache.org) and [Flink](http://flink.apache.org) to enlarge its scalability capacities, and a new link to [R](http://static.amidst.eu/upload/dokumenter/Posters/PosterUseR.pdf) to expand the AMIDST user-base.
+The AMIDST toolbox is an expanding project and upcoming developments include for instance the ongoing integration of the toolbox in Big Data platforms such as [Flink](http://flink.apache.org) and [Spark](http://spark.apache.org) to enlarge its scalability capacities. In addition, a new link to [R](http://static.amidst.eu/upload/dokumenter/Posters/PosterUseR.pdf) is still in progress which will expand the AMIDST user-base.

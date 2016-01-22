@@ -35,31 +35,22 @@
 <li><a href="#dynamicbnmodifyexample">Modifying Bayesian Networks</a></li>
 </ul>
 </li>
+<li><a href="#sampledynamicbn">Sampling from Dynamic Bayesian Networks</a></li>
 <li>
-<a href="#dynamicioexample">Dynamic I/O Functionality</a>
+<a href="#dynamicinferenceexample">Inference Algorithms for Dynamic Bayesian Networks</a>
 
 <ul>
-<li><a href="#dynamiciodatastreamsexample">I/O of Data Streams</a></li>
-<li><a href="#dynamiciobnsexample">I/O of Bayesian Networks</a></li>
-</ul>
-</li>
-<li>
-<a href="#dynamicinferenceexample">Dynamic Inference Algorithms</a>
-
-<ul>
-<li><a href="#dynamicinferenceengingeexample">The Inference Engine</a></li>
-<li><a href="#dynamicvmpexample">Variational Message Passing</a></li>
-<li><a href="#dynamicisexample">Importance Sampling</a></li>
+<li><a href="#dynamicmap">The Dynamic MAP Inference</a></li>
+<li><a href="#dynamicvmp">The Dynamic Variational Message Passing</a></li>
+<li><a href="#dynamicis">The Dynamic Importance Sampling</a></li>
 </ul>
 </li>
 <li>
 <a href="#dynamiclearningexample">Dynamic Learning Algorithms</a>
 
 <ul>
-<li><a href="#dynamicmlexample">Maximum Likelihood</a></li>
-<li><a href="#dynamicpmlexample">Parallel Maximum Likelihood</a></li>
-<li><a href="#dynamicsvbexample">Streaming Variational Bayes</a></li>
-<li><a href="#dynamicpsvbexample">Parallel Streaming Variational Bayes</a></li>
+<li><a href="#dynamicml">Maximum Likelihood for DBNs</a></li>
+<li><a href="#dynamicsvb">Streaming Variational Bayes for DBNs</a></li>
 </ul>
 </li>
 </ul>
@@ -211,90 +202,95 @@ dynamicDAG<span class="pl-k">.</span>getParentSetTimeT(<span class="pl-smi">G</s
 <a id="creating-dynamic-bayesian-networks-with-latent-variables-" class="anchor" href="#creating-dynamic-bayesian-networks-with-latent-variables-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating Dynamic Bayesian Networks with Latent Variables <a name="dynamicbnhiddenexample"></a>
 </h3>
 
-<p>In this example, we simply show how to create a BN model with hidden variables. We simply create a BN for clustering, i.e.,  a naive-Bayes like structure with a single common hidden variable acting as parant of all the observable variables.</p>
+<p>This example shows how to create a BN model with hidden variables. We simply create a BN for clustering, i.e., a naive Bayes like structure with a single hidden variable acting as parant of all the remaining observable variables.</p>
 
-<div class="highlight highlight-source-java"><pre><span class="pl-c">//We can open the data stream using the static class DataStreamLoader</span>
-<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/syntheticData.arff<span class="pl-pds">"</span></span>);
-
-<span class="pl-c">/**</span>
-<span class="pl-c"> * 1. Once the data is loaded, we create a random variable for each of the attributes (i.e. data columns)</span>
-<span class="pl-c"> * in our data.</span>
-<span class="pl-c"> *</span>
-<span class="pl-c"> * 2. {@link Variables} is the class for doing that. It takes a list of Attributes and internally creates</span>
-<span class="pl-c"> * all the variables. We create the variables using Variables class to guarantee that each variable</span>
-<span class="pl-c"> * has a different ID number and make it transparent for the user.</span>
-<span class="pl-c"> *</span>
-<span class="pl-c"> * 3. We can extract the Variable objects by using the method getVariableByName();</span>
-<span class="pl-c"> */</span>
-<span class="pl-smi">Variables</span> variables <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Variables</span>(data<span class="pl-k">.</span>getAttributes());
-
-<span class="pl-smi">Variable</span> a <span class="pl-k">=</span> variables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>A<span class="pl-pds">"</span></span>);
-<span class="pl-smi">Variable</span> b <span class="pl-k">=</span> variables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>B<span class="pl-pds">"</span></span>);
-<span class="pl-smi">Variable</span> c <span class="pl-k">=</span> variables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>C<span class="pl-pds">"</span></span>);
-<span class="pl-smi">Variable</span> d <span class="pl-k">=</span> variables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>D<span class="pl-pds">"</span></span>);
-<span class="pl-smi">Variable</span> e <span class="pl-k">=</span> variables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>E<span class="pl-pds">"</span></span>);
-<span class="pl-smi">Variable</span> g <span class="pl-k">=</span> variables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>G<span class="pl-pds">"</span></span>);
-<span class="pl-smi">Variable</span> h <span class="pl-k">=</span> variables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>H<span class="pl-pds">"</span></span>);
-<span class="pl-smi">Variable</span> i <span class="pl-k">=</span> variables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>I<span class="pl-pds">"</span></span>);
+<div class="highlight highlight-source-java"><pre><span class="pl-c">//Open the data stream using DynamicDataStreamLoader</span>
+<span class="pl-k">DataStream&lt;<span class="pl-smi">DynamicDataInstance</span>&gt;</span> data <span class="pl-k">=</span> <span class="pl-smi">DynamicDataStreamLoader</span><span class="pl-k">.</span>loadFromFile(
+                <span class="pl-s"><span class="pl-pds">"</span>datasets/syntheticDataDiscrete.arff<span class="pl-pds">"</span></span>);
 
 <span class="pl-c">/**</span>
-<span class="pl-c"> * 1. We create the hidden variable. For doing that we make use of the method "newMultionomialVariable". When</span>
-<span class="pl-c"> * a variable is created from an Attribute object, it contains all the information we need (e.g.</span>
-<span class="pl-c"> * the name, the type, etc). But hidden variables does not have an associated attribute</span>
-<span class="pl-c"> * and, for this reason, we use now this to provide this information.</span>
-<span class="pl-c"> *</span>
-<span class="pl-c"> * 2. Using the "newMultionomialVariable" method, we define a variable called HiddenVar, which is</span>
-<span class="pl-c"> * not associated to any attribute and, then, it is a latent variable, its state space is a finite set with two elements, and its</span>
-<span class="pl-c"> * distribution type is multinomial.</span>
-<span class="pl-c"> *</span>
-<span class="pl-c"> * 3. We finally create the hidden variable using the method "newVariable".</span>
-<span class="pl-c"> */</span>
+<span class="pl-c">* 1. Once the data is loaded, create a random variable for each of the attributes (i.e. data columns)</span>
+<span class="pl-c">*</span>
+<span class="pl-c">* 2. {@link DynamicVariables} is the class for doing that. It takes a list of Attributes and internally creates</span>
+<span class="pl-c">* all the variables. We create the variables using DynamicVariables class to guarantee that each variable</span>
+<span class="pl-c">* has a different ID number and make it transparent for the user. Each random variable has an associated</span>
+<span class="pl-c">* interface variable.</span>
+<span class="pl-c">*</span>
+<span class="pl-c">* 3. Extract the Variable objects by using the method getVariableByName()</span>
+<span class="pl-c">*/</span>
+<span class="pl-smi">DynamicVariables</span> dynamicVariables <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">DynamicVariables</span>(data<span class="pl-k">.</span>getAttributes());
 
-<span class="pl-smi">Variable</span> hidden <span class="pl-k">=</span> variables<span class="pl-k">.</span>newMultionomialVariable(<span class="pl-s"><span class="pl-pds">"</span>HiddenVar<span class="pl-pds">"</span></span>, <span class="pl-smi">Arrays</span><span class="pl-k">.</span>asList(<span class="pl-s"><span class="pl-pds">"</span>TRUE<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>FALSE<span class="pl-pds">"</span></span>));
+<span class="pl-smi">Variable</span> <span class="pl-smi">A</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>A<span class="pl-pds">"</span></span>);
+<span class="pl-smi">Variable</span> <span class="pl-smi">B</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>B<span class="pl-pds">"</span></span>);
+<span class="pl-smi">Variable</span> <span class="pl-smi">C</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>C<span class="pl-pds">"</span></span>);
+<span class="pl-smi">Variable</span> <span class="pl-smi">D</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>D<span class="pl-pds">"</span></span>);
+<span class="pl-smi">Variable</span> <span class="pl-smi">E</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>E<span class="pl-pds">"</span></span>);
+<span class="pl-smi">Variable</span> <span class="pl-smi">G</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>G<span class="pl-pds">"</span></span>);
 
-<span class="pl-c">/**</span>
-<span class="pl-c"> * 1. Once we have defined your {@link Variables} object, including the latent variable,</span>
-<span class="pl-c"> * the next step is to create a DAG structure over this set of variables.</span>
-<span class="pl-c"> *</span>
-<span class="pl-c"> * 2. To add parents to each variable, we first recover the ParentSet object by the method</span>
-<span class="pl-c"> * getParentSet(Variable var) and then call the method addParent(Variable var).</span>
-<span class="pl-c"> *</span>
-<span class="pl-c"> * 3. We just put the hidden variable as parent of all the other variables. Following a naive-Bayes</span>
-<span class="pl-c"> * like structure.</span>
-<span class="pl-c"> */</span>
-<span class="pl-smi">DAG</span> dag <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">DAG</span>(variables);
+<span class="pl-smi">Variable</span> <span class="pl-smi">A_Interface</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getInterfaceVariable(<span class="pl-smi">A</span>);
+<span class="pl-smi">Variable</span> <span class="pl-smi">B_Interface</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getInterfaceVariable(<span class="pl-smi">B</span>);
 
-dag<span class="pl-k">.</span>getParentSet(a)<span class="pl-k">.</span>addParent(hidden);
-dag<span class="pl-k">.</span>getParentSet(b)<span class="pl-k">.</span>addParent(hidden);
-dag<span class="pl-k">.</span>getParentSet(c)<span class="pl-k">.</span>addParent(hidden);
-dag<span class="pl-k">.</span>getParentSet(d)<span class="pl-k">.</span>addParent(hidden);
-dag<span class="pl-k">.</span>getParentSet(e)<span class="pl-k">.</span>addParent(hidden);
-dag<span class="pl-k">.</span>getParentSet(g)<span class="pl-k">.</span>addParent(hidden);
-dag<span class="pl-k">.</span>getParentSet(h)<span class="pl-k">.</span>addParent(hidden);
-dag<span class="pl-k">.</span>getParentSet(i)<span class="pl-k">.</span>addParent(hidden);
+<span class="pl-c">//Note that C_Interface and D_Interface are also created although they will not be used</span>
+<span class="pl-c">//(we will not add temporal dependencies)</span>
 
-<span class="pl-c">/**</span>
-<span class="pl-c"> * We print the graph to see if is properly created.</span>
-<span class="pl-c"> */</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(dag<span class="pl-k">.</span>toString());
+<span class="pl-smi">Variable</span> <span class="pl-smi">E_Interface</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getInterfaceVariable(<span class="pl-smi">E</span>);
+<span class="pl-smi">Variable</span> <span class="pl-smi">G_Interface</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getInterfaceVariable(<span class="pl-smi">G</span>);
+
+<span class="pl-c">/*</span>
+<span class="pl-c">* Add a hidden multinomial variable (with 2 states) as parent of all variables except A</span>
+<span class="pl-c">*/</span>
+
+<span class="pl-smi">Variable</span> <span class="pl-smi">H</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>newMultinomialDynamicVariable(<span class="pl-s"><span class="pl-pds">"</span>H<span class="pl-pds">"</span></span>, <span class="pl-c1">2</span>);
+<span class="pl-smi">Variable</span> <span class="pl-smi">H_Interface</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getInterfaceVariable(<span class="pl-smi">H</span>);
 
 <span class="pl-c">/**</span>
-<span class="pl-c"> * 1. We now create the Bayesian network from the previous DAG.</span>
-<span class="pl-c"> *</span>
-<span class="pl-c"> * 2. The BN object is created from the DAG. It automatically looks at the distribution type</span>
-<span class="pl-c"> * of each variable and their parents to initialize the Distributions objects that are stored</span>
-<span class="pl-c"> * inside (i.e. Multinomial, Normal, CLG, etc). The parameters defining these distributions are</span>
-<span class="pl-c"> * properly initialized.</span>
-<span class="pl-c"> *</span>
-<span class="pl-c"> * 3. The network is printed and we can have look at the kind of distributions stored in the BN object.</span>
-<span class="pl-c"> */</span>
-<span class="pl-smi">BayesianNetwork</span> bn <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">BayesianNetwork</span>(dag);
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(bn<span class="pl-k">.</span>toString());
+<span class="pl-c">* Once we have defined your {@link DynamicVariables} object, including the latent variable,</span>
+<span class="pl-c">* the next step is to create a DynamicDAG structure over this set of variables.</span>
+<span class="pl-c">*/</span>
+
+<span class="pl-smi">DynamicDAG</span> dynamicDAG <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">DynamicDAG</span>(dynamicVariables);
+
+<span class="pl-c">/*</span>
+<span class="pl-c">* 1. To add parents to each variable, we first recover the ParentSet object by the method</span>
+<span class="pl-c">* getParentSet(Variable var) and then call the method addParent(Variable var).</span>
+<span class="pl-c">*</span>
+<span class="pl-c">* 2. We just assign the hidden variable as parent of all the other variables (except A), and</span>
+<span class="pl-c">* link it temporally.</span>
+<span class="pl-c">*/</span>
+
+<span class="pl-c">// Time 0: Parents at time 0 are automatically created when adding parents at time T.</span>
+dynamicDAG<span class="pl-k">.</span>getParentSetsTimeT()<span class="pl-k">.</span>stream()
+        .filter(pset <span class="pl-k">-</span><span class="pl-k">&gt;</span> pset<span class="pl-k">.</span>getMainVar()<span class="pl-k">.</span>getVarID() <span class="pl-k">!=</span> <span class="pl-smi">A</span><span class="pl-k">.</span>getVarID())
+        .filter(pset <span class="pl-k">-</span><span class="pl-k">&gt;</span> pset<span class="pl-k">.</span>getMainVar()<span class="pl-k">.</span>getVarID() <span class="pl-k">!=</span> <span class="pl-smi">H</span><span class="pl-k">.</span>getVarID())
+        .forEach(pset <span class="pl-k">-</span><span class="pl-k">&gt;</span> {
+            pset<span class="pl-k">.</span>addParent(<span class="pl-smi">A</span>);
+            pset<span class="pl-k">.</span>addParent(<span class="pl-smi">H</span>);
+        });
+dynamicDAG<span class="pl-k">.</span>getParentSetTimeT(<span class="pl-smi">A</span>)<span class="pl-k">.</span>addParent(<span class="pl-smi">A_Interface</span>);
+dynamicDAG<span class="pl-k">.</span>getParentSetTimeT(<span class="pl-smi">B</span>)<span class="pl-k">.</span>addParent(<span class="pl-smi">B_Interface</span>);
+dynamicDAG<span class="pl-k">.</span>getParentSetTimeT(<span class="pl-smi">E</span>)<span class="pl-k">.</span>addParent(<span class="pl-smi">E_Interface</span>);
+dynamicDAG<span class="pl-k">.</span>getParentSetTimeT(<span class="pl-smi">G</span>)<span class="pl-k">.</span>addParent(<span class="pl-smi">G_Interface</span>);
+dynamicDAG<span class="pl-k">.</span>getParentSetTimeT(<span class="pl-smi">H</span>)<span class="pl-k">.</span>addParent(<span class="pl-smi">H_Interface</span>);
+
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(dynamicDAG<span class="pl-k">.</span>toString());
 
 <span class="pl-c">/**</span>
-<span class="pl-c"> * Finally teh Bayesian network is saved to a file.</span>
-<span class="pl-c"> */</span>
-<span class="pl-smi">BayesianNetworkWriter</span><span class="pl-k">.</span>saveToFile(bn, <span class="pl-s"><span class="pl-pds">"</span>networks/BNHiddenExample.bn<span class="pl-pds">"</span></span>);</pre></div>
+<span class="pl-c">* 1. Create the Dynamic Bayesian network from the previous Dynamic DAG.</span>
+<span class="pl-c">*</span>
+<span class="pl-c">* 2. The DBN object is created from the DynamicDAG. It automatically looks at the distribution type</span>
+<span class="pl-c">* of each variable and their parents to initialize the Distributions objects that are stored</span>
+<span class="pl-c">* inside (i.e. Multinomial, Normal, CLG, etc). The parameters defining these distributions are</span>
+<span class="pl-c">* properly initialized.</span>
+<span class="pl-c">*</span>
+<span class="pl-c">* 3. The network is printed and we can have a look at the kind of distributions stored in the DBN object.</span>
+<span class="pl-c">*/</span>
+<span class="pl-smi">DynamicBayesianNetwork</span> dbn <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">DynamicBayesianNetwork</span>(dynamicDAG);
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>printf(dbn<span class="pl-k">.</span>toString());
+
+<span class="pl-c">/**</span>
+<span class="pl-c">* Finally the created Dynamic Bayesian network is saved to a file.</span>
+<span class="pl-c">*/</span>
+<span class="pl-smi">DynamicBayesianNetworkWriter</span><span class="pl-k">.</span>saveToFile(dbn, <span class="pl-s"><span class="pl-pds">"</span>networks/DBNExample.bn<span class="pl-pds">"</span></span>);</pre></div>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
@@ -302,205 +298,364 @@ dag<span class="pl-k">.</span>getParentSet(i)<span class="pl-k">.</span>addParen
 <a id="modifying-dynamic-bayesian-networks-" class="anchor" href="#modifying-dynamic-bayesian-networks-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Modifying Dynamic Bayesian Networks <a name="dynamicbnmodifyexample"></a>
 </h3>
 
-<p>In this example we show how to access and modify the conditional probabilities of a Bayesian network model.</p>
+<p>This example shows how to access and modify the conditional probabilities of a Dynamic Bayesian network model.</p>
 
-<div class="highlight highlight-source-java"><pre><span class="pl-c">//We first generate a Bayesian network with one multinomial, one Gaussian variable and one link.</span>
-<span class="pl-smi">BayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfGaussianVars(<span class="pl-c1">1</span>);
-<span class="pl-smi">BayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfMultinomialVars(<span class="pl-c1">1</span>,<span class="pl-c1">2</span>);
-<span class="pl-smi">BayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfLinks(<span class="pl-c1">1</span>);
+<div class="highlight highlight-source-java"><pre><span class="pl-c">/**</span>
+<span class="pl-c">* 1. Load the data stream and create the dynamic DAG.</span>
+<span class="pl-c">*/</span>
+<span class="pl-k">DataStream&lt;<span class="pl-smi">DynamicDataInstance</span>&gt;</span> data <span class="pl-k">=</span> <span class="pl-smi">DynamicDataStreamLoader</span><span class="pl-k">.</span>loadFromFile(
+                <span class="pl-s"><span class="pl-pds">"</span>datasets/syntheticDataDiscrete.arff<span class="pl-pds">"</span></span>);
 
-<span class="pl-smi">BayesianNetwork</span> bn <span class="pl-k">=</span> <span class="pl-smi">BayesianNetworkGenerator</span><span class="pl-k">.</span>generateBayesianNetwork();
+<span class="pl-smi">DynamicVariables</span> dynamicVariables <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">DynamicVariables</span>(data<span class="pl-k">.</span>getAttributes());
+<span class="pl-smi">DynamicDAG</span> dynamicDAG <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">DynamicDAG</span>(dynamicVariables);
 
-<span class="pl-c">//We print the randomly generated Bayesian networks</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(bn<span class="pl-k">.</span>toString());
+<span class="pl-smi">Variable</span> <span class="pl-smi">A</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>A<span class="pl-pds">"</span></span>);
+<span class="pl-smi">Variable</span> <span class="pl-smi">B</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>B<span class="pl-pds">"</span></span>);
+<span class="pl-smi">Variable</span> <span class="pl-smi">C</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>C<span class="pl-pds">"</span></span>);
+<span class="pl-smi">Variable</span> <span class="pl-smi">D</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>D<span class="pl-pds">"</span></span>);
+<span class="pl-smi">Variable</span> <span class="pl-smi">E</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>E<span class="pl-pds">"</span></span>);
+<span class="pl-smi">Variable</span> <span class="pl-smi">G</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>G<span class="pl-pds">"</span></span>);
+<span class="pl-smi">Variable</span> <span class="pl-smi">A_Interface</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getInterfaceVariable(<span class="pl-smi">A</span>);
+<span class="pl-smi">Variable</span> <span class="pl-smi">B_Interface</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getInterfaceVariable(<span class="pl-smi">B</span>);
+<span class="pl-smi">Variable</span> <span class="pl-smi">E_Interface</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getInterfaceVariable(<span class="pl-smi">E</span>);
+<span class="pl-smi">Variable</span> <span class="pl-smi">G_Interface</span> <span class="pl-k">=</span> dynamicVariables<span class="pl-k">.</span>getInterfaceVariable(<span class="pl-smi">G</span>);
 
-<span class="pl-c">//We first access the variable we are interested in</span>
-<span class="pl-smi">Variable</span> multiVar <span class="pl-k">=</span> bn<span class="pl-k">.</span>getStaticVariables()<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>DiscreteVar0<span class="pl-pds">"</span></span>);
+dynamicDAG<span class="pl-k">.</span>getParentSetTimeT(<span class="pl-smi">B</span>)<span class="pl-k">.</span>addParent(<span class="pl-smi">A</span>);
+dynamicDAG<span class="pl-k">.</span>getParentSetTimeT(<span class="pl-smi">C</span>)<span class="pl-k">.</span>addParent(<span class="pl-smi">A</span>);
+dynamicDAG<span class="pl-k">.</span>getParentSetTimeT(<span class="pl-smi">D</span>)<span class="pl-k">.</span>addParent(<span class="pl-smi">A</span>);
+dynamicDAG<span class="pl-k">.</span>getParentSetTimeT(<span class="pl-smi">E</span>)<span class="pl-k">.</span>addParent(<span class="pl-smi">A</span>);
+dynamicDAG<span class="pl-k">.</span>getParentSetTimeT(<span class="pl-smi">G</span>)<span class="pl-k">.</span>addParent(<span class="pl-smi">A</span>);
+dynamicDAG<span class="pl-k">.</span>getParentSetTimeT(<span class="pl-smi">A</span>)<span class="pl-k">.</span>addParent(<span class="pl-smi">A_Interface</span>);
+dynamicDAG<span class="pl-k">.</span>getParentSetTimeT(<span class="pl-smi">B</span>)<span class="pl-k">.</span>addParent(<span class="pl-smi">B_Interface</span>);
+dynamicDAG<span class="pl-k">.</span>getParentSetTimeT(<span class="pl-smi">E</span>)<span class="pl-k">.</span>addParent(<span class="pl-smi">E_Interface</span>);
+dynamicDAG<span class="pl-k">.</span>getParentSetTimeT(<span class="pl-smi">G</span>)<span class="pl-k">.</span>addParent(<span class="pl-smi">G_Interface</span>);
 
-<span class="pl-c">//Using the above variable we can get the associated distribution and modify it</span>
-<span class="pl-smi">Multinomial</span> multinomial <span class="pl-k">=</span> bn<span class="pl-k">.</span>getConditionalDistribution(multiVar);
-multinomial<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.2</span>, <span class="pl-c1">0.8</span>});
+<span class="pl-smi">DynamicBayesianNetwork</span> dbn <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">DynamicBayesianNetwork</span>(dynamicDAG);
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>printf(dbn<span class="pl-k">.</span>toString());
 
-<span class="pl-c">//Same than before but accessing the another variable</span>
-<span class="pl-smi">Variable</span> normalVar <span class="pl-k">=</span> bn<span class="pl-k">.</span>getStaticVariables()<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>GaussianVar0<span class="pl-pds">"</span></span>);
+<span class="pl-c">/*</span>
+<span class="pl-c">* 2. Modify the conditional probability distributions (CPDs) to new assigned values.</span>
+<span class="pl-c">* IMPORTANT: The parents are indexed according to Koller (Chapter 10. Pag. 358). Example:</span>
+<span class="pl-c">*  Parents: A = {A0,A1} and B = {B0,B1,B2}.</span>
+<span class="pl-c">*  NumberOfPossibleAssignments = 6</span>
+<span class="pl-c">*  Index   A    B</span>
+<span class="pl-c">*   0     A0   B0</span>
+<span class="pl-c">*   1     A1   B1</span>
+<span class="pl-c">*   2     A0   B2</span>
+<span class="pl-c">*   3     A1   B0</span>
+<span class="pl-c">*   4     A0   B1</span>
+<span class="pl-c">*   5     A1   B2</span>
+<span class="pl-c">*/</span>
 
-<span class="pl-c">//In this case, the conditional distribtuion is of the type "Normal given Multinomial Parents"</span>
-<span class="pl-smi">Normal_MultinomialParents</span> normalMultiDist <span class="pl-k">=</span> bn<span class="pl-k">.</span>getConditionalDistribution(normalVar);
-normalMultiDist<span class="pl-k">.</span>getNormal(<span class="pl-c1">0</span>)<span class="pl-k">.</span>setMean(<span class="pl-c1">1.0</span>);
-normalMultiDist<span class="pl-k">.</span>getNormal(<span class="pl-c1">0</span>)<span class="pl-k">.</span>setVariance(<span class="pl-c1">1.0</span>);
+<span class="pl-c">// *********************** Modifiy the CPDs at TIME 0 ***********************************</span>
 
-normalMultiDist<span class="pl-k">.</span>getNormal(<span class="pl-c1">1</span>)<span class="pl-k">.</span>setMean(<span class="pl-c1">0.0</span>);
-normalMultiDist<span class="pl-k">.</span>getNormal(<span class="pl-c1">1</span>)<span class="pl-k">.</span>setVariance(<span class="pl-c1">1.0</span>);
+<span class="pl-c">// Variable A</span>
+<span class="pl-smi">Multinomial</span> distA_Time0 <span class="pl-k">=</span> dbn<span class="pl-k">.</span>getConditionalDistributionTime0(<span class="pl-smi">A</span>);
+distA_Time0<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.3</span>, <span class="pl-c1">0.7</span>});
 
-<span class="pl-c">//We print modified Bayesian network</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(bn<span class="pl-k">.</span>toString());</pre></div>
+<span class="pl-c">// Variable B</span>
+<span class="pl-smi">Multinomial_MultinomialParents</span> distB_Time0 <span class="pl-k">=</span> dbn<span class="pl-k">.</span>getConditionalDistributionTime0(<span class="pl-smi">B</span>);
+distB_Time0<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">0</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.4</span>, <span class="pl-c1">0.1</span>, <span class="pl-c1">0.5</span>});
+distB_Time0<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">1</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.2</span>, <span class="pl-c1">0.5</span>, <span class="pl-c1">0.3</span>});
+
+<span class="pl-c">// Variable C</span>
+<span class="pl-smi">Multinomial_MultinomialParents</span> distC_Time0 <span class="pl-k">=</span> dbn<span class="pl-k">.</span>getConditionalDistributionTime0(<span class="pl-smi">C</span>);
+distC_Time0<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">0</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.4</span>, <span class="pl-c1">0.6</span>});
+distC_Time0<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">1</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.2</span>, <span class="pl-c1">0.8</span>});
+
+<span class="pl-c">// Variable D</span>
+<span class="pl-smi">Multinomial_MultinomialParents</span> distD_Time0 <span class="pl-k">=</span> dbn<span class="pl-k">.</span>getConditionalDistributionTime0(<span class="pl-smi">D</span>);
+distD_Time0<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">0</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.7</span>, <span class="pl-c1">0.3</span>});
+distD_Time0<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">1</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.1</span>, <span class="pl-c1">0.9</span>});
+
+<span class="pl-c">// Variable E</span>
+<span class="pl-smi">Multinomial_MultinomialParents</span> distE_Time0 <span class="pl-k">=</span> dbn<span class="pl-k">.</span>getConditionalDistributionTime0(<span class="pl-smi">E</span>);
+distE_Time0<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">0</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.8</span>, <span class="pl-c1">0.2</span>});
+distE_Time0<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">1</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.1</span>, <span class="pl-c1">0.9</span>});
+
+<span class="pl-c">// Variable G</span>
+<span class="pl-smi">Multinomial_MultinomialParents</span> distG_Time0 <span class="pl-k">=</span> dbn<span class="pl-k">.</span>getConditionalDistributionTime0(<span class="pl-smi">G</span>);
+distG_Time0<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">0</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.6</span>, <span class="pl-c1">0.4</span>});
+distG_Time0<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">1</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.7</span>, <span class="pl-c1">0.3</span>});
+
+<span class="pl-c">// ************************ Modifiy the CPDs at TIME T ***********************************</span>
+
+<span class="pl-c">// Variable A</span>
+<span class="pl-smi">Multinomial_MultinomialParents</span> distA_TimeT <span class="pl-k">=</span> dbn<span class="pl-k">.</span>getConditionalDistributionTimeT(<span class="pl-smi">A</span>);
+distA_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">0</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.15</span>, <span class="pl-c1">0.85</span>});
+distA_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">1</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.1</span>, <span class="pl-c1">0.9</span>});
+
+<span class="pl-c">// Variable B</span>
+<span class="pl-smi">Multinomial_MultinomialParents</span> distB_TimeT <span class="pl-k">=</span> dbn<span class="pl-k">.</span>getConditionalDistributionTimeT(<span class="pl-smi">B</span>);
+distB_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">0</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.1</span>, <span class="pl-c1">0.2</span>, <span class="pl-c1">0.7</span>});
+distB_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">1</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.6</span>, <span class="pl-c1">0.1</span>, <span class="pl-c1">0.3</span>});
+distB_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">2</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.3</span>, <span class="pl-c1">0.4</span>, <span class="pl-c1">0.3</span>});
+distB_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">3</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.2</span>, <span class="pl-c1">0.1</span>, <span class="pl-c1">0.7</span>});
+distB_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">4</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.5</span>, <span class="pl-c1">0.1</span>, <span class="pl-c1">0.4</span>});
+distB_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">5</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.1</span>, <span class="pl-c1">0.1</span>, <span class="pl-c1">0.8</span>});
+
+<span class="pl-c">// Variable C: equals to the distribution at time 0 (C does not have temporal clone)</span>
+<span class="pl-smi">Multinomial_MultinomialParents</span> distC_TimeT <span class="pl-k">=</span> dbn<span class="pl-k">.</span>getConditionalDistributionTimeT(<span class="pl-smi">C</span>);
+distC_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">0</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.4</span>, <span class="pl-c1">0.6</span>});
+distC_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">1</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.2</span>, <span class="pl-c1">0.8</span>});
+
+<span class="pl-c">// Variable D: equals to the distribution at time 0 (D does not have temporal clone)</span>
+<span class="pl-smi">Multinomial_MultinomialParents</span> distD_TimeT <span class="pl-k">=</span> dbn<span class="pl-k">.</span>getConditionalDistributionTimeT(<span class="pl-smi">D</span>);
+distD_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">0</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.7</span>, <span class="pl-c1">0.3</span>});
+distD_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">1</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.1</span>, <span class="pl-c1">0.9</span>});
+
+<span class="pl-c">// Variable E</span>
+<span class="pl-smi">Multinomial_MultinomialParents</span> distE_TimeT <span class="pl-k">=</span> dbn<span class="pl-k">.</span>getConditionalDistributionTimeT(<span class="pl-smi">E</span>);
+distE_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">0</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.3</span>, <span class="pl-c1">0.7</span>});
+distE_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">1</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.6</span>, <span class="pl-c1">0.4</span>});
+distE_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">2</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.7</span>, <span class="pl-c1">0.3</span>});
+distE_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">3</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.9</span>, <span class="pl-c1">0.1</span>});
+
+<span class="pl-c">// Variable G</span>
+<span class="pl-smi">Multinomial_MultinomialParents</span> distG_TimeT <span class="pl-k">=</span> dbn<span class="pl-k">.</span>getConditionalDistributionTimeT(<span class="pl-smi">G</span>);
+distG_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">0</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.2</span>, <span class="pl-c1">0.8</span>});
+distG_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">1</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.5</span>, <span class="pl-c1">0.5</span>});
+distG_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">2</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.3</span>, <span class="pl-c1">0.7</span>});
+distG_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">3</span>)<span class="pl-k">.</span>setProbabilities(<span class="pl-k">new</span> <span class="pl-smi">double</span>[]{<span class="pl-c1">0.8</span>, <span class="pl-c1">0.2</span>});
+
+<span class="pl-c">/*</span>
+<span class="pl-c">* Print the new modeified DBN</span>
+<span class="pl-c">*/</span>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(dbn<span class="pl-k">.</span>toString());
+</pre></div>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h2>
-<a id="io-functionality-" class="anchor" href="#io-functionality-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>I/O Functionality <a name="dynamicioexample"></a>
+<a id="sampling-from-dynamic-bayesian-networks-" class="anchor" href="#sampling-from-dynamic-bayesian-networks-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Sampling from Dynamic Bayesian Networks <a name="sampledynamicbn"></a>
 </h2>
 
-<h3>
-<a id="io-of-data-streams-" class="anchor" href="#io-of-data-streams-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>I/O of Data Streams <a name="dynamiciodatastreamsexample"></a>
-</h3>
+<p>This example shows how to use the DynamicBayesianNetworkSampler class to randomly generate a dynamic data stream from a given Dynamic Bayesian network.</p>
 
-<p>In this example we show how to load and save data sets from <a href="http://www.cs.waikato.ac.nz/ml/weka/arff.html">.arff</a> files. </p>
+<div class="highlight highlight-source-java"><pre><span class="pl-c">//Randomly generate a DBN with 3 continuous and 3 discrete variables with 2 states</span>
+<span class="pl-smi">DynamicBayesianNetworkGenerator</span> dbnGenerator <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">DynamicBayesianNetworkGenerator</span>();
+dbnGenerator<span class="pl-k">.</span>setNumberOfContinuousVars(<span class="pl-c1">3</span>);
+dbnGenerator<span class="pl-k">.</span>setNumberOfDiscreteVars(<span class="pl-c1">3</span>);
+dbnGenerator<span class="pl-k">.</span>setNumberOfStates(<span class="pl-c1">2</span>);
 
-<div class="highlight highlight-source-java"><pre><span class="pl-c">//We can open the data stream using the static class DataStreamLoader</span>
-<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/syntheticData.arff<span class="pl-pds">"</span></span>);
+<span class="pl-c">//Create a Naive Bayes like structure with temporal links in the children (leaves) and 2 states for</span>
+<span class="pl-c">//the class variable</span>
+<span class="pl-smi">DynamicBayesianNetwork</span> network <span class="pl-k">=</span> <span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>generateDynamicNaiveBayes(
+                <span class="pl-k">new</span> <span class="pl-smi">Random</span>(<span class="pl-c1">0</span>), <span class="pl-c1">2</span>, <span class="pl-c1">true</span>);
 
-<span class="pl-c">//We can save this data set to a new file using the static class DataStreamWriter</span>
-<span class="pl-smi">DataStreamWriter</span><span class="pl-k">.</span>writeDataToFile(data, <span class="pl-s"><span class="pl-pds">"</span>datasets/tmp.arff<span class="pl-pds">"</span></span>);</pre></div>
+<span class="pl-c">//Create the sampler from this network</span>
+<span class="pl-smi">DynamicBayesianNetworkSampler</span> sampler <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">DynamicBayesianNetworkSampler</span>(network);
+sampler<span class="pl-k">.</span>setSeed(<span class="pl-c1">0</span>);
 
-<p><a href="#documentation">[Back to Top]</a></p>
+<span class="pl-c">//Sample a dataStream of 3 sequences of 1000 samples each</span>
+<span class="pl-k">DataStream&lt;<span class="pl-smi">DynamicDataInstance</span>&gt;</span> dataStream <span class="pl-k">=</span> sampler<span class="pl-k">.</span>sampleToDataBase(<span class="pl-c1">3</span>,<span class="pl-c1">1000</span>);
 
-<h3>
-<a id="dynamic-io-of-bayesian-networks-" class="anchor" href="#dynamic-io-of-bayesian-networks-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dynamic I/O of Bayesian Networks <a name="dynamiciobnsexample"></a>
-</h3>
-
-<p>In this example we show how to load and save Bayesian networks models for a binary file with ".bn" extension. In this toolbox Bayesian networks models are saved as serialized objects.</p>
-
-<div class="highlight highlight-source-java"><pre><span class="pl-c">//We can load a Bayesian network using the static class BayesianNetworkLoader</span>
-<span class="pl-smi">BayesianNetwork</span> bn <span class="pl-k">=</span> <span class="pl-smi">BayesianNetworkLoader</span><span class="pl-k">.</span>loadFromFile(<span class="pl-s"><span class="pl-pds">"</span>./networks/WasteIncinerator.bn<span class="pl-pds">"</span></span>);
-
-<span class="pl-c">//Now we print the loaded model</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(bn<span class="pl-k">.</span>toString());
-
-<span class="pl-c">//Now we change the parameters of the model</span>
-bn<span class="pl-k">.</span>randomInitialization(<span class="pl-k">new</span> <span class="pl-smi">Random</span>(<span class="pl-c1">0</span>));
-
-<span class="pl-c">//We can save this Bayesian network to using the static class BayesianNetworkWriter</span>
-<span class="pl-smi">BayesianNetworkWriter</span><span class="pl-k">.</span>saveToFile(bn, <span class="pl-s"><span class="pl-pds">"</span>networks/tmp.bn<span class="pl-pds">"</span></span>);</pre></div>
+<span class="pl-c">//Save the created data stream in a file</span>
+<span class="pl-smi">DataStreamWriter</span><span class="pl-k">.</span>writeDataToFile(dataStream, <span class="pl-s"><span class="pl-pds">"</span>./datasets/dnb-samples.arff<span class="pl-pds">"</span></span>);</pre></div>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h2>
-<a id="inference-algorithms-" class="anchor" href="#inference-algorithms-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Inference Algorithms <a name="dynamicinferenceexample"></a>
+<a id="inference-algorithms-for-dynamic-bayesian-networks-" class="anchor" href="#inference-algorithms-for-dynamic-bayesian-networks-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Inference Algorithms for Dynamic Bayesian Networks <a name="dynamicinferenceexample"></a>
 </h2>
 
 <h3>
-<a id="the-inference-engine-" class="anchor" href="#the-inference-engine-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The Inference Engine <a name="dynamicinferenceengingeexample"></a>
+<a id="the-dynamic-map-inference-" class="anchor" href="#the-dynamic-map-inference-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The Dynamic MAP Inference <a name="dynamicmap"></a>
 </h3>
 
-<p>This example show how to perform inference in a Bayesian network model using the InferenceEngine static class. This class aims to be a straigthfoward way to perform queries over a Bayesian network model. By the default the \textit{VMP} inference method is invoked.</p>
+<p>This example shows how to use the Dynamic MAP Inference algorithm.</p>
 
-<div class="highlight highlight-source-java"><pre><span class="pl-c">//We first load the WasteIncinerator bayesian network which has multinomial </span>
-<span class="pl-c">//and Gaussian variables.</span>
-<span class="pl-smi">BayesianNetwork</span> bn <span class="pl-k">=</span> <span class="pl-smi">BayesianNetworkLoader</span><span class="pl-k">.</span>loadFromFile(<span class="pl-s"><span class="pl-pds">"</span>./networks/WasteIncinerator.bn<span class="pl-pds">"</span></span>);
+<div class="highlight highlight-source-java"><pre><span class="pl-c">//Generate a random DBN model</span>
+<span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfContinuousVars(<span class="pl-c1">3</span>);
+<span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfDiscreteVars(<span class="pl-c1">5</span>);
+<span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfStates(<span class="pl-c1">2</span>);
+<span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfLinks(<span class="pl-c1">5</span>);
+<span class="pl-smi">DynamicBayesianNetwork</span> dynamicBayesianNetwork <span class="pl-k">=</span> <span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>generateDynamicNaiveBayes(<span class="pl-k">new</span> <span class="pl-smi">Random</span>(<span class="pl-c1">0</span>), <span class="pl-c1">2</span>, <span class="pl-c1">true</span>);
 
-<span class="pl-c">//We recover the relevant variables for this example: Mout which is normally </span>
-<span class="pl-c">//distributed, and W which is multinomial.</span>
-<span class="pl-smi">Variable</span> varMout <span class="pl-k">=</span> bn<span class="pl-k">.</span>getStaticVariables()<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>Mout<span class="pl-pds">"</span></span>);
-<span class="pl-smi">Variable</span> varW <span class="pl-k">=</span> bn<span class="pl-k">.</span>getStaticVariables()<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>W<span class="pl-pds">"</span></span>);
+<span class="pl-c">//Initialize the Dynamic MAP object</span>
+<span class="pl-k">int</span> nTimeSteps <span class="pl-k">=</span> <span class="pl-c1">6</span>;
+<span class="pl-smi">eu.amidst.dynamic.inference<span class="pl-k">.</span>DynamicMAPInference</span> dynMAP <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">eu.amidst.dynamic.inference<span class="pl-k">.</span>DynamicMAPInference</span>();
+dynMAP<span class="pl-k">.</span>setModel(dynamicBayesianNetwork);
+dynMAP<span class="pl-k">.</span>setNumberOfTimeSteps(nTimeSteps);
 
-<span class="pl-c">//Set the evidence.</span>
-<span class="pl-smi">Assignment</span> assignment <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">HashMapAssignment</span>(<span class="pl-c1">1</span>);
-assignment<span class="pl-k">.</span>setValue(varW,<span class="pl-c1">0</span>);
+<span class="pl-smi">Variable</span> mapVariable <span class="pl-k">=</span> dynamicBayesianNetwork<span class="pl-k">.</span>getDynamicVariables()<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>ClassVar<span class="pl-pds">"</span></span>);
+dynMAP<span class="pl-k">.</span>setMAPvariable(mapVariable);
 
-<span class="pl-c">//Then we query the posterior of</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(Mout|W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> <span class="pl-smi">InferenceEngine</span><span class="pl-k">.</span>getPosterior(varMout, bn, assignment));
+<span class="pl-c">//Generate an evidence for T=0,...,nTimeSteps-1</span>
+<span class="pl-k">List&lt;<span class="pl-smi">Variable</span>&gt;</span> varsDynamicModel <span class="pl-k">=</span> dynamicBayesianNetwork<span class="pl-k">.</span>getDynamicVariables()<span class="pl-k">.</span>getListOfDynamicVariables();
 
-<span class="pl-c">//Or some more refined queries</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(0.7&lt;Mout&lt;6.59 | W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> 
- <span class="pl-smi">InferenceEngine</span><span class="pl-k">.</span>getExpectedValue(varMout, bn, v <span class="pl-k">-</span><span class="pl-k">&gt;</span> (<span class="pl-c1">0.7</span> <span class="pl-k">&lt;</span> v <span class="pl-k">&amp;&amp;</span> v <span class="pl-k">&lt;</span> <span class="pl-c1">6.59</span>) <span class="pl-k">?</span> <span class="pl-c1">1.0</span> <span class="pl-k">:</span> <span class="pl-c1">0.0</span> ));</pre></div>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>DYNAMIC VARIABLES:<span class="pl-pds">"</span></span>);
+varsDynamicModel<span class="pl-k">.</span>forEach(var <span class="pl-k">-</span><span class="pl-k">&gt;</span> <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>Var ID <span class="pl-pds">"</span></span> <span class="pl-k">+</span> var<span class="pl-k">.</span>getVarID() <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span>: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> var<span class="pl-k">.</span>getName()));
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println();
+<span class="pl-k">int</span> indexVarEvidence1 <span class="pl-k">=</span> <span class="pl-c1">2</span>;
+<span class="pl-k">int</span> indexVarEvidence2 <span class="pl-k">=</span> <span class="pl-c1">3</span>;
+<span class="pl-k">int</span> indexVarEvidence3 <span class="pl-k">=</span> <span class="pl-c1">4</span>;
+<span class="pl-smi">Variable</span> varEvidence1 <span class="pl-k">=</span> varsDynamicModel<span class="pl-k">.</span>get(indexVarEvidence1);
+<span class="pl-smi">Variable</span> varEvidence2 <span class="pl-k">=</span> varsDynamicModel<span class="pl-k">.</span>get(indexVarEvidence2);
+<span class="pl-smi">Variable</span> varEvidence3 <span class="pl-k">=</span> varsDynamicModel<span class="pl-k">.</span>get(indexVarEvidence3);
+
+<span class="pl-k">List&lt;<span class="pl-smi">Variable</span>&gt;</span> varsEvidence <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-k">ArrayList&lt;&gt;</span>(<span class="pl-c1">3</span>);
+varsEvidence<span class="pl-k">.</span>add(<span class="pl-c1">0</span>,varEvidence1);
+varsEvidence<span class="pl-k">.</span>add(<span class="pl-c1">1</span>,varEvidence2);
+varsEvidence<span class="pl-k">.</span>add(<span class="pl-c1">2</span>,varEvidence3);
+
+<span class="pl-k">double</span> varEvidenceValue;
+
+<span class="pl-smi">Random</span> random <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Random</span>(<span class="pl-c1">4634</span>);
+
+<span class="pl-k">List&lt;<span class="pl-smi">DynamicAssignment</span>&gt;</span> evidence <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-k">ArrayList&lt;&gt;</span>(nTimeSteps);
+
+<span class="pl-k">for</span> (<span class="pl-k">int</span> t <span class="pl-k">=</span> <span class="pl-c1">0</span>; t <span class="pl-k">&lt;</span> nTimeSteps; t<span class="pl-k">++</span>) {
+   <span class="pl-smi">HashMapDynamicAssignment</span> dynAssignment <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">HashMapDynamicAssignment</span>(varsEvidence<span class="pl-k">.</span>size());
+
+   <span class="pl-k">for</span> (<span class="pl-k">int</span> i <span class="pl-k">=</span> <span class="pl-c1">0</span>; i <span class="pl-k">&lt;</span> varsEvidence<span class="pl-k">.</span>size(); i<span class="pl-k">++</span>) {
+
+        dynAssignment<span class="pl-k">.</span>setSequenceID(<span class="pl-c1">12302253</span>);
+        dynAssignment<span class="pl-k">.</span>setTimeID(t);
+        <span class="pl-smi">Variable</span> varEvidence <span class="pl-k">=</span> varsEvidence<span class="pl-k">.</span>get(i);
+
+        <span class="pl-k">if</span> (varEvidence<span class="pl-k">.</span>isMultinomial()) {
+             varEvidenceValue <span class="pl-k">=</span> random<span class="pl-k">.</span>nextInt(varEvidence1<span class="pl-k">.</span>getNumberOfStates());
+        } <span class="pl-k">else</span> {
+             varEvidenceValue <span class="pl-k">=</span> <span class="pl-k">-</span><span class="pl-c1">5</span> <span class="pl-k">+</span> <span class="pl-c1">10</span> <span class="pl-k">*</span> random<span class="pl-k">.</span>nextDouble();
+        }
+             dynAssignment<span class="pl-k">.</span>setValue(varEvidence, varEvidenceValue);
+        }
+        evidence<span class="pl-k">.</span>add(dynAssignment);
+    }
+    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>EVIDENCE:<span class="pl-pds">"</span></span>);
+    evidence<span class="pl-k">.</span>forEach(evid <span class="pl-k">-</span><span class="pl-k">&gt;</span> {
+    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>Evidence at time <span class="pl-pds">"</span></span> <span class="pl-k">+</span> evid<span class="pl-k">.</span>getTimeID());
+    evid<span class="pl-k">.</span>getVariables()<span class="pl-k">.</span>forEach(variable <span class="pl-k">-</span><span class="pl-k">&gt;</span> <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(variable<span class="pl-k">.</span>getName() <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span>: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> <span class="pl-smi">Integer</span><span class="pl-k">.</span>toString((<span class="pl-k">int</span>) evid<span class="pl-k">.</span>getValue(variable))));
+    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println();
+});
+
+<span class="pl-c">//Set the evidence and run the inference process</span>
+dynMAP<span class="pl-k">.</span>setEvidence(evidence);
+dynMAP<span class="pl-k">.</span>runInference(<span class="pl-smi">eu.amidst.dynamic.inference<span class="pl-k">.</span>DynamicMAPInference</span><span class="pl-k">.</span><span class="pl-smi">SearchAlgorithm</span><span class="pl-c1"><span class="pl-k">.</span>IS</span>);
+
+<span class="pl-c">//Display the results</span>
+<span class="pl-smi">Assignment</span> <span class="pl-smi">MAPestimate</span> <span class="pl-k">=</span> dynMAP<span class="pl-k">.</span>getMAPestimate();
+<span class="pl-k">double</span> <span class="pl-smi">MAPestimateProbability</span> <span class="pl-k">=</span> dynMAP<span class="pl-k">.</span>getMAPestimateProbability();
+
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>MAP sequence over <span class="pl-pds">"</span></span> <span class="pl-k">+</span> mapVariable<span class="pl-k">.</span>getName() <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span>:<span class="pl-pds">"</span></span>);
+<span class="pl-k">List&lt;<span class="pl-smi">Variable</span>&gt;</span> <span class="pl-smi">MAPvarReplications</span> <span class="pl-k">=</span> <span class="pl-smi">MAPestimate</span><span class="pl-k">.</span>getVariables()<span class="pl-k">.</span>stream()<span class="pl-k">.</span>sorted((var1,var2) <span class="pl-k">-</span><span class="pl-k">&gt;</span> (var1<span class="pl-k">.</span>getVarID()<span class="pl-k">&gt;</span>var2<span class="pl-k">.</span>getVarID()<span class="pl-k">?</span> <span class="pl-c1">1</span> <span class="pl-k">:</span> <span class="pl-k">-</span><span class="pl-c1">1</span>))<span class="pl-k">.</span>collect(<span class="pl-smi">Collectors</span><span class="pl-k">.</span>toList());
+
+<span class="pl-smi">StringBuilder</span> sequence <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">StringBuilder</span>();
+<span class="pl-smi">MAPvarReplications</span><span class="pl-k">.</span>stream()<span class="pl-k">.</span>forEachOrdered(var <span class="pl-k">-</span><span class="pl-k">&gt;</span> sequence<span class="pl-k">.</span>append(<span class="pl-smi">Integer</span><span class="pl-k">.</span>toString((<span class="pl-k">int</span>) <span class="pl-smi">MAPestimate</span><span class="pl-k">.</span>getValue(var)) <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span>, <span class="pl-pds">"</span></span>));
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(sequence<span class="pl-k">.</span>toString());
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>with probability prop. to: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> <span class="pl-smi">MAPestimateProbability</span>);</pre></div>
+
+<h3>
+<a id="the-dynamic-variational-message-passing-" class="anchor" href="#the-dynamic-variational-message-passing-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The Dynamic Variational Message Passing <a name="dynamicvmp"></a>
+</h3>
+
+<p>This example shows how to use the Factored Frontier algorithm with Variational Message Passing for running inference on dynamic Bayesian networks.</p>
+
+<div class="highlight highlight-source-java"><pre>
+<span class="pl-c">//Generate a dynamic Bayesian network (NB structure with class and attributes temporally linked)</span>
+<span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfContinuousVars(<span class="pl-c1">2</span>);
+<span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfDiscreteVars(<span class="pl-c1">5</span>);
+<span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfStates(<span class="pl-c1">3</span>);
+<span class="pl-smi">DynamicBayesianNetwork</span> extendedDBN <span class="pl-k">=</span> <span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>generateDynamicNaiveBayes(random,<span class="pl-c1">2</span>,<span class="pl-c1">true</span>);
+
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(extendedDBN<span class="pl-k">.</span>toString());
+
+<span class="pl-c">//Select the target variable for inference, in this case it corresponds to the class variable</span>
+<span class="pl-smi">Variable</span> classVar <span class="pl-k">=</span> extendedDBN<span class="pl-k">.</span>getDynamicVariables()<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>ClassVar<span class="pl-pds">"</span></span>);
+
+
+<span class="pl-c">//Create a dynamic data stream with 3 sequences for prediction. The class var is made hidden.</span>
+<span class="pl-smi">DynamicBayesianNetworkSampler</span> dynamicSampler <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">DynamicBayesianNetworkSampler</span>(extendedDBN);
+dynamicSampler<span class="pl-k">.</span>setHiddenVar(classVar);
+<span class="pl-k">DataStream&lt;<span class="pl-smi">DynamicDataInstance</span>&gt;</span> dataPredict <span class="pl-k">=</span> dynamicSampler<span class="pl-k">.</span>sampleToDataBase(<span class="pl-c1">3</span>,<span class="pl-c1">100</span>);
+
+
+<span class="pl-c">//Select VMP with the factored frontier algorithm as the Inference Algorithm</span>
+<span class="pl-smi">FactoredFrontierForDBN</span> <span class="pl-smi">FFalgorithm</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">FactoredFrontierForDBN</span>(<span class="pl-k">new</span> <span class="pl-smi">VMP</span>());
+<span class="pl-smi">InferenceEngineForDBN</span><span class="pl-k">.</span>setInferenceAlgorithmForDBN(<span class="pl-smi">FFalgorithm</span>);
+
+<span class="pl-c">//Set the DBN model</span>
+<span class="pl-smi">InferenceEngineForDBN</span><span class="pl-k">.</span>setModel(extendedDBN);
+
+<span class="pl-k">int</span> time <span class="pl-k">=</span> <span class="pl-c1">0</span> ;
+<span class="pl-smi">UnivariateDistribution</span> posterior <span class="pl-k">=</span> <span class="pl-c1">null</span>;
+<span class="pl-k">for</span> (<span class="pl-smi">DynamicDataInstance</span> instance <span class="pl-k">:</span> dataPredict) {
+
+   <span class="pl-c">//The InferenceEngineForDBN must be reset at the beginning of each Sequence.</span>
+   <span class="pl-k">if</span> (instance<span class="pl-k">.</span>getTimeID()<span class="pl-k">==</span><span class="pl-c1">0</span> <span class="pl-k">&amp;&amp;</span> posterior <span class="pl-k">!=</span> <span class="pl-c1">null</span>) {
+       <span class="pl-smi">InferenceEngineForDBN</span><span class="pl-k">.</span>reset();
+       time<span class="pl-k">=</span><span class="pl-c1">0</span>;
+   }
+
+   <span class="pl-c">//Set the evidence </span>
+   <span class="pl-smi">InferenceEngineForDBN</span><span class="pl-k">.</span>addDynamicEvidence(instance);
+
+   <span class="pl-c">//Run the inference process</span>
+   <span class="pl-smi">InferenceEngineForDBN</span><span class="pl-k">.</span>runInference();
+
+   <span class="pl-c">//Query the posterior of the target variable</span>
+   posterior <span class="pl-k">=</span> <span class="pl-smi">InferenceEngineForDBN</span><span class="pl-k">.</span>getFilteredPosterior(classVar);
+
+   <span class="pl-c">//Display the output</span>
+   <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(ClassVar|e[0:<span class="pl-pds">"</span></span><span class="pl-k">+</span>(time<span class="pl-k">++</span>)<span class="pl-k">+</span><span class="pl-s"><span class="pl-pds">"</span>]) = <span class="pl-pds">"</span></span><span class="pl-k">+</span>posterior);
+}</pre></div>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
-<a id="variational-message-passing-" class="anchor" href="#variational-message-passing-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Variational Message Passing <a name="dynamicvmpexample"></a>
+<a id="the-dynamic-importance-sampling-" class="anchor" href="#the-dynamic-importance-sampling-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The Dynamic Importance Sampling <a name="dynamicis"></a>
 </h3>
 
-<p>This example we show how to perform inference on a general Bayesian network using the Variational Message Passing (VMP)
-algorithm detailed in</p>
+<p>This example shows how to use the Factored Frontier algorithm with Importance Sampling for running inference in dynamic Bayesian networks.</p>
 
-<blockquote>
-<p>Winn, J. M., Bishop, C. M. (2005). Variational message passing. In Journal of Machine Learning Research (pp. 661-694).</p>
-</blockquote>
+<div class="highlight highlight-source-java"><pre><span class="pl-c">//Generate a dynamic Bayesian network (NB structure with class and attributes temporally linked)</span>
+<span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfContinuousVars(<span class="pl-c1">2</span>);
+<span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfDiscreteVars(<span class="pl-c1">5</span>);
+<span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfStates(<span class="pl-c1">3</span>);
+<span class="pl-smi">DynamicBayesianNetwork</span> extendedDBN <span class="pl-k">=</span> <span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>generateDynamicNaiveBayes(random, <span class="pl-c1">2</span>, <span class="pl-c1">true</span>);
 
-<div class="highlight highlight-source-java"><pre><span class="pl-c">//We first load the WasteIncinerator bayesian network which has multinomial </span>
-<span class="pl-c">//and Gaussian variables.</span>
-<span class="pl-smi">BayesianNetwork</span> bn <span class="pl-k">=</span> <span class="pl-smi">BayesianNetworkLoader</span><span class="pl-k">.</span>loadFromFile(<span class="pl-s"><span class="pl-pds">"</span>./networks/WasteIncinerator.bn<span class="pl-pds">"</span></span>);
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(extendedDBN<span class="pl-k">.</span>toString());
 
-<span class="pl-c">//We recover the relevant variables for this example: Mout which is normally </span>
-<span class="pl-c">//distributed, and W which is multinomial.</span>
-<span class="pl-smi">Variable</span> varMout <span class="pl-k">=</span> bn<span class="pl-k">.</span>getStaticVariables()<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>Mout<span class="pl-pds">"</span></span>);
-<span class="pl-smi">Variable</span> varW <span class="pl-k">=</span> bn<span class="pl-k">.</span>getStaticVariables()<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>W<span class="pl-pds">"</span></span>);
+<span class="pl-c">//Select the target variable for inference, in this case the class variable</span>
+<span class="pl-smi">Variable</span> classVar <span class="pl-k">=</span> extendedDBN<span class="pl-k">.</span>getDynamicVariables()<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>ClassVar<span class="pl-pds">"</span></span>);
 
-<span class="pl-c">//First we create an instance of a inference algorithm. In this case, we use </span>
-<span class="pl-c">//the VMP class.</span>
-<span class="pl-smi">InferenceAlgorithm</span> inferenceAlgorithm <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">VMP</span>();
+<span class="pl-c">//Create a dynamic dataset with 3 sequences for prediction. The class var is made hidden.</span>
+<span class="pl-smi">DynamicBayesianNetworkSampler</span> dynamicSampler <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">DynamicBayesianNetworkSampler</span>(extendedDBN);
+dynamicSampler<span class="pl-k">.</span>setHiddenVar(classVar);
+<span class="pl-k">DataStream&lt;<span class="pl-smi">DynamicDataInstance</span>&gt;</span> dataPredict <span class="pl-k">=</span> dynamicSampler<span class="pl-k">.</span>sampleToDataBase(<span class="pl-c1">3</span>, <span class="pl-c1">1000</span>);
 
-<span class="pl-c">//Then, we set the BN model</span>
-inferenceAlgorithm<span class="pl-k">.</span>setModel(bn);
+<span class="pl-c">//Select IS with the factored frontier algorithm as the Inference Algorithm</span>
+<span class="pl-smi">ImportanceSampling</span> importanceSampling <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">ImportanceSampling</span>();
+importanceSampling<span class="pl-k">.</span>setKeepDataOnMemory(<span class="pl-c1">true</span>);
+<span class="pl-smi">FactoredFrontierForDBN</span> <span class="pl-smi">FFalgorithm</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">FactoredFrontierForDBN</span>(importanceSampling);
+<span class="pl-smi">InferenceEngineForDBN</span><span class="pl-k">.</span>setInferenceAlgorithmForDBN(<span class="pl-smi">FFalgorithm</span>);
 
-<span class="pl-c">//If exists, we also set the evidence.</span>
-<span class="pl-smi">Assignment</span> assignment <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">HashMapAssignment</span>(<span class="pl-c1">1</span>);
-assignment<span class="pl-k">.</span>setValue(varW,<span class="pl-c1">0</span>);
-inferenceAlgorithm<span class="pl-k">.</span>setEvidence(assignment);
+<span class="pl-c">//Set the DBN model</span>
+<span class="pl-smi">InferenceEngineForDBN</span><span class="pl-k">.</span>setModel(extendedDBN);
 
-<span class="pl-c">//Then we run inference</span>
-inferenceAlgorithm<span class="pl-k">.</span>runInference();
+<span class="pl-k">int</span> time <span class="pl-k">=</span> <span class="pl-c1">0</span>;
+<span class="pl-smi">UnivariateDistribution</span> posterior <span class="pl-k">=</span> <span class="pl-c1">null</span>;
+<span class="pl-k">for</span> (<span class="pl-smi">DynamicDataInstance</span> instance <span class="pl-k">:</span> dataPredict) {
 
-<span class="pl-c">//Then we query the posterior of</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(Mout|W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> inferenceAlgorithm<span class="pl-k">.</span>getPosterior(varMout));
+    <span class="pl-c">//The InferenceEngineForDBN must be reset at the beginning of each Sequence.</span>
+    <span class="pl-k">if</span> (instance<span class="pl-k">.</span>getTimeID() <span class="pl-k">==</span> <span class="pl-c1">0</span> <span class="pl-k">&amp;&amp;</span> posterior <span class="pl-k">!=</span> <span class="pl-c1">null</span>) {
+        <span class="pl-smi">InferenceEngineForDBN</span><span class="pl-k">.</span>reset();
+        time <span class="pl-k">=</span> <span class="pl-c1">0</span>;
+     }
 
-<span class="pl-c">//Or some more refined queries</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(0.7&lt;Mout&lt;6.59 | W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> 
- inferenceAlgorithm<span class="pl-k">.</span>getExpectedValue(varMout, v <span class="pl-k">-</span><span class="pl-k">&gt;</span> (<span class="pl-c1">0.7</span> <span class="pl-k">&lt;</span> v <span class="pl-k">&amp;&amp;</span> v <span class="pl-k">&lt;</span> <span class="pl-c1">6.59</span>) <span class="pl-k">?</span> <span class="pl-c1">1.0</span> <span class="pl-k">:</span> <span class="pl-c1">0.0</span> ));
+    <span class="pl-c">//Set the evidence.</span>
+    <span class="pl-smi">InferenceEngineForDBN</span><span class="pl-k">.</span>addDynamicEvidence(instance);
 
-<span class="pl-c">//We can also compute the probability of the evidence</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> <span class="pl-smi">Math</span><span class="pl-k">.</span>exp(inferenceAlgorithm<span class="pl-k">.</span>getLogProbabilityOfEvidence()));</pre></div>
+    <span class="pl-c">//Run inference</span>
+    <span class="pl-smi">InferenceEngineForDBN</span><span class="pl-k">.</span>runInference();
 
-<p><a href="#documentation">[Back to Top]</a></p>
+    <span class="pl-c">//Query the posterior of the target variable</span>
+    posterior <span class="pl-k">=</span> <span class="pl-smi">InferenceEngineForDBN</span><span class="pl-k">.</span>getFilteredPosterior(classVar);
 
-<h3>
-<a id="importance-sampling-" class="anchor" href="#importance-sampling-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Importance Sampling <a name="isexample"></a>
-</h3>
-
-<p>This example we show how to perform inference on a general Bayesian network using an importance sampling
-algorithm detailed in</p>
-
-<blockquote>
-<p>Fung, R., Chang, K. C. (2013). Weighing and integrating evidence for stochastic simulation in Bayesian networks. arXiv preprint arXiv:1304.1504.</p>
-</blockquote>
-
-<div class="highlight highlight-source-java"><pre><span class="pl-c">//We first load the WasteIncinerator bayesian network which has multinomial </span>
-<span class="pl-c">//and Gaussian variables.</span>
-<span class="pl-smi">BayesianNetwork</span> bn <span class="pl-k">=</span> <span class="pl-smi">BayesianNetworkLoader</span><span class="pl-k">.</span>loadFromFile(<span class="pl-s"><span class="pl-pds">"</span>./networks/WasteIncinerator.bn<span class="pl-pds">"</span></span>);
-
-<span class="pl-c">//We recover the relevant variables for this example: Mout which is normally </span>
-<span class="pl-c">//distributed, and W which is multinomial.</span>
-<span class="pl-smi">Variable</span> varMout <span class="pl-k">=</span> bn<span class="pl-k">.</span>getStaticVariables()<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>Mout<span class="pl-pds">"</span></span>);
-<span class="pl-smi">Variable</span> varW <span class="pl-k">=</span> bn<span class="pl-k">.</span>getStaticVariables()<span class="pl-k">.</span>getVariableByName(<span class="pl-s"><span class="pl-pds">"</span>W<span class="pl-pds">"</span></span>);
-
-<span class="pl-c">//First we create an instance of a inference algorithm. In this case, we use </span>
-<span class="pl-c">//the ImportanceSampling class.</span>
-<span class="pl-smi">InferenceAlgorithm</span> inferenceAlgorithm <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">ImportanceSampling</span>();
-
-<span class="pl-c">//Then, we set the BN model</span>
-inferenceAlgorithm<span class="pl-k">.</span>setModel(bn);
-
-<span class="pl-c">//If exists, we also set the evidence.</span>
-<span class="pl-smi">Assignment</span> assignment <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">HashMapAssignment</span>(<span class="pl-c1">1</span>);
-assignment<span class="pl-k">.</span>setValue(varW,<span class="pl-c1">0</span>);
-inferenceAlgorithm<span class="pl-k">.</span>setEvidence(assignment);
-
-<span class="pl-c">//We can also set to be run in parallel on multicore CPUs</span>
-inferenceAlgorithm<span class="pl-k">.</span>setParallelMode(<span class="pl-c1">true</span>);
-
-<span class="pl-c">//Then we run inference</span>
-inferenceAlgorithm<span class="pl-k">.</span>runInference();
-
-<span class="pl-c">//Then we query the posterior of</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(Mout|W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> inferenceAlgorithm<span class="pl-k">.</span>getPosterior(varMout));
-
-<span class="pl-c">//Or some more refined queries</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(0.7&lt;Mout&lt;6.59 | W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> 
- inferenceAlgorithm<span class="pl-k">.</span>getExpectedValue(varMout, v <span class="pl-k">-</span><span class="pl-k">&gt;</span> (<span class="pl-c1">0.7</span> <span class="pl-k">&lt;</span> v <span class="pl-k">&amp;&amp;</span> v <span class="pl-k">&lt;</span> <span class="pl-c1">6.59</span>) <span class="pl-k">?</span> <span class="pl-c1">1.0</span> <span class="pl-k">:</span> <span class="pl-c1">0.0</span> ));
-
-<span class="pl-c">//We can also compute the probability of the evidence</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(W=0) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> <span class="pl-smi">Math</span><span class="pl-k">.</span>exp(inferenceAlgorithm<span class="pl-k">.</span>getLogProbabilityOfEvidence()));</pre></div>
+    <span class="pl-c">//Display the output</span>
+    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>P(ClassVar|e[0:<span class="pl-pds">"</span></span> <span class="pl-k">+</span> (time<span class="pl-k">++</span>) <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span>]) = <span class="pl-pds">"</span></span> <span class="pl-k">+</span> posterior);
+}</pre></div>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
@@ -509,166 +664,76 @@ inferenceAlgorithm<span class="pl-k">.</span>runInference();
 </h2>
 
 <h3>
-<a id="maximum-likelihood-" class="anchor" href="#maximum-likelihood-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Maximum Likelihood <a name="mlexample"></a>
+<a id="maximum-likelihood-for-dbns-" class="anchor" href="#maximum-likelihood-for-dbns-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Maximum Likelihood for DBNs <a name="dynamicml"></a>
 </h3>
 
-<p>This other example shows how to learn incrementally the parameters of a Bayesian network using data batches,</p>
+<p>This example shows how to learn the parameters of a dynamic Bayesian network using maximum likelihood from a randomly sampled data stream.</p>
 
-<div class="highlight highlight-source-java"><pre><span class="pl-c">//We can open the data stream using the static class DataStreamLoader</span>
-<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> 
-                  <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/WasteIncineratorSample.arff<span class="pl-pds">"</span></span>);
+<div class="highlight highlight-source-java"><pre><span class="pl-c">//Generate a dynamic Bayesian network (NB structure with class and attributes temporally linked)</span>
+<span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfContinuousVars(<span class="pl-c1">2</span>);
+<span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfDiscreteVars(<span class="pl-c1">5</span>);
+<span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfStates(<span class="pl-c1">3</span>);
+<span class="pl-smi">DynamicBayesianNetwork</span> dbnRandom <span class="pl-k">=</span> <span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>generateDynamicNaiveBayes(random,<span class="pl-c1">2</span>,<span class="pl-c1">true</span>);
 
-<span class="pl-c">//We create a ParameterLearningAlgorithm object with the MaximumLikehood builder</span>
-<span class="pl-smi">ParameterLearningAlgorithm</span> parameterLearningAlgorithm <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">ParallelMaximumLikelihood</span>();
+<span class="pl-c">//Sample dynamic data stream from the created dbn with random parameters</span>
+<span class="pl-smi">DynamicBayesianNetworkSampler</span> sampler <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">DynamicBayesianNetworkSampler</span>(dbnRandom);
+sampler<span class="pl-k">.</span>setSeed(<span class="pl-c1">0</span>);
+<span class="pl-k">DataStream&lt;<span class="pl-smi">DynamicDataInstance</span>&gt;</span> data <span class="pl-k">=</span> sampler<span class="pl-k">.</span>sampleToDataBase(<span class="pl-c1">3</span>,<span class="pl-c1">10000</span>);
 
-<span class="pl-c">//We fix the DAG structure</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setDAG(getNaiveBayesStructure(data,<span class="pl-c1">0</span>));
+<span class="pl-c">//Set batch size value and the parallel mode</span>
+<span class="pl-smi">DynamicMaximumLikelihood</span><span class="pl-k">.</span>setBatchSize(<span class="pl-c1">1000</span>);
+<span class="pl-smi">DynamicMaximumLikelihood</span><span class="pl-k">.</span>setParallelMode(<span class="pl-c1">true</span>);
 
-<span class="pl-c">//We should invoke this method before processing any data</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>initLearning();
+<span class="pl-c">//Learn the DBN parameters with ML from data</span>
+<span class="pl-smi">DynamicBayesianNetwork</span> dbnLearnt <span class="pl-k">=</span> <span class="pl-smi">DynamicMaximumLikelihood</span><span class="pl-k">.</span>learnDynamic(dbnRandom<span class="pl-k">.</span>getDynamicDAG(), data);
 
-
-<span class="pl-c">//Then we show how we can perform parameter learnig by a sequential updating of data batches.</span>
-<span class="pl-k">for</span> (<span class="pl-k">DataOnMemory&lt;<span class="pl-smi">DataInstance</span>&gt;</span> batch <span class="pl-k">:</span> data<span class="pl-k">.</span>iterableOverBatches(<span class="pl-c1">100</span>)){
-    parameterLearningAlgorithm<span class="pl-k">.</span>updateModel(batch);
-}
-
-<span class="pl-c">//And we get the model</span>
-<span class="pl-smi">BayesianNetwork</span> bnModel <span class="pl-k">=</span> parameterLearningAlgorithm<span class="pl-k">.</span>getLearntBayesianNetwork();
-
-<span class="pl-c">//We print the model</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(bnModel<span class="pl-k">.</span>toString());</pre></div>
+<span class="pl-c">//We print the learnt DBN model</span>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(dbnLearnt<span class="pl-k">.</span>toString());        </pre></div>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
-<a id="parallel-maximum-likelihood-" class="anchor" href="#parallel-maximum-likelihood-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parallel Maximum Likelihood <a name="dynamicpmlexample"></a>
+<a id="streaming-variational-bayes-for-dbns-" class="anchor" href="#streaming-variational-bayes-for-dbns-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Streaming Variational Bayes for DBNs <a name="dynamicsvb"></a>
 </h3>
 
-<p>This example shows how to learn in parallel the parameters of a Bayesian network from a stream of data using maximum likelihood.</p>
+<p>This example shows how to learn the parameters of a dynamic Bayesian network using streaming variational Bayes from a randomly sampled data stream.</p>
 
-<div class="highlight highlight-source-java"><pre><span class="pl-c">//We can open the data stream using the static class DataStreamLoader</span>
-<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> 
-           <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/syntheticData.arff<span class="pl-pds">"</span></span>);
+<div class="highlight highlight-source-java"><pre>
+<span class="pl-c">//Generate a dynamic Bayesian network (NB structure with class and attributes temporally linked)</span>
+<span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfContinuousVars(<span class="pl-c1">2</span>);
+<span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfDiscreteVars(<span class="pl-c1">5</span>);
+<span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>setNumberOfStates(<span class="pl-c1">3</span>);
+<span class="pl-smi">DynamicBayesianNetwork</span> dbnRandom <span class="pl-k">=</span> <span class="pl-smi">DynamicBayesianNetworkGenerator</span><span class="pl-k">.</span>generateDynamicNaiveBayes(random,<span class="pl-c1">2</span>,<span class="pl-c1">true</span>);
 
-<span class="pl-c">//We create a MaximumLikelihood object with the MaximumLikehood builder</span>
-<span class="pl-smi">MaximumLikelihood</span> parameterLearningAlgorithm <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">MaximumLikelihood</span>();
+<span class="pl-c">//Sample dynamic data stream from the created dbn with random parameters</span>
+<span class="pl-smi">DynamicBayesianNetworkSampler</span> sampler <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">DynamicBayesianNetworkSampler</span>(dbnRandom);
+sampler<span class="pl-k">.</span>setSeed(<span class="pl-c1">0</span>);
+<span class="pl-c">//Sample 3 sequences of 100K instances</span>
+<span class="pl-k">DataStream&lt;<span class="pl-smi">DynamicDataInstance</span>&gt;</span> data <span class="pl-k">=</span> sampler<span class="pl-k">.</span>sampleToDataBase(<span class="pl-c1">3</span>,<span class="pl-c1">10000</span>);
 
-<span class="pl-c">//We activate the parallel mode.</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setParallelMode(<span class="pl-c1">true</span>);
+<span class="pl-c">//Parameter Learning with Streaming variational Bayes</span>
+<span class="pl-smi">DynamicSVB</span> svb <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">DynamicSVB</span>();
 
-<span class="pl-c">//We fix the DAG structure</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setDAG(getNaiveBayesStructure(data,<span class="pl-c1">0</span>));
+<span class="pl-c">//Set the desired options for the svb</span>
+svb<span class="pl-k">.</span>setWindowsSize(<span class="pl-c1">100</span>);
+svb<span class="pl-k">.</span>setSeed(<span class="pl-c1">0</span>);
+<span class="pl-c">//If desired, we may also set some options for the VMP</span>
+<span class="pl-smi">VMP</span> vmp <span class="pl-k">=</span> svb<span class="pl-k">.</span>getDynamicPlateauStructure()<span class="pl-k">.</span>getVMPTimeT();
+vmp<span class="pl-k">.</span>setOutput(<span class="pl-c1">true</span>);
+vmp<span class="pl-k">.</span>setTestELBO(<span class="pl-c1">true</span>);
+vmp<span class="pl-k">.</span>setMaxIter(<span class="pl-c1">1000</span>);
+vmp<span class="pl-k">.</span>setThreshold(<span class="pl-c1">0.0001</span>);
 
-<span class="pl-c">//We set the batch size which will be employed to learn the model in parallel</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setBatchSize(<span class="pl-c1">100</span>);
+<span class="pl-c">//Set the dynamicDAG, the data and start learning</span>
+svb<span class="pl-k">.</span>setDynamicDAG(dbnRandom<span class="pl-k">.</span>getDynamicDAG());
+svb<span class="pl-k">.</span>setDataStream(data);
+svb<span class="pl-k">.</span>runLearning();
 
-<span class="pl-c">//We set the data which is going to be used for leaning the parameters</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setDataStream(data);
+<span class="pl-c">//Get the learnt DBN model</span>
+<span class="pl-smi">DynamicBayesianNetwork</span> dbnLearnt <span class="pl-k">=</span> svb<span class="pl-k">.</span>getLearntDBN();
 
-<span class="pl-c">//We perform the learning</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>runLearning();
-
-<span class="pl-c">//And we get the model</span>
-<span class="pl-smi">BayesianNetwork</span> bnModel <span class="pl-k">=</span> parameterLearningAlgorithm<span class="pl-k">.</span>getLearntBayesianNetwork();
-
-<span class="pl-c">//We print the model</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(bnModel<span class="pl-k">.</span>toString());</pre></div>
-
-<p><a href="#documentation">[Back to Top]</a></p>
-
-<h3>
-<a id="streaming-variational-bayes-" class="anchor" href="#streaming-variational-bayes-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Streaming Variational Bayes <a name="dynamicsvbexample"></a>
-</h3>
-
-<p>This example shows how to learn incrementally the parameters of a Bayesian network from a stream of data with a Bayesian approach using the following algorithm,</p>
-
-<blockquote>
-<p>Broderick, T., Boyd, N., Wibisono, A., Wilson, A. C., &amp; Jordan, M. I. (2013). Streaming variational Bayes. 
-In Advances in Neural Information Processing Systems (pp. 1727-1735).</p>
-</blockquote>
-
-<p>In this second example we show a alternative implementation which explicitly updates the model by batches by using the class <em>SVB</em>.</p>
-
-<div class="highlight highlight-source-java"><pre><span class="pl-c">//We can open the data stream using the static class DataStreamLoader</span>
-<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> 
-                      <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/WasteIncineratorSample.arff<span class="pl-pds">"</span></span>);
-
-<span class="pl-c">//We create a StreamingVariationalBayesVMP object</span>
-<span class="pl-smi">StreamingVariationalBayesVMP</span> parameterLearningAlgorithm <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">StreamingVariationalBayesVMP</span>();
-
-<span class="pl-c">//We fix the DAG structure, which is a Naive Bayes with a </span>
-<span class="pl-c">//global latent binary variable</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setDAG(getHiddenNaiveBayesStructure(data));
-
-<span class="pl-c">//We fix the size of the window, which must be equal to the size of the data batches </span>
-<span class="pl-c">//we use for learning</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setWindowsSize(<span class="pl-c1">5</span>);
-
-<span class="pl-c">//We can activate the output</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setOutput(<span class="pl-c1">true</span>);
-
-<span class="pl-c">//We should invoke this method before processing any data</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>initLearning();
-
-<span class="pl-c">//Then we show how we can perform parameter learnig by a sequential updating of </span>
-<span class="pl-c">//data batches.</span>
-<span class="pl-k">for</span> (<span class="pl-k">DataOnMemory&lt;<span class="pl-smi">DataInstance</span>&gt;</span> batch <span class="pl-k">:</span> data<span class="pl-k">.</span>iterableOverBatches(<span class="pl-c1">5</span>)){
-    parameterLearningAlgorithm<span class="pl-k">.</span>updateModel(batch);
-}
-
-<span class="pl-c">//And we get the model</span>
-<span class="pl-smi">BayesianNetwork</span> bnModel <span class="pl-k">=</span> parameterLearningAlgorithm<span class="pl-k">.</span>getLearntBayesianNetwork();
-
-<span class="pl-c">//We print the model</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(bnModel<span class="pl-k">.</span>toString());</pre></div>
-
-<p><a href="#documentation">[Back to Top]</a></p>
-
-<h3>
-<a id="parallel-streaming-variational-bayes-" class="anchor" href="#parallel-streaming-variational-bayes-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parallel Streaming Variational Bayes <a name="dynamicpsvbexample"></a>
-</h3>
-
-<p>This example shows how to learn in the parameters of a Bayesian network from a stream of data with a Bayesian
-approach using the parallel version  of the SVB algorithm, </p>
-
-<blockquote>
-<p>Broderick, T., Boyd, N., Wibisono, A., Wilson, A. C., &amp; Jordan, M. I. (2013). Streaming variational Bayes. 
-In Advances in Neural Information Processing Systems (pp. 1727-1735).</p>
-</blockquote>
-
-<div class="highlight highlight-source-java"><pre><span class="pl-c">//We can open the data stream using the static class DataStreamLoader</span>
-<span class="pl-k">DataStream&lt;<span class="pl-smi">DataInstance</span>&gt;</span> data <span class="pl-k">=</span> 
-                   <span class="pl-smi">DataStreamLoader</span><span class="pl-k">.</span>openFromFile(<span class="pl-s"><span class="pl-pds">"</span>datasets/WasteIncineratorSample.arff<span class="pl-pds">"</span></span>);
-
-<span class="pl-c">//We create a ParallelSVB object</span>
-<span class="pl-smi">ParallelSVB</span> parameterLearningAlgorithm <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">ParallelSVB</span>();
-
-<span class="pl-c">//We fix the number of cores we want to exploit</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setNCores(<span class="pl-c1">4</span>);
-
-<span class="pl-c">//We fix the DAG structure, which is a Naive Bayes with a </span>
-<span class="pl-c">//global latent binary variable</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setDAG(<span class="pl-smi">StreamingVMPExample</span><span class="pl-k">.</span>getHiddenNaiveBayesStructure(data));
-
-
-<span class="pl-c">//We fix the size of the window</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>getSVBEngine()<span class="pl-k">.</span>setWindowsSize(<span class="pl-c1">100</span>);
-
-<span class="pl-c">//We can activate the output</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setOutput(<span class="pl-c1">true</span>);
-
-<span class="pl-c">//We set the data which is going to be used for leaning the parameters</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>setDataStream(data);
-
-<span class="pl-c">//We perform the learning</span>
-parameterLearningAlgorithm<span class="pl-k">.</span>runLearning();
-
-<span class="pl-c">//And we get the model</span>
-<span class="pl-smi">BayesianNetwork</span> bnModel <span class="pl-k">=</span> parameterLearningAlgorithm<span class="pl-k">.</span>getLearntBayesianNetwork();
-
-<span class="pl-c">//We print the model</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(bnModel<span class="pl-k">.</span>toString());</pre></div>
+<span class="pl-c">//Print the DBN model</span>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(dbnLearnt<span class="pl-k">.</span>toString());</pre></div>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
