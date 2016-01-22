@@ -3,9 +3,9 @@
    * [Dynamic Data Streams](#dynamicdatastreamsexample)
    * [Dynamic Random Variables](#dynamicvariablesexample)
    * [Dynamic Bayesian Networks](#dynamicbnexample)
-       * [Creating Bayesian Networks](#dynamicbnnohiddenexample)
-       * [Creating Bayesian Networks with latent variables](#dynamicbnhiddenexample)
-       * [Modifying Bayesian Networks](#dynamicbnmodifyexample)
+       * [Creating Dynamic Bayesian Networks](#dynamicbn)
+       * [Creating Dynamic Bayesian Networks with latent variables](#dynamicbnhidden)
+       * [Modifying Bayesian Networks](#dynamicbnmodify)
    * [Sampling from Dynamic Bayesian Networks](#sampledynamicbn)
    * [Inference Algorithms for Dynamic Bayesian Networks](#dynamicinferenceexample)
        * [The Dynamic MAP Inference](#dynamicmap)
@@ -85,7 +85,7 @@ System.out.println("Is Variable "+multinomialVar.getName()+" a dynamic variable?
 
 ## Dynamic Bayesian Networks<a name="dynamicbnexample"></a>
 
-### Creating dynamic Bayesian networks<a name="bnnohiddenexample"></a>
+### Creating Dynamic Bayesian networks<a name="dynamicbn"></a>
 
 This example creates a dynamic BN, from a dynamic data stream, with randomly generated probability distributions, then saves it to a file.
 
@@ -160,7 +160,7 @@ DynamicBayesianNetworkWriter.saveToFile(dbn, "networks/DBNExample.bn");
 [[Back to Top]](#documentation)
 
 
-### Creating Dynamic Bayesian Networks with Latent Variables <a name="dynamicbnhiddenexample"></a>
+### Creating Dynamic Bayesian Networks with Latent Variables <a name="dynamicbnhidden"></a>
 
 This example shows how to create a BN model with hidden variables. We simply create a BN for clustering, i.e., a naive Bayes like structure with a single hidden variable acting as parant of all the remaining observable variables.
  
@@ -257,7 +257,7 @@ DynamicBayesianNetworkWriter.saveToFile(dbn, "networks/DBNExample.bn");
 [[Back to Top]](#documentation)
 
 
-### Modifying Dynamic Bayesian Networks <a name="dynamicbnmodifyexample"></a>
+### Modifying Dynamic Bayesian Networks <a name="dynamicbnmodify"></a>
 
 This example shows how to access and modify the conditional probabilities of a Dynamic Bayesian network model.
 
