@@ -31,7 +31,7 @@
 
 <ul>
 <li><a href="#dynamicbn">Creating Dynamic Bayesian Networks</a></li>
-<li><a href="#dynamicbnhidden">Creating Dynamic Bayesian Networks with latent variables</a></li>
+<li><a href="#dynamicbnhidden">Creating Dynamic Bayesian Networks with Latent Variables</a></li>
 <li><a href="#dynamicbnmodify">Modifying Bayesian Networks</a></li>
 </ul>
 </li>
@@ -421,8 +421,7 @@ distG_TimeT<span class="pl-k">.</span>getMultinomial(<span class="pl-c1">3</span
 <span class="pl-c">/*</span>
 <span class="pl-c">* Print the new modeified DBN</span>
 <span class="pl-c">*/</span>
-<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(dbn<span class="pl-k">.</span>toString());
-</pre></div>
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(dbn<span class="pl-k">.</span>toString());</pre></div>
 
 <p><a href="#documentation">[Back to Top]</a></p>
 
@@ -545,6 +544,8 @@ dynMAP<span class="pl-k">.</span>runInference(<span class="pl-smi">eu.amidst.dyn
 <span class="pl-smi">MAPvarReplications</span><span class="pl-k">.</span>stream()<span class="pl-k">.</span>forEachOrdered(var <span class="pl-k">-</span><span class="pl-k">&gt;</span> sequence<span class="pl-k">.</span>append(<span class="pl-smi">Integer</span><span class="pl-k">.</span>toString((<span class="pl-k">int</span>) <span class="pl-smi">MAPestimate</span><span class="pl-k">.</span>getValue(var)) <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span>, <span class="pl-pds">"</span></span>));
 <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(sequence<span class="pl-k">.</span>toString());
 <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>with probability prop. to: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> <span class="pl-smi">MAPestimateProbability</span>);</pre></div>
+
+<p><a href="#documentation">[Back to Top]</a></p>
 
 <h3>
 <a id="the-dynamic-variational-message-passing-" class="anchor" href="#the-dynamic-variational-message-passing-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The Dynamic Variational Message Passing <a name="dynamicvmp"></a>

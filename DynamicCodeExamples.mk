@@ -4,7 +4,7 @@
    * [Dynamic Random Variables](#dynamicvariablesexample)
    * [Dynamic Bayesian Networks](#dynamicbnexample)
        * [Creating Dynamic Bayesian Networks](#dynamicbn)
-       * [Creating Dynamic Bayesian Networks with latent variables](#dynamicbnhidden)
+       * [Creating Dynamic Bayesian Networks with Latent Variables](#dynamicbnhidden)
        * [Modifying Bayesian Networks](#dynamicbnmodify)
    * [Sampling from Dynamic Bayesian Networks](#sampledynamicbn)
    * [Inference Algorithms for Dynamic Bayesian Networks](#dynamicinferenceexample)
@@ -384,7 +384,6 @@ distG_TimeT.getMultinomial(3).setProbabilities(new double[]{0.8, 0.2});
 * Print the new modeified DBN
 */
 System.out.println(dbn.toString());
-
 ```
 
 [[Back to Top]](#documentation)
@@ -506,6 +505,9 @@ MAPvarReplications.stream().forEachOrdered(var -> sequence.append(Integer.toStri
 System.out.println(sequence.toString());
 System.out.println("with probability prop. to: " + MAPestimateProbability);
 ```
+
+[[Back to Top]](#documentation)
+
 ### The Dynamic Variational Message Passing <a name="dynamicvmp"></a>
 
 This example shows how to use the Factored Frontier algorithm with Variational Message Passing for running inference on dynamic Bayesian networks.
