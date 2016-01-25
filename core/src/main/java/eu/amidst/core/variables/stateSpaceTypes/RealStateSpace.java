@@ -17,6 +17,9 @@ import eu.amidst.core.variables.StateSpaceTypeEnum;
  */
 public class RealStateSpace extends StateSpaceType {
 
+    /** Represents the serial version ID for serializing the object. */
+    private static final long serialVersionUID = -1395387065313130721L;
+
     /** Represents the minimum value of the interval. */
     private double minInterval;
 
@@ -49,6 +52,22 @@ public class RealStateSpace extends StateSpaceType {
      */
     public double getMinInterval() {
         return minInterval;
+    }
+
+    /**
+     * Sets the maximum value of the interval.
+     * @param value the minimum value of the interval.
+     */
+    public void setMaxInterval(double value) {
+         maxInterval = value;
+    }
+
+    /**
+     * Sets the minimum value of the interval.
+     * @param value the maximum value of the interval.
+     */
+    public void setMinInterval(double value) {
+        minInterval = value;
     }
 
     /**

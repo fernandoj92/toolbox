@@ -73,28 +73,29 @@ public class ARFFDataFolderReader implements DataFileReader {
                     .filter(line -> line.startsWith("@attribute"))
                     .collect(Collectors.toList());
 
-            /*
-            List<Attribute> atts = attLines.stream()
-                    .map(line -> {
-                        String[] parts = line.split(" |\t");
-                        int index = Integer.parseInt(parts[2]);
-                        StringBuilder builder = new StringBuilder();
-                        for (int i = 0; i < parts.length; i++) {
-                            if (i == 2)
-                                continue;
-                            builder.append(parts[i]);
-                            builder.append("\t");
-                        }
-                        return ARFFDataReader.createAttributeFromLine(index, builder.toString());
-                    })
-                    .collect(Collectors.toList());
-            */
 
+            List<Attribute> atts = null;
+            try {
+                atts = attLines.stream()
+                        .map(line -> {
+                            String[] parts = line.split(" |\t");
+                            int index = Integer.parseInt(parts[2]);
+                            StringBuilder builder = new StringBuilder();
+                            for (int i = 0; i < parts.length; i++) {
+                                if (i == 2)
+                                    continue;
+                                builder.append(parts[i]);
+                                builder.append("\t");
+                            }
+                            return ARFFDataReader.createAttributeFromLine(index, builder.toString());
+                        })
+                        .collect(Collectors.toList());
 
-            List<Attribute> atts = IntStream.range(0, attLines.size())
-                    .mapToObj(i -> ARFFDataReader.createAttributeFromLine(i, attLines.get(i)))
-                    .collect(Collectors.toList());
-
+            }catch (Exception e) {
+                atts = IntStream.range(0, attLines.size())
+                        .mapToObj(i -> ARFFDataReader.createAttributeFromLine(i, attLines.get(i)))
+                        .collect(Collectors.toList());
+            }
 
             Collections.sort(atts, (a, b) -> a.getIndex() - b.getIndex());
             attributes = new Attributes(atts);
@@ -131,13 +132,15 @@ public class ARFFDataFolderReader implements DataFileReader {
             DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(pathFileData));
             Stream<Path> stream = StreamSupport.stream(directoryStream.spliterator(), false);
 
-            Stream<String> fileLines = stream.flatMap(path -> {
-                try{
-                    return Files.lines(path);
-                }catch (Exception ex){
-                    throw new UndeclaredThrowableException(ex);
-                }
-            });
+            Stream<String> fileLines = stream
+                    .filter(path ->!path.getFileName().toString().startsWith("."))
+                    .flatMap(path -> {
+                        try{
+                            return Files.lines(path);
+                        }catch (Exception ex){
+                            throw new UndeclaredThrowableException(ex);
+                        }
+                    });
 
 
             return fileLines

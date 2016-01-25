@@ -15,10 +15,7 @@ import eu.amidst.core.utils.Vector;
 import eu.amidst.core.variables.Assignment;
 import eu.amidst.core.variables.Variable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -40,12 +37,15 @@ public class EF_LearningBayesianNetwork extends EF_Distribution {
     /** Represents the parameter variables included in this EF_LearningBayesianNetwork model. */
     ParameterVariables parametersVariables;
 
+    /** Represents the list of Variables which are not expended*/
+    List<Variable> non_expand;
     /**
      * Creates a new EF_LearningBayesianNetwork object from a given {@link DAG} object.
      * @param dag a {@link DAG} object.
      */
     public EF_LearningBayesianNetwork(DAG dag){
 
+        this.non_expand = new ArrayList<>();
         parametersVariables = new ParameterVariables(dag.getVariables().getNumberOfVars());
 
         distributionList =
@@ -68,12 +68,46 @@ public class EF_LearningBayesianNetwork extends EF_Distribution {
      */
     public EF_LearningBayesianNetwork(List<EF_ConditionalDistribution> distributions){
 
+        this.non_expand = new ArrayList<>();
+
         parametersVariables = new ParameterVariables(distributions.size());
 
         distributionList =
                 distributions
                         .stream()
                         .map(dist -> dist.toExtendedLearningDistribution(parametersVariables))
+                        .flatMap(listOfDist -> listOfDist.stream())
+                        .sorted((a,b) -> a.getVariable().getVarID() - b.getVariable().getVarID())
+                        .collect(Collectors.toList());
+
+        this.naturalParameters = null;
+        this.momentParameters = null;
+    }
+
+    /**
+     * Creates a new EF_LearningBayesianNetwork object from a given list {@link EF_ConditionalDistribution} objects.
+     * @param distributions a list of {@link EF_ConditionalDistribution} objects.
+     */
+
+    /**
+     * Creates a new EF_LearningBayesianNetwork object from a given list {@link EF_ConditionalDistribution} objects.
+     * @param distributions a list of {@link EF_ConditionalDistribution} objects.
+     * @param non_expand, a list of {@link Variable} objects which are not expanded.
+     */
+    public EF_LearningBayesianNetwork(List<EF_ConditionalDistribution> distributions, List<Variable> non_expand){
+
+        this.non_expand = non_expand;
+        parametersVariables = new ParameterVariables(distributions.size());
+
+        distributionList =
+                distributions
+                        .stream()
+                        .map(dist -> {
+                            if (this.non_expand.contains(dist.getVariable()))
+                                return Arrays.asList(dist);
+                            else
+                                return dist.toExtendedLearningDistribution(parametersVariables);
+                        })
                         .flatMap(listOfDist -> listOfDist.stream())
                         .sorted((a,b) -> a.getVariable().getVarID() - b.getVariable().getVarID())
                         .collect(Collectors.toList());
@@ -90,6 +124,24 @@ public class EF_LearningBayesianNetwork extends EF_Distribution {
         return parametersVariables;
     }
 
+
+    /**
+     * Returns the list of parameter variables included in this EF_LearningBayesianNetwork model.
+     * @return A {@link List} of {@list Variable} objects.
+     */
+    public List<Variable> getListOfParametersVariables(){ return this.parametersVariables.getListOfParamaterVariables();}
+
+    /**
+     * Returns the list of non parameter variables included in this EF_LearningBayesianNetwork model.
+     * @return A {@link List} of {@list Variable} objects.
+     */
+    public List<Variable> getListOfNonParameterVariables() {
+        return this.distributionList.stream()
+                .map(dist -> dist.getVariable())
+                .filter(var -> !var.isParameterVariable())
+                .collect(Collectors.toList());
+    }
+
     /**
      * Converts the distributions of this EF_LearningBayesianNetwork model into a list of {@link ConditionalDistribution} objects.
      * This conversion also removes the parameter variables by replacing them with their expected value.
@@ -101,6 +153,11 @@ public class EF_LearningBayesianNetwork extends EF_Distribution {
         for (EF_ConditionalDistribution dist: distributionList) {
             if (dist.getVariable().isParameterVariable())
                 continue;
+
+            if (this.non_expand.contains(dist.getVariable())){
+                condDistList.add(dist.toConditionalDistribution());
+                continue;
+            }
 
             EF_ConditionalDistribution distLearning = dist;
             Map<Variable, Vector> expectedParameters = new HashMap<>();

@@ -23,11 +23,11 @@ public class DataStreamLoaderTest extends TestCase {
 
     public static void test1(){
 
-        DataStream<DataInstance> data = DataStreamLoader.openFromFile("./datasets/datatest.arff");
+        DataStream<DataInstance> data = DataStreamLoader.openFromFile("./datasets/WasteIncineratorSample.arff");
         for (Attribute attribute : data.getAttributes().getFullListOfAttributes()) {
             System.out.println(attribute.getName() +", "+attribute.getIndex());
         }
-        assertEquals(data.getAttributes().getNumberOfAttributes(),7);
-        assertEquals(data.stream().count(), 16);
+        assertEquals(data.getAttributes().getNumberOfAttributes(),9);
+        assertEquals(data.stream().count(), 10000);
     }
 }

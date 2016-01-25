@@ -56,18 +56,13 @@ public class GaussianHiddenTransitionMethod implements TransitionMethod, Seriali
             if (!paramVariable.isNormalParameter())
                 continue;
 
-
-            //if (paramVariable.getName().contains("_Beta0_"))
-            //    continue;
-
-            EF_Normal prior = bayesianNetwork.getDistribution(paramVariable);
+            EF_NormalParameter prior = bayesianNetwork.getDistribution(paramVariable);
 
             double varPrior = 1;
             double precisionPrior = 1/varPrior;
             double meanPrior = 0;
 
-            prior.getNaturalParameters().set(0, precisionPrior*meanPrior);
-            prior.getNaturalParameters().set(1, -0.5* precisionPrior);
+            prior.setNaturalWithMeanPrecision(meanPrior,precisionPrior);
             prior.fixNumericalInstability();
             prior.updateMomentFromNaturalParameters();
 
@@ -76,32 +71,15 @@ public class GaussianHiddenTransitionMethod implements TransitionMethod, Seriali
 
         for (Variable localVar : this.localHiddenVars) {
 
-            EF_NormalGamma normal = bayesianNetwork.getDistribution(localVar);
+            EF_Normal normal = bayesianNetwork.getDistribution(localVar);
 
-
-            Variable gammaVar = normal.getGammaParameterVariable();
-
-            EF_Gamma gamma =  bayesianNetwork.getDistribution(gammaVar);
-
-            int initVariance = 1;
-            double alpha = 1000;
-            double beta = alpha * initVariance;
-
-            gamma.getNaturalParameters().set(0, alpha - 1);
-            gamma.getNaturalParameters().set(1, -beta);
-            gamma.fixNumericalInstability();
-            gamma.updateMomentFromNaturalParameters();
-
-            Variable meanVar = normal.getMeanParameterVariable();
-            EF_Normal meanDist = bayesianNetwork.getDistribution(meanVar);
 
             double mean = meanStart;
-            double var = initVariance;
+            double var = 1;
 
-            meanDist.getNaturalParameters().set(0, mean / (var));
-            meanDist.getNaturalParameters().set(1, -1 / (2 * var));
-            meanDist.fixNumericalInstability();
-            meanDist.updateMomentFromNaturalParameters();
+            normal.setNaturalWithMeanPrecision(mean,1/var);
+            normal.fixNumericalInstability();
+            normal.updateMomentFromNaturalParameters();
 
         }
 
@@ -115,33 +93,16 @@ public class GaussianHiddenTransitionMethod implements TransitionMethod, Seriali
     public EF_LearningBayesianNetwork transitionModel(EF_LearningBayesianNetwork bayesianNetwork, PlateuStructure plateuStructure) {
 
         for (Variable localVar : this.localHiddenVars) {
-            Normal normalGlobalHiddenPreviousTimeStep = plateuStructure.getEFVariablePosterior(localVar, 0).toUnivariateDistribution();
+            Normal normalGlobalHiddenPreviousTimeStep = plateuStructure.getEFParameterPosterior(localVar).toUnivariateDistribution();
 
-            EF_NormalGamma normal = bayesianNetwork.getDistribution(localVar);
-
-            Variable gammaVar = normal.getGammaParameterVariable();
-
-            EF_Gamma gamma = bayesianNetwork.getDistribution(gammaVar);
+            EF_Normal normal = bayesianNetwork.getDistribution(localVar);
 
             double variance = normalGlobalHiddenPreviousTimeStep.getVariance() + this.transtionVariance;
-
-            double alpha = 1000;
-            double beta = alpha * variance;
-
-            gamma.getNaturalParameters().set(0, alpha - 1);
-            gamma.getNaturalParameters().set(1, -beta);
-            gamma.fixNumericalInstability();
-            gamma.updateMomentFromNaturalParameters();
-
-            Variable meanVar = normal.getMeanParameterVariable();
-            EF_Normal meanDist = bayesianNetwork.getDistribution(meanVar);
-
             double mean = normalGlobalHiddenPreviousTimeStep.getMean();
 
-            meanDist.getNaturalParameters().set(0, mean / (variance));
-            meanDist.getNaturalParameters().set(1, -1 / (2 * variance));
-            meanDist.fixNumericalInstability();
-            meanDist.updateMomentFromNaturalParameters();
+            normal.setNaturalWithMeanPrecision(mean,1/variance);
+            normal.fixNumericalInstability();
+            normal.updateMomentFromNaturalParameters();
         }
 
         /***** FADING ****/

@@ -61,7 +61,7 @@ public class BayesianNetworkSampler implements AmidstOptionsHandler, Serializabl
      */
     public BayesianNetworkSampler(BayesianNetwork network1){
         network=network1;
-        this.causalOrder=Utils.getCausalOrder(network.getDAG());
+        this.causalOrder=Utils.getTopologicalOrder(network.getDAG());
     }
 
     /**
@@ -145,7 +145,10 @@ public class BayesianNetworkSampler implements AmidstOptionsHandler, Serializabl
      * @return a {@link DataStream} of {@link DataInstance}s.
      */
     public DataStream<DataInstance> sampleToDataStream(int nSamples){
-        class TemporalDataStream implements DataStream<DataInstance> {
+        class TemporalDataStream implements DataStream<DataInstance>, Serializable {
+            /** Represents the serial version ID for serializing the object. */
+            private static final long serialVersionUID = -3436599636425587512L;
+
             Attributes atts;
             BayesianNetworkSampler sampler;
             int nSamples;
@@ -306,6 +309,10 @@ public class BayesianNetworkSampler implements AmidstOptionsHandler, Serializabl
         sampler.setSeed(0);
 
         DataStream<DataInstance> dataStream = sampler.sampleToDataStream(100);
+
+
+
+
         DataStreamWriter.writeDataToFile(dataStream,"datasets/asisa-samples.arff");
 
         System.out.println(watch.stop());

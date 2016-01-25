@@ -6,8 +6,8 @@ import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataOnMemory;
 import eu.amidst.core.datastream.DataStream;
 import eu.amidst.core.distribution.Multinomial;
+import eu.amidst.core.learning.parametric.ParallelMLMissingData;
 import eu.amidst.core.learning.parametric.ParallelMaximumLikelihood;
-import eu.amidst.core.learning.parametric.ParameterLearningAlgorithm;
 import eu.amidst.core.models.BayesianNetwork;
 import eu.amidst.core.models.DAG;
 import eu.amidst.core.utils.*;
@@ -18,6 +18,7 @@ import eu.amidst.huginlink.converters.BNConverterToHugin;
 import eu.amidst.huginlink.inference.HuginInference;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * This class provides a link to the <a href="https://www.hugin.com">Hugin</a>'s functionality to learn in parallel a TAN model.
@@ -158,9 +159,13 @@ public class ParallelTAN implements AmidstOptionsHandler {
         if (learnedBN==null)
             throw new IllegalArgumentException("The model has not been learned");
 
+        if (!Utils.isMissingValue(instance.getValue(targetVar)))
+            System.out.println("Class Variable can not be set.");
+
         this.inference.setEvidence(instance);
         this.inference.runInference();
         Multinomial dist = this.inference.getPosterior(targetVar);
+
         return dist.getParameters();
     }
 
@@ -182,47 +187,104 @@ public class ParallelTAN implements AmidstOptionsHandler {
         try {
             huginNetwork = BNConverterToHugin.convertToHugin(bn);
 
-            DataOnMemory dataOnMemory = ReservoirSampling.samplingNumberOfSamples(this.numSamplesOnMemory, dataStream);
+        } catch (ExceptionHugin exceptionHugin) {
+            System.out.println("ParallelTan LearnDAG Error 1");
+            exceptionHugin.printStackTrace();
+            throw new IllegalStateException("Hugin Exception: " + exceptionHugin.getMessage());
+        }
+        DataOnMemory dataOnMemory = ReservoirSampling.samplingNumberOfSamples(this.numSamplesOnMemory, dataStream);
 
-            // Set the number of cases
-            int numCases = dataOnMemory.getNumberOfDataInstances();
+        // Set the number of cases
+        int numCases = dataOnMemory.getNumberOfDataInstances();
+        try {
             huginNetwork.setNumberOfCases(numCases);
             huginNetwork.setConcurrencyLevel(this.numCores);
-            NodeList nodeList = huginNetwork.getNodes();
+        } catch (ExceptionHugin exceptionHugin) {
+            System.out.println("ParallelTan LearnDAG Error 2");
+            exceptionHugin.printStackTrace();
+            throw new IllegalStateException("Hugin Exception: " + exceptionHugin.getMessage());
+        }
 
-            // It is more efficient to loop the matrix of values in this way. 1st variables and 2nd cases
-            for (int i = 0; i < nodeList.size(); i++) {
-                Variable var = bn.getDAG().getVariables().getVariableById(i);
-                Node n = nodeList.get(i);
+        NodeList nodeList = huginNetwork.getNodes();
+
+        // It is more efficient to loop the matrix of values in this way. 1st variables and 2nd cases
+        for (int i = 0; i < nodeList.size(); i++) {
+            Variable var = bn.getDAG().getVariables().getVariableById(i);
+            Node n = nodeList.get(i);
+
+            try {
                 if (n.getKind().compareTo(NetworkModel.H_KIND_DISCRETE) == 0) {
                     ((DiscreteChanceNode) n).getExperienceTable();
                     for (int j = 0; j < numCases; j++) {
-                        int state = (int) dataOnMemory.getDataInstance(j).getValue(var);
-                        ((DiscreteChanceNode) n).setCaseState(j, state);
+                        double state = dataOnMemory.getDataInstance(j).getValue(var);
+                        if (!Utils.isMissingValue(state)) {
+                            ((DiscreteChanceNode) n).setCaseState(j, (int) state);
+                        }
                     }
                 } else {
                     ((ContinuousChanceNode) n).getExperienceTable();
                     for (int j = 0; j < numCases; j++) {
                         double value = dataOnMemory.getDataInstance(j).getValue(var);
-                        ((ContinuousChanceNode) n).setCaseValue(j, (long) value);
+                        if (!Utils.isMissingValue(value))
+                            ((ContinuousChanceNode) n).setCaseValue(j, value);
                     }
                 }
             }
+            catch (ExceptionHugin exceptionHugin) {
+                System.out.println("ParallelTan LearnDAG Error 3 with node " + Integer.toString(i));
+                exceptionHugin.printStackTrace();
+                throw new IllegalStateException("Hugin Exception: " + exceptionHugin.getMessage());
+            }
+//            if(i==0 || i==6) {
+//                System.out.println("Node " + i);
+//                System.out.println(Arrays.toString(n.getTable().getData()));
+//
+//                System.out.println(Arrays.toString (((DiscreteChanceNode) n).getExperienceTable().getData()));
+//                System.out.println(((DiscreteChanceNode) n).getEnteredValue());
+//                System.out.println(n.getChildren().stream().count());
+//            }
+        }
 
-            //Structural learning
-            Node root = huginNetwork.getNodeByName(nameRoot);
-            Node target = huginNetwork.getNodeByName(nameTarget);
+        //Structural learning
+        DiscreteChanceNode root, target;
+        try {
+            root = (DiscreteChanceNode)huginNetwork.getNodeByName(nameRoot);
+            target = (DiscreteChanceNode)huginNetwork.getNodeByName(nameTarget);
 
-            Stopwatch watch = Stopwatch.createStarted();
-            huginNetwork.learnChowLiuTree(root, target);
-            System.out.println("Structural Learning in Hugin: " + watch.stop());
-
-            DAG dagLearned = (BNConverterToAMIDST.convertToAmidst(huginNetwork)).getDAG();
-            dagLearned.getVariables().setAttributes(dataStream.getAttributes());
-            return dagLearned;
         } catch (ExceptionHugin exceptionHugin) {
+            System.out.println("ParallelTan LearnDAG Error 4");
+            exceptionHugin.printStackTrace();
             throw new IllegalStateException("Hugin Exception: " + exceptionHugin.getMessage());
         }
+
+
+        Stopwatch watch = Stopwatch.createStarted();
+        try {
+            System.out.println("Root: " + root.getName());
+            System.out.println("Target: " + target.getName());
+
+            //root.getHome().getNodes().stream().forEach(node -> System.out.println(node.getName())
+            huginNetwork.learnChowLiuTree(root, target);
+        } catch (ExceptionHugin exceptionHugin) {
+            System.out.println("ParallelTan LearnDAG Error 5");
+            exceptionHugin.printStackTrace();
+            throw new IllegalStateException("Hugin Exception: " + exceptionHugin.getMessage());
+        }
+        System.out.println("Structural Learning in Hugin: " + watch.stop());
+
+
+        DAG dagLearned;
+        try {
+            dagLearned = (BNConverterToAMIDST.convertToAmidst(huginNetwork)).getDAG();
+            dagLearned.getVariables().setAttributes(dataStream.getAttributes());
+        } catch (ExceptionHugin exceptionHugin) {
+            System.out.println("ParallelTan LearnDAG Error 6");
+            exceptionHugin.printStackTrace();
+            throw new IllegalStateException("Hugin Exception: " + exceptionHugin.getMessage());
+        }
+
+        return dagLearned;
+
     }
 
     /**
@@ -231,18 +293,23 @@ public class ParallelTAN implements AmidstOptionsHandler {
      * @return a <code>BayesianNetwork</code> object in ADMIST format.
      * @throws ExceptionHugin
      */
-    public BayesianNetwork learn(DataStream<DataInstance> dataStream) throws ExceptionHugin {
-        ParameterLearningAlgorithm parameterLearningAlgorithm = new ParallelMaximumLikelihood();
-        parameterLearningAlgorithm.setParallelMode(this.parallelMode);
-        parameterLearningAlgorithm.setDAG(this.learnDAG(dataStream));
-        parameterLearningAlgorithm.setDataStream(dataStream);
-        parameterLearningAlgorithm.initLearning();
-        parameterLearningAlgorithm.runLearning();
-        learnedBN = parameterLearningAlgorithm.getLearntBayesianNetwork();
+    public BayesianNetwork learn(DataStream<DataInstance> dataStream) {
+        try {
+            ParallelMLMissingData parameterLearningAlgorithm = new ParallelMLMissingData();
+            parameterLearningAlgorithm.setLaplace(true);
+            parameterLearningAlgorithm.setParallelMode(this.parallelMode);
+            parameterLearningAlgorithm.setDAG(this.learnDAG(dataStream));
+            parameterLearningAlgorithm.setDataStream(dataStream);
+            parameterLearningAlgorithm.initLearning();
+            parameterLearningAlgorithm.runLearning();
+            learnedBN = parameterLearningAlgorithm.getLearntBayesianNetwork();
 
-        this.inference = new HuginInference();
-        this.inference.setModel(this.learnedBN);
-        return this.learnedBN;
+            this.inference = new HuginInference();
+            this.inference.setModel(this.learnedBN);
+            return this.learnedBN;
+        }catch (ExceptionHugin ex){
+            throw new IllegalStateException("Hugin Exception: " + ex.getMessage());
+        }
     }
 
     /**
@@ -253,7 +320,7 @@ public class ParallelTAN implements AmidstOptionsHandler {
      * @throws ExceptionHugin
      */
     public BayesianNetwork learn(DataStream<DataInstance> dataStream, int batchSize) throws ExceptionHugin {
-        ParallelMaximumLikelihood parameterLearningAlgorithm = new ParallelMaximumLikelihood();
+        ParallelMLMissingData parameterLearningAlgorithm = new ParallelMLMissingData();
         parameterLearningAlgorithm.setBatchSize(batchSize);
         parameterLearningAlgorithm.setParallelMode(this.parallelMode);
         parameterLearningAlgorithm.setDAG(this.learnDAG(dataStream));
@@ -313,7 +380,7 @@ public class ParallelTAN implements AmidstOptionsHandler {
     }
 
 
-    public static void main(String[] args) throws ExceptionHugin, IOException {
+    public static void main(String[] args) throws IOException {
 
 
         OptionParser.setArgsOptions(ParallelTAN.class, args);

@@ -18,12 +18,14 @@ import eu.amidst.core.inference.messagepassing.VMP;
 import eu.amidst.core.io.BayesianNetworkLoader;
 import eu.amidst.core.models.BayesianNetwork;
 import eu.amidst.core.utils.LocalRandomGenerator;
+import eu.amidst.core.utils.Serialization;
 import eu.amidst.core.utils.Utils;
 import eu.amidst.core.variables.Assignment;
 import eu.amidst.core.variables.HashMapAssignment;
 import eu.amidst.core.variables.Variable;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -42,14 +44,16 @@ import java.util.stream.Stream;
  * <p> For an example of use follow this link
  * <a href="http://amidst.github.io/toolbox/CodeExamples.html#isexample"> http://amidst.github.io/toolbox/CodeExamples.html#isexample </a>  </p>
  */
-public class ImportanceSampling implements InferenceAlgorithm {
+public class ImportanceSampling implements InferenceAlgorithm, Serializable {
+
+    private static final long serialVersionUID = 8587756877237341367L;
 
     private BayesianNetwork model;
     private BayesianNetwork samplingModel;
-    private int sampleSize = 100;
+    private int sampleSize = 10000;
     private List<Variable> causalOrder;
 
-    private boolean keepDataOnMemory;
+    private boolean keepDataOnMemory = true;
     private List<ImportanceSampling.WeightedAssignment> weightedSampleList;
     private Stream<ImportanceSampling.WeightedAssignment> weightedSampleStream;
     private int seed = 0;
@@ -116,8 +120,9 @@ public class ImportanceSampling implements InferenceAlgorithm {
      * @param samplingModel_ a {@link BayesianNetwork} model according to which samples will be taken.
      */
     public void setSamplingModel(BayesianNetwork samplingModel_) {
-        this.samplingModel = samplingModel_;
-        this.causalOrder = Utils.getCausalOrder(samplingModel.getDAG());
+        this.samplingModel = new BayesianNetwork(samplingModel_.getDAG(),
+                Serialization.deepCopy(samplingModel_.getConditionalDistributions()));
+        this.causalOrder = Utils.getTopologicalOrder(samplingModel.getDAG());
     }
 
     /**
@@ -140,6 +145,10 @@ public class ImportanceSampling implements InferenceAlgorithm {
         return this.model;
     }
 
+    public BayesianNetwork getSamplingModel() {
+        return this.samplingModel;
+    }
+
 
     /**
      * {@inheritDoc}
@@ -149,6 +158,8 @@ public class ImportanceSampling implements InferenceAlgorithm {
 
         if(keepDataOnMemory) {
             weightedSampleStream = weightedSampleList.stream().sequential();
+        }else{
+            computeWeightedSampleStream(false);
         }
         if(parallelMode) {
             weightedSampleStream.parallel();
@@ -218,13 +229,16 @@ public class ImportanceSampling implements InferenceAlgorithm {
 
         if(keepDataOnMemory) {
             weightedSampleStream = weightedSampleList.stream().sequential();
+        }else{
+            computeWeightedSampleStream(false);
         }
+
         if(parallelMode) {
             weightedSampleStream.parallel();
         }
         List<Double> sum = weightedSampleStream
                 .map(ws -> Arrays.asList(ws.weight, ws.weight * function.apply(ws.assignment.getValue(var))))
-                .reduce(Arrays.asList(new Double(0.0), new Double(0.0)), (List<Double> e1, List<Double> e2) -> Arrays.asList(e1.get(0) + e2.get(0), e1.get(1) + e2.get(1)));
+                .reduce(Arrays.asList(new Double(0.0), new Double(0.0)), (e1, e2) -> Arrays.asList(e1.get(0) + e2.get(0), e1.get(1) + e2.get(1)));
 
         return sum.get(1)/sum.get(0);
     }
@@ -236,7 +250,7 @@ public class ImportanceSampling implements InferenceAlgorithm {
     //TODO For continuous variables, instead of returning a Gaussian distributions, we should return a Mixture of Gaussians!!
     public <E extends UnivariateDistribution> E getPosterior(Variable var) {
 
-        Variable samplingVar = this.samplingModel.getVariables().getVariableById(var.getVarID());
+        Variable samplingVar = this.samplingModel.getVariables().getVariableByName(var.getName());
         // TODO Could we build this object in a general way for Multinomial and Normal?
         EF_UnivariateDistribution ef_univariateDistribution = samplingVar.newUnivariateDistribution().toEFUnivariateDistribution();
 
@@ -244,10 +258,14 @@ public class ImportanceSampling implements InferenceAlgorithm {
 
         if(keepDataOnMemory) {
             weightedSampleStream = weightedSampleList.stream().sequential();
+        }else{
+            computeWeightedSampleStream(false);
         }
+
         if(parallelMode) {
             weightedSampleStream.parallel();
         }
+
 
         SufficientStatistics sumSS = weightedSampleStream
                 .peek(w -> {
@@ -258,7 +276,7 @@ public class ImportanceSampling implements InferenceAlgorithm {
                     SS.multiplyBy(e.weight);
                     return SS;
                 })
-                .reduce(SufficientStatistics::sumVector).get();
+                .reduce(SufficientStatistics::sumVectorNonStateless).get();
 
         sumSS.divideBy(dataInstanceCount.get());
 
@@ -275,20 +293,19 @@ public class ImportanceSampling implements InferenceAlgorithm {
         return (E)posteriorDistribution;
     }
 
-    private void computeWeightedSampleStream() {
+    private void computeWeightedSampleStream(boolean saveDataOnMemory_) {
 
         LocalRandomGenerator randomGenerator = new LocalRandomGenerator(seed);
-
-        IntStream auxIntStream = IntStream.range(0, sampleSize).sequential();
         if (parallelMode) {
-            auxIntStream.parallel();
+            weightedSampleStream = IntStream.range(0, sampleSize).parallel()
+                    .mapToObj(i -> getWeightedAssignment(randomGenerator.current()));
+        } else {
+            weightedSampleStream = IntStream.range(0, sampleSize).sequential()
+                    .mapToObj(i -> getWeightedAssignment(randomGenerator.current()));
         }
 
-        if(keepDataOnMemory) {
-            weightedSampleList = auxIntStream.mapToObj(i -> getWeightedAssignment(randomGenerator.current())).collect(Collectors.toList());
-        }
-        else {
-            weightedSampleStream = auxIntStream.mapToObj(i -> getWeightedAssignment(randomGenerator.current()));
+        if(saveDataOnMemory_){
+                weightedSampleList = weightedSampleStream.collect(Collectors.toList());
         }
     }
 
@@ -297,7 +314,7 @@ public class ImportanceSampling implements InferenceAlgorithm {
      */
     @Override
     public void runInference() {
-       this.computeWeightedSampleStream();
+        if(keepDataOnMemory) computeWeightedSampleStream(true);
     }
 
 

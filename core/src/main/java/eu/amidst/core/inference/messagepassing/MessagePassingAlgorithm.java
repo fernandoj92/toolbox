@@ -24,6 +24,7 @@ import eu.amidst.core.variables.Variable;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -46,10 +47,10 @@ public abstract class MessagePassingAlgorithm<E extends Vector> implements Infer
     protected Assignment assignment = new HashMapAssignment(0);
 
     /** Represents the list of {@link Node}s. */
-    protected List<Node> nodes;
+    transient protected List<Node> nodes;
 
     /** Represents a {@code Map} object that maps variables to nodes. */
-    protected Map<Variable,Node> variablesToNode;
+    transient protected Map<Variable,Node> variablesToNode;
 
     /** Represents the probability of evidence. */
     protected double probOfEvidence = Double.NaN;
@@ -73,7 +74,7 @@ public abstract class MessagePassingAlgorithm<E extends Vector> implements Infer
     protected int nIter = 0;
 
     /** Represents the evidence lower bound. */
-    protected double local_elbo = Double.NEGATIVE_INFINITY;
+    protected double local_elbo = -Double.MAX_VALUE;
 
     /** Represents the number of local iterations. */
     protected int local_iter = 0;
@@ -104,7 +105,7 @@ public abstract class MessagePassingAlgorithm<E extends Vector> implements Infer
 
     /**
      * Sets the maximum number of iterations for this MessagePassingAlgorithm.
-     * @param maxIter a {@code double} that represents the  maximum number of iterations to be set.
+     * @param maxIter a {@code int} that represents the  maximum number of iterations to be set.
      */
     public void setMaxIter(int maxIter) {
         this.maxIter = maxIter;
@@ -154,11 +155,14 @@ public abstract class MessagePassingAlgorithm<E extends Vector> implements Infer
 
                 Message<E> selfMessage = newSelfMessage(node);
 
-                selfMessage =   node.getChildren()
+                Optional<Message<E>> message = node.getChildren()
                                 .stream()
                                 .filter(children -> children.isActive())
-                                .map(children -> newMessageToParent(children,node))
-                                .reduce(selfMessage, Message::combine);
+                                .map(children -> newMessageToParent(children, node))
+                                .reduce(Message::combineNonStateless);
+
+                if (message.isPresent())
+                    selfMessage.combine(message.get());
 
                 //for (Node child: node.getChildren()){
                 //    selfMessage = Message.combine(newMessageToParent(child, node), selfMessage);
@@ -305,7 +309,7 @@ public abstract class MessagePassingAlgorithm<E extends Vector> implements Infer
      * {@inheritDoc}
      */
     @Override
-    public double getLogProbabilityOfEvidence() {
+    public double   getLogProbabilityOfEvidence() {
         return this.probOfEvidence;
     }
 
@@ -352,5 +356,5 @@ public abstract class MessagePassingAlgorithm<E extends Vector> implements Infer
      * @return the log probability of the evidence
      */
     public abstract double computeLogProbabilityOfEvidence();
-
+    
 }

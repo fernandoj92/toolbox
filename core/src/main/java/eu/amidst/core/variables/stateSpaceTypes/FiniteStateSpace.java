@@ -20,6 +20,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class FiniteStateSpace extends StateSpaceType implements Iterable<String> {
 
+    /** Represents the serial version ID for serializing the object. */
+    private static final long serialVersionUID = 2666054088212842587L;
+
     /** Represents the number of states. */
     private int numberOfStates;
 

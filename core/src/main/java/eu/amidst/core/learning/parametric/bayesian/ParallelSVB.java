@@ -99,21 +99,14 @@ public class ParallelSVB implements BayesianParameterLearningAlgorithm{
         if (this.nCores==-1)
             this.nCores=Runtime.getRuntime().availableProcessors();
 
+        this.SVBEngine.setDAG(this.dag);
+        this.SVBEngine.setSeed(this.seed);
+        this.SVBEngine.initLearning();
+
         svbEngines = new SVB[nCores];
 
         for (int i = 0; i < nCores; i++) {
-            svbEngines[i] = new SVB();
-            svbEngines[i].setSeed(this.seed);
-            svbEngines[i].setDAG(this.dag);
-            svbEngines[i].setWindowsSize(this.SVBEngine.getWindowsSize());
-
-            svbEngines[i].setPlateuStructure(Serialization.deepCopy(this.SVBEngine.getPlateuStructure()));
-            svbEngines[i].setTransitionMethod(Serialization.deepCopy(this.SVBEngine.getTransitionMethod()));
-
-            svbEngines[i].getPlateuStructure().getVMP().setOutput(activateOutput);
-            svbEngines[i].getPlateuStructure().getVMP().setTestELBO(this.SVBEngine.getPlateuStructure().getVMP().getTestELBO());
-            svbEngines[i].getPlateuStructure().getVMP().setMaxIter(this.SVBEngine.getPlateuStructure().getVMP().getMaxIter());
-            svbEngines[i].getPlateuStructure().getVMP().setThreshold(this.SVBEngine.getPlateuStructure().getVMP().getThreshold());
+            svbEngines[i] = Serialization.deepCopy(this.SVBEngine);
             svbEngines[i].initLearning();
         }
 
@@ -171,7 +164,7 @@ public class ParallelSVB implements BayesianParameterLearningAlgorithm{
                     IntStream.range(0, dataBatches.size())
                         .parallel()
                         .mapToObj(i -> this.svbEngines[i].updateModelOnBatchParallel(dataBatches.get(i)))
-                        .reduce(SVB.BatchOutput::sum)
+                        .reduce(SVB.BatchOutput::sumNonStateless)
                         .get();
 
             //Update logLikelihood
@@ -192,35 +185,50 @@ public class ParallelSVB implements BayesianParameterLearningAlgorithm{
      */
     public void updateModelInParallel(DataStream<DataInstance> data) {
 
-        Iterator<DataOnMemory<DataInstance>> iterator = data.iterableOverBatches(this.SVBEngine.getWindowsSize()).iterator();
 
-        logLikelihood = 0;
-        while(iterator.hasNext()){
-            CompoundVector posterior =  this.svbEngines[0].getNaturalParameterPrior();
+        logLikelihood = Double.NEGATIVE_INFINITY;
+        boolean convergence = false;
+        while (!convergence) {
+            CompoundVector posterior = this.svbEngines[0].getNaturalParameterPrior();
 
-            //Load Data
-            List<DataOnMemory<DataInstance>> dataBatches = new ArrayList();
-            int cont=0;
-            while (iterator.hasNext() && cont<nCores){
-                dataBatches.add(iterator.next());
-                cont++;
+            Iterator<DataOnMemory<DataInstance>> iterator = data.iterableOverBatches(this.SVBEngine.getWindowsSize()).iterator();
+            double local_loglikelihood = 0;
+            while (iterator.hasNext()) {
+
+                //Load Data
+                List<DataOnMemory<DataInstance>> dataBatches = new ArrayList();
+                int cont = 0;
+                while (iterator.hasNext() && cont < nCores) {
+                    dataBatches.add(iterator.next());
+                    cont++;
+                }
+
+                //Run Inference
+                SVB.BatchOutput out =
+                        IntStream.range(0, dataBatches.size())
+                                .parallel()
+                                .mapToObj(i -> this.svbEngines[i].updateModelOnBatchParallel(dataBatches.get(i)))
+                                .reduce(SVB.BatchOutput::sumNonStateless)
+                                .get();
+
+                //Combine the output
+                posterior.sum(out.getVector());
+                local_loglikelihood += out.getElbo();
             }
 
-            //Run Inference
-            SVB.BatchOutput out=
-                    IntStream.range(0, dataBatches.size())
-                            .parallel()
-                            .mapToObj(i -> this.svbEngines[i].updateModelOnBatchParallel(dataBatches.get(i)))
-                            .reduce(SVB.BatchOutput::sum)
-                            .get();
-
-            //Update logLikelihood
-            this.logLikelihood+=out.getElbo();
-
-            //Combine the output
-            posterior.sum(out.getVector());
             for (int i = 0; i < nCores; i++) {
                 this.svbEngines[i].updateNaturalParameterPrior(posterior);
+            }
+
+
+
+            if (Math.abs(logLikelihood - local_loglikelihood)/this.SVBEngine.getPlateuStructure().getNumberOfReplications() < 0.01) {
+                convergence = true;
+            } else if ((logLikelihood-local_loglikelihood)/this.SVBEngine.getPlateuStructure().getNumberOfReplications()>0.01) {
+                throw new IllegalStateException("Non increasing log likelihood: " + local_loglikelihood + " , " + logLikelihood);
+            }else {
+                //Update logLikelihood
+                logLikelihood = local_loglikelihood;
             }
         }
 

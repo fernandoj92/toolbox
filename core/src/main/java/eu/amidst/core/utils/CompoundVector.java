@@ -25,7 +25,7 @@ public class CompoundVector implements MomentParameters, NaturalParameters, Suff
     /** Represents the serial version ID for serializing the object. */
     private static final long serialVersionUID = -3436599636425587512L;
 
-    /** Represents the total size of the CompoundVector, defined as the sum of its baseVector sizes. */
+    /** Represents the total size of the CompoundVector, defined as the sumNonStateless of its baseVector sizes. */
     int size;
 
     /** Represents the list of base vectors. */
@@ -57,16 +57,6 @@ public class CompoundVector implements MomentParameters, NaturalParameters, Suff
         }
     }
 
-    public static CompoundVector newZeroedVector(CompoundVector vector){
-        List<Vector> newvectors  = new ArrayList(vector.baseVectors.size());
-
-        for (int i = 0; i < vector.baseVectors.size(); i++) {
-            newvectors.add(new ArrayVector(vector.baseVectors.get(i).getVector().size()));
-        }
-
-        return new CompoundVector(newvectors);
-    }
-
     /**
      * Returns the number of base vectors
      * @return a positive integer number.
@@ -91,6 +81,18 @@ public class CompoundVector implements MomentParameters, NaturalParameters, Suff
      */
     public Vector getVectorByPosition(int position) {
         return this.baseVectors.get(position).getVector();
+    }
+
+
+    /**
+     * Returns a list of Vectors.
+     */
+    public List<Vector> getVectors(){
+        List<Vector> vectors = new ArrayList();
+        for (int i = 0; i < baseVectors.size(); i++) {
+            vectors.add(this.getVectorByPosition(i));
+        }
+        return vectors;
     }
 
     /**
@@ -145,6 +147,14 @@ public class CompoundVector implements MomentParameters, NaturalParameters, Suff
      * {@inheritDoc}
      */
     @Override
+    public void substract(Vector vector) {
+        this.substract((CompoundVector) vector);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void copy(Vector vector) {
         this.copy((CompoundVector) vector);
     }
@@ -167,7 +177,7 @@ public class CompoundVector implements MomentParameters, NaturalParameters, Suff
 
     /**
      * Returns the dot product of this CompoundVector and an input CompoundVector, defined as
-     * the sum of the pairwise products of the values of the two CompoundVectors.
+     * the sumNonStateless of the pairwise products of the values of the two CompoundVectors.
      * @param vec an input CompoundVector.
      * @return a double that represents the dot product of the two CompoundVectors.
      */
@@ -187,11 +197,19 @@ public class CompoundVector implements MomentParameters, NaturalParameters, Suff
     }
 
     /**
-     * Updates the values of this CompoundVector as a sum of its initial values and the input CompoundVector values.
+     * Updates the values of this CompoundVector as a sumNonStateless of its initial values and the input CompoundVector values.
      * @param vector an input CompoundVector.
      */
     public void sum(CompoundVector vector) {
         this.baseVectors.stream().forEach(w -> w.getVector().sum(vector.getVectorByPosition(w.getIndex())));
+    }
+
+    /**
+     * Updates the values of this CompoundVector as a substractNonStateless of its initial values and the input CompoundVector values.
+     * @param vector an input CompoundVector.
+     */
+    public void substract(CompoundVector vector) {
+        this.baseVectors.stream().forEach(w -> w.getVector().substract(vector.getVectorByPosition(w.getIndex())));
     }
 
     /**

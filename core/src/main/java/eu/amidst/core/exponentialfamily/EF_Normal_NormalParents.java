@@ -1,26 +1,24 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.  See the NOTICE file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file to You under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ *
  */
 
 package eu.amidst.core.exponentialfamily;
 
 import eu.amidst.core.distribution.ConditionalLinearGaussian;
-import eu.amidst.core.utils.ArrayVector;
 import eu.amidst.core.utils.Vector;
 import eu.amidst.core.variables.Assignment;
 import eu.amidst.core.variables.Variable;
-
 import org.apache.commons.math.linear.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.IntStream;
 
 /**
@@ -38,6 +36,16 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
 
     /** Represents the number of parents. */
     int nOfParents;
+
+
+    /** Represents the vector of beta values (without beta0)*/
+    double[] betas;
+
+    /** Represents the beta0 value*/
+    double beta0;
+
+    /** Represents the variance */
+    double variance;
 
     /**
      * Creates a new EF_Normal_NormalParents distribution.
@@ -61,8 +69,12 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
         sizeSS = nOfParents*nOfParents + 3 * nOfParents + 2 ; // (n+1)^2 (covariance matrix of YX) + n (E(Y)) + 1 (E(X))
 
         this.var=var_;
-        this.momentParameters = this.createEmtpyCompoundVector();
-        this.naturalParameters = this.createEmtpyCompoundVector();
+        this.momentParameters = null;//this.createEmtpyCompoundVector();
+        this.naturalParameters = null;//this.createEmtpyCompoundVector();
+
+        this.beta0 = 0;
+        this.variance = 0;
+        this.betas = new double[parents.size()];
     }
 
     /**
@@ -91,25 +103,56 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
         RealMatrix cov_YYInverse = new LUDecompositionImpl(cov_YY).getSolver().getInverse();
         RealVector beta = cov_YYInverse.preMultiply(cov_XY);
 
+        this.betas = new double[beta.getDimension()];
+        for (int i = 0; i<beta.getDimension(); i++){
+            this.betas[i] = beta.getEntry(i);
+        }
+        this.beta0 = mean_X - beta.dotProduct(mean_Y);
+        this.variance = cov_XX - beta.dotProduct(cov_XY);
 
-        double beta_0 = mean_X - beta.dotProduct(mean_Y);
-        double variance = cov_XX - beta.dotProduct(cov_XY);
+    }
 
-        /*
-         * Third step: natural parameters (5 in total)
-         */
+    public void setBetas(double[] betas) {
+        this.betas = betas;
+    }
+
+    public void setBeta0(double beta0) {
+        this.beta0 = beta0;
+    }
+
+    public void setVariance(double variance) {
+        this.variance = variance;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void updateMomentFromNaturalParameters() {
+        //throw new UnsupportedOperationException("Method not implemented yet!");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NaturalParameters getNaturalParameters(){
+
+        this.naturalParameters = this.createEmtpyCompoundVector();
+
+        RealVector beta = new ArrayRealVector(betas);
 
         /*
          * 1) theta_0
          */
-        double theta_0 = beta_0 / variance;
+        double theta_0 = beta0 / variance;
         double[] theta_0array = {theta_0};
 
         /*
          * 2) theta_0Theta
          */
         double variance2Inv =  1.0/(2*variance);
-        RealVector theta_0Theta = beta.mapMultiply(-beta_0 / variance);
+        RealVector theta_0Theta = beta.mapMultiply(-beta0 / variance);
         ((CompoundVector) this.naturalParameters).setXYbaseVector(new ArrayRealVector(theta_0array, theta_0Theta.getData()));
 
         /*
@@ -138,14 +181,7 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
         natural_XY.setSubMatrix(theta_betaBeta.getData(),1,1);
         ((CompoundVector) this.naturalParameters).setcovbaseVector(natural_XY);
 
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void updateMomentFromNaturalParameters() {
-        //throw new UnsupportedOperationException("Method not implemented yet!");
+        return this.naturalParameters;
     }
 
     /**
@@ -193,13 +229,7 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
      */
     @Override
     public double computeLogNormalizer() {
-        CompoundVector globalNaturalParameters = (CompoundVector)this.naturalParameters;
-        double theta_0 = globalNaturalParameters.get(0);
-        double theta_Minus1 = globalNaturalParameters.getcovbaseMatrix().getEntry(0,0);
-        double variance = -0.5/theta_Minus1;
-        double beta_0 = theta_0 * variance;
-
-        return (beta_0*beta_0)/(2*variance) + 0.5*Math.log(variance);
+        return (beta0*beta0)/(2*variance) + 0.5*Math.log(variance);
     }
 
     /**
@@ -226,7 +256,18 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
         vectorSS.setXYbaseVector(XYRealVector);
 
         RealMatrix covRealmatrix = new Array2DRowRealMatrix(Yarray.length + 1,Yarray.length + 1);
-        covRealmatrix.scalarAdd(1.0);
+
+
+
+        //We perform the "laplace" correction in that way to break symmetric covariance matrixes.
+        Random rand = new Random(0);
+        for (int i = 0; i < Yarray.length + 1; i++) {
+            for (int j = 0; j < Yarray.length + 1; j++) {
+                covRealmatrix.addToEntry(i,j,rand.nextDouble()+0.01);
+            }
+        }
+        //covRealmatrix = covRealmatrix.scalarAdd(1.0);
+
         vectorSS.setcovbaseVector(covRealmatrix);
 
         return vectorSS;
@@ -245,36 +286,32 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
      */
     @Override
     public double getExpectedLogNormalizer(Map<Variable, MomentParameters> momentParents) {
-        CompoundVector globalNaturalParameters = (CompoundVector)this.naturalParameters;
-        double logNorm = -0.5*Math.log(-2*globalNaturalParameters.getTheta_Minus1());
+        int nOfBetas = this.betas.length;
 
-        double[] Yarray = new double[nOfParents];
-        double[] YYarray = new double[nOfParents];
+        //From Beta_0, Beta, gamma and Y parents to variable X.
+        double beta0Squared;
+        double invVariance;
+        double dotProductBetaY = 0;
+        double sumSquaredMoments=0;
+        double sumSquaredMeanMoments=0;
 
-        for (int i = 0; i < nOfParents; i++) {
-            Yarray[i] = momentParents.get(this.getConditioningVariables().get(i)).get(0);
-            YYarray[i] = momentParents.get(this.getConditioningVariables().get(i)).get(1);
+        for (int i = 0; i < nOfBetas; i++) {
+            dotProductBetaY += momentParents.get(this.parents.get(i)).get(0) *
+                    betas[i];
+            sumSquaredMoments += betas[i]*betas[i]*
+                    momentParents.get(this.parents.get(i)).get(1);
+
+            sumSquaredMeanMoments += Math.pow(betas[i] *
+                    momentParents.get(this.parents.get(i)).get(0), 2);
         }
-        RealVector Y = new ArrayRealVector(Yarray);
 
-        logNorm -= globalNaturalParameters.getTheta_beta0BetaRV().
-                dotProduct(new ArrayRealVector(Y));
+        beta0Squared = beta0*beta0;
+        invVariance = 1/variance;
+        double logVar = Math.log(variance);
 
-        RealMatrix YY = Y.outerProduct(Y);
-        for (int i = 0; i < nOfParents; i++) {
-            YY.setEntry(i,i,YYarray[i]);
-        }
-
-        logNorm -= IntStream.range(0,nOfParents).mapToDouble(p ->
-        {
-                return globalNaturalParameters.getTheta_BetaBetaRM().getRowVector(p).dotProduct(YY.getRowVector(p));
-        })
-                .sum();
-
-        logNorm -= Math.pow(globalNaturalParameters.getTheta_beta0(),2)/(4*globalNaturalParameters.getTheta_Minus1());
-
-        return logNorm;
+        return -0.5*logVar +  0.5*invVariance*(beta0Squared + dotProductBetaY*dotProductBetaY - sumSquaredMeanMoments + sumSquaredMoments + 2*beta0*dotProductBetaY);
     }
+
 
 
     /**
@@ -282,18 +319,19 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
      */
     @Override
     public NaturalParameters getExpectedNaturalFromParents(Map<Variable, MomentParameters> momentParents) {
-        NaturalParameters naturalParameters = new ArrayVector(2);
-        CompoundVector globalNaturalParameters = (CompoundVector)this.naturalParameters;
+        int nOfBetas = this.betas.length;
 
-        double[] Yarray = new double[nOfParents];
-        for (int i = 0; i < nOfParents; i++) {
-            Yarray[i] = momentParents.get(this.getConditioningVariables().get(i)).get(0);
+        double dotProductBetaY = 0;
+
+        for (int i = 0; i < nOfBetas; i++) {
+            dotProductBetaY += momentParents.get(this.parents.get(i)).get(0) *
+                    betas[i];
         }
-        RealVector Y = new ArrayRealVector(Yarray);
-        naturalParameters.set(0,globalNaturalParameters.getTheta_beta0() +
-                2*globalNaturalParameters.getTheta_BetaRV().dotProduct(Y));
 
-        naturalParameters.set(1,globalNaturalParameters.getTheta_Minus1());
+        NaturalParameters naturalParameters = new EF_Normal.ArrayVectorParameter(2);
+
+        naturalParameters.set(0, this.beta0 + dotProductBetaY);
+        naturalParameters.set(1, 1/variance);
 
         return naturalParameters;
     }
@@ -303,26 +341,34 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
      */
     @Override
     public NaturalParameters getExpectedNaturalToParent(Variable parent, Map<Variable, MomentParameters> momentChildCoParents) {
-        NaturalParameters naturalParameters = new ArrayVector(2);
-        CompoundVector globalNaturalParameters = (CompoundVector)this.naturalParameters;
 
-        int parentID=this.getConditioningVariables().indexOf(parent);
+        int nOfBetas = this.betas.length;
 
-        RealVector theta_BetaBetaPrima = globalNaturalParameters.getTheta_BetaBetaRM().getRowVector(parentID);//.copy();
-        theta_BetaBetaPrima.setEntry(parentID, 0);
+        double dotProductBetaY = 0;
 
-        double[] Yarray = new double[nOfParents];
-        for (int i = 0; i < nOfParents; i++) {
-            Yarray[i] = momentChildCoParents.get(this.getConditioningVariables().get(i)).get(0);
+
+        for (int i = 0; i < nOfBetas; i++) {
+            dotProductBetaY += momentChildCoParents.get(this.parents.get(i)).get(0) *
+                    betas[i];
         }
 
-        RealVector YY_i = new ArrayRealVector(Yarray);
 
-        naturalParameters.set(0,globalNaturalParameters.getTheta_beta0Beta()[parentID]+
-                2*globalNaturalParameters.getTheta_Beta()[parentID]*momentChildCoParents.get(var).get(0)+
-                2*theta_BetaBetaPrima.dotProduct(YY_i));
+        double X = momentChildCoParents.get(var).get(0);
 
-        naturalParameters.set(1, globalNaturalParameters.getTheta_BetaBeta()[parentID][parentID]);
+        int parentID=this.parents.indexOf(parent);
+        double beta_iSquared = betas[parentID]*betas[parentID];
+        double beta_i = betas[parentID];
+        double Y_i = momentChildCoParents.get(this.parents.get(parentID)).get(0);
+        double invVariance = 1/variance;
+
+        double factor = beta_i/beta_iSquared;
+
+        double mean = factor*(-beta0 + X - (dotProductBetaY-beta_i*Y_i));
+        double precision = beta_iSquared*invVariance;
+
+        NaturalParameters naturalParameters = new EF_Normal.ArrayVectorParameter(2);
+        naturalParameters.set(0,mean);
+        naturalParameters.set(1,precision);
 
         return naturalParameters;
     }
@@ -335,38 +381,12 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
     public ConditionalLinearGaussian toConditionalDistribution() {
         ConditionalLinearGaussian normal_normal = new ConditionalLinearGaussian(this.getVariable(), this.getConditioningVariables());
 
-        double[] allBeta = this.getAllBetaValues();
-
-        normal_normal.setIntercept(allBeta[0]);
-        normal_normal.setCoeffParents(Arrays.copyOfRange(allBeta, 1, allBeta.length));
-        normal_normal.setVariance(this.getVariance());
+        normal_normal.setIntercept(beta0);
+        normal_normal.setCoeffParents(Arrays.copyOfRange(betas, 0, betas.length));
+        normal_normal.setVariance(this.variance);
 
         return normal_normal;
     }
-
-    /**
-     * Returns the variance of this EF_Normal_NormalParents distribution.
-     * @return a positive {@code double} value that represents the variance.
-     */
-    public double getVariance(){
-        double theta_Minus1 = ((CompoundVector)this.naturalParameters).getcovbaseMatrix().getEntry(0,0);
-        return -0.5/theta_Minus1;
-    }
-
-    /**
-     * Returns an array with all the beta coefficient values, including beta0, of this EF_Normal_NormalParents distribution.
-     * @return an {@code array} of {@code double} values that represents beta coefficient values.
-     */
-    public double[] getAllBetaValues(){
-        CompoundVector globalNaturalParameters = (CompoundVector)this.naturalParameters;
-        double[] theta_beta0beta = globalNaturalParameters.getXYbaseMatrix().toArray();
-        double variance = getVariance();
-        double beta0 = theta_beta0beta[0]*variance;
-        double[] beta = Arrays.stream(theta_beta0beta).map(w->-w*variance/beta0).toArray();
-        beta[0] = beta0;
-        return beta;
-    }
-
 
     /**
      * Creates an empty compound parameter vector.
@@ -586,7 +606,7 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
         public double dotProduct(CompoundVector vec) {
             double result = this.getXYbaseMatrix().dotProduct(vec.getXYbaseMatrix()); //theta1
             result += IntStream.range(0,nOfParents+1).mapToDouble(p ->
-                       this.getcovbaseMatrix().getRowVector(p).dotProduct(vec.getcovbaseMatrix().getRowVector(p))).sum();
+                    this.getcovbaseMatrix().getRowVector(p).dotProduct(vec.getcovbaseMatrix().getRowVector(p))).sum();
             return result;
         }
 
@@ -605,3 +625,5 @@ public class EF_Normal_NormalParents extends EF_ConditionalDistribution  {
     }
 
 }
+
+

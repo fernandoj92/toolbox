@@ -13,10 +13,11 @@ import eu.amidst.core.datastream.DataStream;
 import eu.amidst.core.distribution.Multinomial;
 import eu.amidst.core.inference.InferenceAlgorithm;
 import eu.amidst.core.inference.messagepassing.VMP;
-import eu.amidst.core.learning.parametric.ParallelMaximumLikelihood;
-import eu.amidst.core.learning.parametric.ParameterLearningAlgorithm;
+import eu.amidst.core.learning.parametric.ParallelMLMissingData;
 import eu.amidst.core.models.BayesianNetwork;
 import eu.amidst.core.utils.DAGGenerator;
+import eu.amidst.core.utils.Utils;
+import eu.amidst.core.variables.Variable;
 
 /**
  * The NaiveBayesClassifier class implements the interface {@link Classifier} and defines a Naive Bayes Classifier.
@@ -26,9 +27,6 @@ public class NaiveBayesClassifier implements Classifier{
     /** Represents the name of the class variable. */
     String className;
 
-    /** Represents the ID of the class variable. */
-    String classVarID;
-
     /** Represents the Naive Bayes Classifier, which is considered as a {@link BayesianNetwork}. */
     BayesianNetwork bnModel;
 
@@ -37,6 +35,9 @@ public class NaiveBayesClassifier implements Classifier{
 
     /** Represents the inference algorithm. */
     InferenceAlgorithm predictions;
+
+    /** Represents the class variable */
+    Variable classVar;
 
     /**
      * Creates a new NaiveBayesClassifier.
@@ -69,9 +70,11 @@ public class NaiveBayesClassifier implements Classifier{
      */
     @Override
     public double[] predict(DataInstance instance) {
+        if (!Utils.isMissingValue(instance.getValue(classVar)))
+            System.out.println("Class Variable can not be set.");
         this.predictions.setEvidence(instance);
         this.predictions.runInference();
-        Multinomial multinomial = this.predictions.getPosterior(this.getBNModel().getVariables().getVariableByName(className));
+        Multinomial multinomial = this.predictions.getPosterior(classVar);
         return multinomial.getParameters();
     }
 
@@ -107,7 +110,7 @@ public class NaiveBayesClassifier implements Classifier{
      */
     @Override
     public void learn(DataStream<DataInstance> dataStream){
-        ParameterLearningAlgorithm parameterLearningAlgorithm = new ParallelMaximumLikelihood();
+        ParallelMLMissingData parameterLearningAlgorithm = new ParallelMLMissingData();
         parameterLearningAlgorithm.setParallelMode(this.parallelMode);
         parameterLearningAlgorithm.setDAG(DAGGenerator.getNaiveBayesStructure(dataStream.getAttributes(),this.className));
         parameterLearningAlgorithm.setDataStream(dataStream);
@@ -115,6 +118,7 @@ public class NaiveBayesClassifier implements Classifier{
         parameterLearningAlgorithm.runLearning();
         bnModel = parameterLearningAlgorithm.getLearntBayesianNetwork();
         predictions.setModel(bnModel);
+        this.classVar = this.bnModel.getVariables().getVariableByName(this.className);
     }
 
 
@@ -124,7 +128,7 @@ public class NaiveBayesClassifier implements Classifier{
      * @param batchSize the size of the batch for the parallel ML algorithm.
      */
     public void learn(DataStream<DataInstance> dataStream, int batchSize){
-        ParallelMaximumLikelihood parameterLearningAlgorithm = new ParallelMaximumLikelihood();
+        ParallelMLMissingData parameterLearningAlgorithm = new ParallelMLMissingData();
         parameterLearningAlgorithm.setBatchSize(batchSize);
         parameterLearningAlgorithm.setParallelMode(this.parallelMode);
         parameterLearningAlgorithm.setDAG(DAGGenerator.getNaiveBayesStructure(dataStream.getAttributes(),this.className));
@@ -133,6 +137,6 @@ public class NaiveBayesClassifier implements Classifier{
         parameterLearningAlgorithm.runLearning();
         bnModel = parameterLearningAlgorithm.getLearntBayesianNetwork();
         predictions.setModel(bnModel);
+        this.classVar = this.bnModel.getVariables().getVariableByName(this.className);
     }
-
 }

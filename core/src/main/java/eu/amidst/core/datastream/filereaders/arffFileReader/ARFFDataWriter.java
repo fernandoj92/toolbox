@@ -16,10 +16,12 @@ import eu.amidst.core.datastream.filereaders.DataFileWriter;
 import eu.amidst.core.utils.Utils;
 import eu.amidst.core.variables.StateSpaceTypeEnum;
 import eu.amidst.core.variables.stateSpaceTypes.FiniteStateSpace;
+import eu.amidst.core.variables.stateSpaceTypes.RealStateSpace;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.text.DecimalFormat;
 
 // TODO Write a quickARFFReader and quickARFFSaver
 
@@ -27,6 +29,9 @@ import java.io.UncheckedIOException;
  * This class implements the interface {@link DataFileWriter} and defines an ARFF (Weka Attribute-Relation File Format) data writer.
  */
 public class ARFFDataWriter implements DataFileWriter {
+
+    public static DecimalFormat decimalFormat = new DecimalFormat("#");
+
 
     /**
      * Saves a given data stream to an ARFF file.
@@ -85,8 +90,12 @@ public class ARFFDataWriter implements DataFileWriter {
         }
     }
 
-    public static String attributeToARFFStringWithIndex(Attribute att){
+    public static String attributeToARFFStringWithIndex(Attribute att, boolean includeRanges){
         if (att.getStateSpaceType().getStateSpaceTypeEnum()== StateSpaceTypeEnum.REAL) {
+            if(includeRanges && !att.getName().equalsIgnoreCase("SEQUENCE_ID") && !att.getName().equalsIgnoreCase("TIME_ID"))
+                return "@attribute " + att.getName() + " " +att.getIndex()+ " real ["+
+                        ((RealStateSpace) att.getStateSpaceType()).getMinInterval() +","+
+                        ((RealStateSpace) att.getStateSpaceType()).getMaxInterval() +"]";
             return "@attribute " + att.getName() + " " +att.getIndex()+ " real";
         } else if (att.getStateSpaceType().getStateSpaceTypeEnum()== StateSpaceTypeEnum.FINITE_SET) {
             StringBuilder stringBuilder = new StringBuilder("@attribute " + att.getName() + " " +att.getIndex()+ " {");
@@ -98,6 +107,7 @@ public class ARFFDataWriter implements DataFileWriter {
             throw new IllegalArgumentException("Unknown SateSapaceType");
         }
     }
+
     /**
      * Converts a {@link DataInstance} object to an ARFF format {@code String}.
      * @param assignment a {@link DataInstance} object.
@@ -137,8 +147,10 @@ public class ARFFDataWriter implements DataFileWriter {
             String nameState = stateSpace.getStatesName((int) assignment.getValue(att));
             builder.append(nameState + separator);
         } else if (att.getStateSpaceType().getStateSpaceTypeEnum() == StateSpaceTypeEnum.REAL) {
-            if (att.getNumberFormat() != null) {
-                builder.append(att.getNumberFormat().format(assignment.getValue(att)) + separator);
+            //if (att.getNumberFormat() != null) {
+                //builder.append(att.getNumberFormat().format(assignment.getValue(att)) + separator);
+            if (att.isSpecialAttribute() || att.isTimeId()){
+                builder.append(decimalFormat.format(assignment.getValue(att)) + separator);
             } else {
                 builder.append(assignment.getValue(att) + separator);
             }
