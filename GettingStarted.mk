@@ -138,7 +138,9 @@ The following paper provides a deep discussion over the different design issues 
 
 AMIDST toolbox is an open source project under [Apache Software License 2.0](http://www.apache.org/licenses/LICENSE-2.0). It is written in Java and is based on [Apache Maven](https://en.wikipedia.org/wiki/Apache_Maven) for building and structuring the project. This toolbox is structured as [multi-module Maven project](http://books.sonatype.com/mvnex-book/reference/multimodule.html). Roughly speaking, a **Maven module** is an independent piece of software with explicit dependencies to other modules in the project and to other external libraries. Each module is placed in independent folders and contains an xml file describing its dependencies. In this current version, the toolbox is composed by the following four modules:
 
-* **Core module** contains all the main functionalities of the toolbox. It is placed in the *core* folder under the root project folder. 
+* **Core module** contains all the main functionalities for *Static BNs*. It is placed in the *core* folder under the root project folder. 
+
+* **Core-dynamic module** contains all the main functionalities for *Dynamic BNs*. It is placed in the *core-dynamic* folder under the root project folder. 
 
 * **Examples module** contains basic code examples showing how to use the main functionalities of the toolbox. It is placed in the *examples* folder under the root project folder.
 

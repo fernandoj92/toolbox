@@ -30,7 +30,7 @@ This component supports both **Conditional Linear Gaussians** and **Exponential 
 The implementation of the latter ensures an alternative representation of the standard distributions based on vectors of natural and 
 moment parameters.
 
-##AMIDST modules<a name="modules"></a> 
+##AMIDST Modules<a name="modules"></a> 
 
 The following figure shows a high-level overview of the key modules of the AMIDST toolbox:
 
@@ -70,7 +70,7 @@ The latter is implemented by computing (variational) posterior distributions ove
 ###Learning Engine<a name="learning"></a>  
 
 Learning engine includes the **Structural Learning**, **Parameter Learning**, and **Feature Selection** (still under development) 
-components that are connected to both PGM and DataStream. 
+components that are connected to both **PGM** and **DataStream**. 
 
 * **The Structural Learning** component currently includes parallel implementations of the tree augmented naive Bayes 
 classifier (**Parallel TAN**) (Madsen et al., 2014) as well as a constraint-based method for learning general 
