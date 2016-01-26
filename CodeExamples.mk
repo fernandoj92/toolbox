@@ -1,4 +1,4 @@
-## Code Examples<a name="documentation"></a>
+## Bayesian Networks: Code Examples<a name="documentation"></a>
 
    * [Data Streams](#datastreamsexample)
    * [Random Variables](#variablesexample)

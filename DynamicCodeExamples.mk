@@ -1,4 +1,4 @@
-## Dynamic Bayesian networks: code Examples<a name="documentation"></a>
+## Dynamic Bayesian networks: Code Examples<a name="documentation"></a>
 
    * [Dynamic Data Streams](#dynamicdatastreamsexample)
    * [Dynamic Random Variables](#dynamicvariablesexample)
