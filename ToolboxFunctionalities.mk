@@ -14,14 +14,14 @@ Blue boxes represent software components that have been fully implemented, while
 
 <p align="center">
 <img title="Illustration of the design of the AMIDST components related to core structures. Nomenclature: The boxes in the figure represent software components (sets, possibly singletons, of classes), a rounded-arc going from X to Y indicate that Y ‘uses/references’ X, and an arc with an arrow from X to Y implies inheritance.
-" src="https://amidst.github.io/toolbox/docs/PGMs.pdf" width="800">
+" src="https://amidst.github.io/toolbox/docs/PGMs.pdf" width="700">
 </p>
 
 The core structures mainly relates to the basic components that play a 
 key role in ensuring the implementation of the different AMIDST learning and inference algorithms.
 
 For starters, instantiation of a particular **probabilistic graphical model** (**PGM** component) will be required. 
-Currently, it is possible to create either a **static Bayesian network** (**BN** component) or a two time-slice dynamic 
+Currently, it is possible to create either a static Bayesian network (**BN** component) or a two time-slice dynamic 
 Bayesian network (**2T-DBN** component). Then, the **DAG** component is defined over a list of **Static Variables**, whereas 
 the **2T-DBN** component is defined over a list of **Dynamic Variables**.
 
@@ -35,7 +35,7 @@ moment parameters.
 The following figure shows a high-level overview of the key modules of the AMIDST toolbox:
 
 <p align="center">
-<img title="Illustration of the design of the AMIDST components related to core structures." src="https://amidst.github.io/toolbox/docs/Functionalities.pdf" width="800">
+<img title="Illustration of the design of the AMIDST components related to core structures." src="https://amidst.github.io/toolbox/docs/Functionalities.pdf" width="700">
 </p>
 
 ###Data Sources<a name="datasources"></a> 

@@ -22,7 +22,6 @@ The figure below shows a non-exhaustive taxonomy of relevant data mining tools d
 <img title="Taxonomy" src="https://amidst.github.io/toolbox/docs/taxonomy.png" width="500">
 </p>
 
-
 # Documentation<a name="documentation"></a>
 
 * [Getting Started!](http://amidst.github.io/toolbox/GettingStarted.html) explains how to install the AMIDST toolbox, how this toolbox makes use of Java 8 new functional style programming features, and why it is based on a module based architecture.
@@ -45,8 +44,7 @@ Scalability is a main concern for the AMIDST toolbox. Java 8 functional programm
 
 # Publications & Use-Cases
 
-The following repository [https://github.com/amidst/toolbox-usecases](https://github.com/amidst/toolbox-usecases) contains the source code and details about the publications and use-cases using the AMIDST toolbox. 
-
+The following repository [https://github.com/amidst/toolbox-usecases](https://github.com/amidst/toolbox-usecases) contains the source code and details about the publications and use-cases using the AMIDST toolbox.
 
 # Upcoming Developments
 
