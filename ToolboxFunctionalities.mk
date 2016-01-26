@@ -7,79 +7,78 @@ hybrid Bayesian networks from streaming data.
 
 In what follows, we describe the main functionalities that the AMIDST toolbox supplies.
 
-##Probabilistic Graphical Models<a name="pgms"></a>
+##AMIDST Core Structures<a name="pgms"></a>
 
-An overview of the core structures of the AMIDST toolbox is illustrated in the following figure. 
-Blue boxes represent software components that have been implemented in the AMIDST toolbox, 
-while green boxes represent components that are part of AMIDST design specification to be implemented in the future.
+An overview of the core structures of the AMIDST toolbox is illustrated in the figure below. 
+Blue boxes represent software components that have been fully implemented, while green boxes represent components that are part of AMIDST design specification to be implemented in the future.
 
 <p align="center">
 <img title="Illustration of the design of the AMIDST components related to core structures. Nomenclature: The boxes in the figure represent software components (sets, possibly singletons, of classes), a rounded-arc going from X to Y indicate that Y ‘uses/references’ X, and an arc with an arrow from X to Y implies inheritance.
-" src="https://amidst.github.io/toolbox/docs/PGMs.pdf" width="500">
+" src="https://amidst.github.io/toolbox/docs/PGMs.pdf" width="800">
 </p>
 
-The structures included in the figure mainly relates to the basic components that play a 
-key role in ensuring the implementation of the different AMIDST learning and inference algorithms. 
-For starters, instantiation of a particular probabilistic graphical model (PGM component) will be required. 
-Currently, it is possible to create either a static Bayesian network (BN component) or a two time-slice dynamic 
-Bayesian network (2T- DBN component). Then, the DAG component is defined over a list of Static Variables, whereas 
-the 2T-DBN component is defined over a list of Dynamic Variables.
+The core structures mainly relates to the basic components that play a 
+key role in ensuring the implementation of the different AMIDST learning and inference algorithms.
 
-Both BN and 2T-DBN models rely on the Distributions component to define the conditional probability distributions. 
-This component supports both Conditional Linear Gaussians and Exponential Family representations of the distributions. 
+For starters, instantiation of a particular **probabilistic graphical model** (**PGM** component) will be required. 
+Currently, it is possible to create either a **static Bayesian network** (**BN** component) or a two time-slice dynamic 
+Bayesian network (**2T-DBN** component). Then, the **DAG** component is defined over a list of **Static Variables**, whereas 
+the **2T-DBN** component is defined over a list of **Dynamic Variables**.
+
+Both **BN** and **2T-DBN** models rely on the **Distributions** component to define the conditional probability distributions. 
+This component supports both **Conditional Linear Gaussians** and **Exponential Family** representations of the distributions. 
 The implementation of the latter ensures an alternative representation of the standard distributions based on vectors of natural and 
 moment parameters.
 
 ##AMIDST modules<a name="modules"></a> 
 
-The following figure shows a high-level overview of the key modules of the AMIDST toolbox
+The following figure shows a high-level overview of the key modules of the AMIDST toolbox:
 
 <p align="center">
-<img title="Illustration of the design of the AMIDST components related to core structures." src="https://amidst.github.io/toolbox/docs/Functionalities.pdf" width="500">
+<img title="Illustration of the design of the AMIDST components related to core structures." src="https://amidst.github.io/toolbox/docs/Functionalities.pdf" width="800">
 </p>
 
 ###Data Sources<a name="datasources"></a> 
 
-In the AMIDST framework, we consider two types of data sources for learning, namely, DataStream, 
-where data arrives at high frequency with no storage of historical data, and DataOnMemory for static 
+In the AMIDST framework, we consider two types of data sources for learning, namely, **DataStream**, 
+where data arrives at high frequency with no storage of historical data, and **DataOnMemory** for static 
 databases that simply correspond to traditional databases. 
 The data format supported by AMIDST is [Weka](www.cs.waikato.ac.nz/ml/weka/)’s attribute-relation file format (ARFF).
 
-Moreover, we ensure a scalable DistributedDataProcessing using [Apache Flink](http://flink.apache.org) that runs the AMIDST developed algorithms 
+Moreover, we ensure a scalable **DistributedDataProcessing** using [Apache Flink](http://flink.apache.org) that runs the AMIDST developed algorithms 
 on top of the Hadoop and Yarn architectures on [Amazon Elastic MapReduce (EMR)](https://aws.amazon.com/elasticmapreduce/). This part will be soon released!
 
-Each of the data sources are furthermore connected to the DataInstance and DynamicDataInstance components 
+Each of the data sources are furthermore connected to the **DataInstance** and **DynamicDataInstance** components 
 that represent a particular evidence configuration (static or dynamic, respectively) such as the observed values 
 of a collection of variables at time t or a particular row in a database.
 
 ###Inference Engines<a name="inference"></a>
 
 * **The Static Inference Engine** includes all the inference algorithms for a static Bayesian networks (BNs). 
-It consists of five implemented methods, namely, HUGIN Exact Inference (Madsen et al., 2005), 
-Importance Sampling (Hammersley and Handscomb, 1964; Salmeron et al., 2015), 
-Variational Message Passing (Winn and Bishop, 2005), Static MAP Inference, and MPE Inference. 
+It consists of five implemented methods, namely, **HUGIN Exact Inference** (Madsen et al., 2005), 
+**Importance Sampling** (Hammersley and Handscomb, 1964; Salmeron et al., 2015), 
+**Variational Message Passing (VMP)** (Winn and Bishop, 2005), **Static MAP Inference**, and **MPE Inference**. 
 This module has been designed and implemented to be extendable and support future implementations of other 
-inference algorithms such as the Expectation Propagation (EP) algorithm. 
+inference algorithms such as the **Expectation Propagation (EP)** algorithm. 
 
 * **The Dynamic Inference Engine** includes all the inference algorithms for dynamic Bayesian networks (DBNs). 
 It consists of the implementation of the dynamic versions of HUGIN Exact Inference, Importance Sampling, 
-Variational Message Passing by means of the Factored Frontier algorithm, as well as Dynamic MAP. 
+Variational Message Passing by means of the **Factored Frontier** algorithm, as well as **Dynamic MAP**. 
 The latter is implemented by computing (variational) posterior distributions over subsets of MAP variables. 
-This module has been also designed and implemented to be extendable and support future implementations of other 
-inference algorithms for dynamic models.
+
 
 ###Learning Engine<a name="learning"></a>  
 
-Learning engine includes the Structural Learning, Parameter Learning, and Feature Selection (still under development) 
+Learning engine includes the **Structural Learning**, **Parameter Learning**, and **Feature Selection** (still under development) 
 components that are connected to both PGM and DataStream. 
 
-* **The Structural learning** component currently includes parallel implementations of the tree augmented naive Bayes 
-classifier (Parallel TAN) (Madsen et al., 2014) as well as a constraint-based method for learning general 
-Bayesian networks (Parallel PC) (Madsen et al., 2015). Both of the these implementations are based on the use of threads, 
+* **The Structural Learning** component currently includes parallel implementations of the tree augmented naive Bayes 
+classifier (**Parallel TAN**) (Madsen et al., 2014) as well as a constraint-based method for learning general 
+Bayesian networks (**Parallel PC**) (Madsen et al., 2015). Both of the these implementations are based on the use of threads, 
 and rely on interfacing to the Hugin AMIDST API.
 
-* **The Parameter learning** in AMIDST models can be performed using either a fully Bayesian approach 
-or a maximum likelihood-based approach (Scholz, 2004). The Bayesian approach to parameter learning is closely linked to the 
+* **The Parameter Learning** in AMIDST models can be performed using either a **fully Bayesian approach** 
+or a **maximum likelihood-based approach** (Scholz, 2004). The Bayesian approach to parameter learning is closely linked to the 
 task of probabilistic inference supported by the Streaming Variational Bayes algorithm (Broderick et al., 2013), using Variational Message Passing as the underlying inference 
 algorithm (VMP) provided by the Static Inference Engine in the toolbox.
 
