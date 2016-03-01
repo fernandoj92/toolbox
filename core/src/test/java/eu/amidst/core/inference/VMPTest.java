@@ -254,7 +254,7 @@ public class VMPTest extends TestCase {
                 if (localAssignment.getValue(mainVar) != k)
                     continue;
 
-                val += q1.getProbabilityOfState((int) localAssignment.getValue(var1)) * q2.getProbabilityOfState((int) localAssignment.getValue(var2)) * bn.getLogProbabiltyOf(localAssignment);
+                val += q1.getProbabilityOfState((int) localAssignment.getValue(var1)) * q2.getProbabilityOfState((int) localAssignment.getValue(var2)) * bn.getLogProbabilityOf(localAssignment);
             }
             output[k] = Math.exp(val);
         }
@@ -350,7 +350,7 @@ public class VMPTest extends TestCase {
                 if (localAssignment.getValue(mainVar) != k || localAssignment.getValue(observedVar) != observedVal)
                     continue;
 
-                val += q1.getProbabilityOfState((int) localAssignment.getValue(var1)) * bn.getLogProbabiltyOf(localAssignment);
+                val += q1.getProbabilityOfState((int) localAssignment.getValue(var1)) * bn.getLogProbabilityOf(localAssignment);
             }
             output[k] = Math.exp(val);
         }

@@ -49,7 +49,7 @@ public class BaseDistributionMultinomialParentsTest {
                     ef_logProb += ef_dist.computeLogProbabilityOf(e);
                 }
 
-            logProb = testnet.getLogProbabiltyOf(e);
+            logProb = testnet.getLogProbabilityOf(e);
 
             //System.out.println("Distributions: "+ logProb + " = EF-Distributions: "+ ef_logProb);
             Assert.assertEquals(logProb, ef_logProb, 0.0001);
@@ -81,7 +81,7 @@ public class BaseDistributionMultinomialParentsTest {
             for(EF_ConditionalDistribution ef_dist: ef_testnet.getDistributionList()){
                 ef_logProb += ef_dist.computeLogProbabilityOf(e);
             }
-            logProb = testnet.getLogProbabiltyOf(e);
+            logProb = testnet.getLogProbabilityOf(e);
             //System.out.println("Distributions: "+ logProb + " = EF-Distributions: "+ ef_logProb);
             Assert.assertEquals(logProb, ef_logProb, 0.0001);
 
@@ -113,7 +113,7 @@ public class BaseDistributionMultinomialParentsTest {
                 ef_logProb += ef_dist.computeLogProbabilityOf(e);
             }
 
-            logProb = testnet.getLogProbabiltyOf(e);
+            logProb = testnet.getLogProbabilityOf(e);
 
             System.out.println("Distributions: "+ logProb + " = EF-Distributions: "+ ef_logProb);
             Assert.assertEquals(logProb, ef_logProb, 0.0001);

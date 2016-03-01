@@ -46,7 +46,7 @@ public class ParallelMaximumLikelihoodEM implements ParameterLearningAlgorithm {
     protected int numberOfIterations = 10;
 
     /** The threshold for stopping EM */
-    protected double threshold = 0.001;
+    protected double threshold = 1.0E-3;
 
     /** The inference algorithm used in the expectation step */
     protected InferenceAlgorithm inferenceAlgorithm;
@@ -119,7 +119,16 @@ public class ParallelMaximumLikelihoodEM implements ParameterLearningAlgorithm {
      */
     @Override
     public double updateModel(DataOnMemory<DataInstance> batch) {
+        assert(batch.getList().size() > 0);
+        // Difference in the log-likelihood of two consecutive steps
+        double localThreshold = Double.MAX_VALUE;
+        // Current number of iterations
+        int localIterations = 0;
+
         //Por cada batch recibido se realiza una serie de iteraciones del algoritmo EM
+        while(localThreshold > threshold || localIterations < numberOfIterations){
+
+        }
 
         return 0;
     }

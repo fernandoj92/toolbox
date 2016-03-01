@@ -118,7 +118,7 @@ public class CreatingBayesianNetworks {
          */
         double logProb = 0;
         for (DataInstance instance : data) {
-            logProb += bn.getLogProbabiltyOf(instance);
+            logProb += bn.getLogProbabilityOf(instance);
         }
         System.out.println(logProb);
 

@@ -1,15 +1,10 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.  See the NOTICE file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file to You under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.  You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
- */
+package mt.ferjorosa.core.ltm;
 
-package eu.amidst.core.models;
-
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import eu.amidst.core.distribution.ConditionalDistribution;
 import eu.amidst.core.distribution.Distribution;
+import eu.amidst.core.models.DAG;
+import eu.amidst.core.models.ParentSet;
 import eu.amidst.core.utils.Utils;
 import eu.amidst.core.variables.Assignment;
 import eu.amidst.core.variables.Variable;
@@ -21,48 +16,45 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * The BayesianNetwork class represents a Bayesian network model.
+ * Reimplemento todo desde 0 ya que la clase mas "cercana" seria BayesianNetwork pero es "final" y seguramente habria que
+ * realizar una refactorización del código para que puediera extenderse correctamente, hay muchos métodos que seria posible
+ * compartir.
  *
- * <p> For an example of use follow this link </p>
- * <p> <a href="http://amidst.github.io/toolbox/CodeExamples.html#bnexample"> http://amidst.github.io/toolbox/CodeExamples.html#bnexample </a>  </p>
- *
- * <p> For further details about the implementation of this class using Java 8 functional-style programming look at the following paper: </p>
- *
- * <i> Masegosa et al. Probabilistic Graphical Models on Multi-Core CPUs using Java 8. IEEE-CIM (2015). </i>
- *
+ * Actualmente solo se pueden crear LCMs con variables discretas ya que tenemos que calcular la similitud de las variables
+ * mediante la información mútua
  */
-public final class BayesianNetwork implements Serializable {
+public final class DiscreteLatentClusterModel implements Serializable{
 
     /** Represents the serial version ID for serializing the object. */
-    private static final long serialVersionUID = 4107783324901370839L;
+    private static final long serialVersionUID = 9107523324901381856L;
 
-    /** Represents the list of conditional probability distributions defining the Bayesian network parameters. */
+    /** Represents the list of conditional probability distributions defining the LCM parameters. */
     private List<ConditionalDistribution> distributions;
 
-    /** Represents the Directed Acyclic Graph ({@link DAG}) defining the Bayesian network graphical structure. */
+    /** Represents the Directed Acyclic Graph ({@link DAG}) defining the LCM graphical structure. */
     private DAG dag;
 
-    /**
-     * Creates a new BayesianNetwork from a dag.
-     * @param dag a directed acyclic graph.
-     */
-    public BayesianNetwork(DAG dag) {
-        this.dag = dag;
-        initializeDistributions();
+    public DiscreteLatentClusterModel(DAG dag) throws IllegalArgumentException{
+        // Check if the DAG structure follows the LCM structure
+        if(isLCM(dag)) {
+            this.dag = dag;
+            initializeDistributions();
+        }else
+            throw new IllegalArgumentException("DAG must follow the LCM structure");
+    }
+
+    public DiscreteLatentClusterModel(DAG dag, Random randomInitialization) throws IllegalArgumentException{
+        // Check if the DAG structure follows the LCM structure
+        if(isLCM(dag)) {
+            this.dag = dag;
+            initializeDistributions();
+            randomInitialization(randomInitialization);
+        }else
+            throw new IllegalArgumentException("DAG must follow the LCM structure");
     }
 
     /**
-     * Creates a new BayesianNetwork from a dag and a list of distributions.
-     * @param dag a directed acyclic graph.
-     * @param dists a list of conditional probability distributions.
-     */
-    public BayesianNetwork(DAG dag, List<ConditionalDistribution> dists) {
-        this.dag = dag;
-        this.distributions = dists;
-    }
-
-    /**
-     * Returns the name of the BN
+     * Returns the name of the LCM
      * @return a String object
      */
     public String getName() {
@@ -70,7 +62,7 @@ public final class BayesianNetwork implements Serializable {
     }
 
     /**
-     * Sets the name of the BN
+     * Sets the name of the LCM
      * @param name, a String object
      */
     public void setName(String name) {
@@ -160,6 +152,15 @@ public final class BayesianNetwork implements Serializable {
     }
 
     /**
+     *
+     */
+    private boolean isLCM(DAG dag){
+        //Solo puede existir una variable oculta y dicha variable debe de ser el padre de todas las demás
+        return true;
+    }
+
+
+    /**
      * Returns the log probability of a valid assignment.
      * @param assignment an object of type {@link Assignment}.
      * @return the log probability of an assignment.
@@ -191,7 +192,7 @@ public final class BayesianNetwork implements Serializable {
     public String toString() {
 
         StringBuilder str = new StringBuilder();
-        str.append("Bayesian Network:\n");
+        str.append("Latent Cluster Model:\n");
 
         for (Variable var : this.getVariables()) {
 
@@ -222,21 +223,25 @@ public final class BayesianNetwork implements Serializable {
      * @param random an object of type {@link java.util.Random}.
      */
     public void randomInitialization(Random random) {
+        //this.distributions = new ArrayList(this.getNumberOfVars());
+
         this.distributions.stream().forEach(w -> w.randomInitialization(random));
+
+
     }
 
     /**
      * Tests if two Bayesian networks are equals.
      * A two Bayesian networks are considered equals if they have an equal conditional distribution for each variable.
-     * @param bnet a given BayesianNetwork to be compared with this BayesianNetwork.
+     * @param lcm a given Latent Cluster Model to be compared with this Latent Cluster Model.
      * @param threshold a threshold value.
      * @return a boolean indicating if the two BNs are equals or not.
      */
-    public boolean equalBNs(BayesianNetwork bnet, double threshold) {
+    public boolean equalLCMs(DiscreteLatentClusterModel lcm, double threshold) {
         boolean equals = true;
-        if (this.getDAG().equals(bnet.getDAG())){
+        if (this.getDAG().equals(lcm.getDAG())){
             for (Variable var : this.getVariables()) {
-                equals = equals && this.getConditionalDistribution(var).equalDist(bnet.getConditionalDistribution(var), threshold);
+                equals = equals && this.getConditionalDistribution(var).equalDist(lcm.getConditionalDistribution(var), threshold);
             }
         }
         return equals;
@@ -262,5 +267,5 @@ public final class BayesianNetwork implements Serializable {
     public static void loadOptions() {
 
     }
-}
 
+}

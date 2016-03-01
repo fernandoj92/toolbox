@@ -77,7 +77,7 @@ public class BayesianNetworkTest {
 
         double logProb = 0;
         for (DataInstance instance : data) {
-            logProb += bn.getLogProbabiltyOf(instance);
+            logProb += bn.getLogProbabilityOf(instance);
         }
 
         System.out.println(logProb);

@@ -144,7 +144,7 @@ public class MPEInference implements PointEstimator {
     }
 
     //    private double getProbabilityOf(Assignment as1) {
-//        return Math.exp(this.model.getLogProbabiltyOf(as1));
+//        return Math.exp(this.model.getLogProbabilityOf(as1));
 //    }
 
     /**
@@ -180,9 +180,9 @@ public class MPEInference implements PointEstimator {
 
         Stream<Assignment> sample = ISaux.getSamples().parallel();
 
-        //ISaux.getSamples().parallel().forEachOrdered(assign -> System.out.println(assign.outputString(causalOrder) + ", p=" + Math.exp(model.getLogProbabiltyOf(assign))));
+        //ISaux.getSamples().parallel().forEachOrdered(assign -> System.out.println(assign.outputString(causalOrder) + ", p=" + Math.exp(model.getLogProbabilityOf(assign))));
         //System.out.println();
-        //sample.map(this::hillClimbingOneVar).forEachOrdered(assign -> System.out.println(assign.outputString(causalOrder) + ", p=" + Math.exp(model.getLogProbabiltyOf(assign))));
+        //sample.map(this::hillClimbingOneVar).forEachOrdered(assign -> System.out.println(assign.outputString(causalOrder) + ", p=" + Math.exp(model.getLogProbabilityOf(assign))));
         //sample = ISaux.getSamples().parallel();
 
         switch(searchAlgorithm) {
@@ -192,32 +192,32 @@ public class MPEInference implements PointEstimator {
                 break;
 
             case SAMPLING:    // NO OPTIMIZATION ALGORITHM, JUST PICKING THE SAMPLE WITH HIGHEST PROBABILITY
-                MPEestimate = sample.reduce((s1, s2) -> (model.getLogProbabiltyOf(s1) > model.getLogProbabiltyOf(s2) ? s1 : s2)).get();
+                MPEestimate = sample.reduce((s1, s2) -> (model.getLogProbabilityOf(s1) > model.getLogProbabilityOf(s2) ? s1 : s2)).get();
                 break;
 
 
 
             case SA_LOCAL:     // "SIMULATED ANNEALING", MOVING SOME VARIABLES AT EACH ITERATION
-                MPEestimate = sample.map(this::simulatedAnnealingOneVar).reduce((s1, s2) -> (model.getLogProbabiltyOf(s1) > model.getLogProbabiltyOf(s2) ? s1 : s2)).get();
+                MPEestimate = sample.map(this::simulatedAnnealingOneVar).reduce((s1, s2) -> (model.getLogProbabilityOf(s1) > model.getLogProbabilityOf(s2) ? s1 : s2)).get();
                 break;
 
             case SA_GLOBAL:     // SIMULATED ANNEALING, MOVING ALL VARIABLES AT EACH ITERATION
-                MPEestimate = sample.map(this::simulatedAnnealingAllVars).reduce((s1, s2) -> (model.getLogProbabiltyOf(s1) > model.getLogProbabiltyOf(s2) ? s1 : s2)).get();
+                MPEestimate = sample.map(this::simulatedAnnealingAllVars).reduce((s1, s2) -> (model.getLogProbabilityOf(s1) > model.getLogProbabilityOf(s2) ? s1 : s2)).get();
                 break;
 
 
 
             case HC_GLOBAL:     // HILL CLIMBING, MOVING ALL VARIABLES AT EACH ITERATION
-                MPEestimate = sample.map(this::hillClimbingAllVars).reduce((s1, s2) -> (model.getLogProbabiltyOf(s1) > model.getLogProbabiltyOf(s2) ? s1 : s2)).get();
+                MPEestimate = sample.map(this::hillClimbingAllVars).reduce((s1, s2) -> (model.getLogProbabilityOf(s1) > model.getLogProbabilityOf(s2) ? s1 : s2)).get();
                 break;
 
             case HC_LOCAL:     // HILL CLIMBING, MOVING SOME VARIABLES AT EACH ITERATION
             default:
-                MPEestimate = sample.map(this::hillClimbingOneVar).reduce((s1, s2) -> (model.getLogProbabiltyOf(s1) > model.getLogProbabiltyOf(s2) ? s1 : s2)).get();
+                MPEestimate = sample.map(this::hillClimbingOneVar).reduce((s1, s2) -> (model.getLogProbabilityOf(s1) > model.getLogProbabilityOf(s2) ? s1 : s2)).get();
                 break;
         }
 
-        MPEestimateLogProbability = model.getLogProbabiltyOf(MPEestimate);
+        MPEestimateLogProbability = model.getLogProbabilityOf(MPEestimate);
 
     }
 
@@ -474,8 +474,8 @@ public class MPEInference implements PointEstimator {
             newGuess=obtainValues(evidence, random);
             //System.out.println(newGuess.outputString());
 
-            currentProbability=this.model.getLogProbabiltyOf(initialGuess);
-            nextProbability=this.model.getLogProbabiltyOf(newGuess);
+            currentProbability=this.model.getLogProbabilityOf(initialGuess);
+            nextProbability=this.model.getLogProbabilityOf(newGuess);
 
 
 
@@ -512,7 +512,7 @@ public class MPEInference implements PointEstimator {
 
 
         Assignment currentAssignment=new HashMapAssignment(initialGuess);
-        double currentProbability=this.model.getLogProbabiltyOf(currentAssignment);
+        double currentProbability=this.model.getLogProbabilityOf(currentAssignment);
 
         Assignment nextAssignment;
         double nextProbability;
@@ -549,7 +549,7 @@ public class MPEInference implements PointEstimator {
             nextAssignment = moveDiscreteVariables(initialGuess, 3);
             nextAssignment = assignContinuousVariables(nextAssignment);
 
-            nextProbability=this.model.getLogProbabiltyOf(nextAssignment);
+            nextProbability=this.model.getLogProbabilityOf(nextAssignment);
 
             if (nextProbability > currentProbability) {
                 currentAssignment = nextAssignment;
@@ -582,7 +582,7 @@ public class MPEInference implements PointEstimator {
         double eps=0;
 
         Assignment currentAssignment=new HashMapAssignment(initialGuess);
-        double currentProbability=this.model.getLogProbabiltyOf(currentAssignment);
+        double currentProbability=this.model.getLogProbabilityOf(currentAssignment);
 
         Assignment nextAssignment;
         double nextProbability;
@@ -594,7 +594,7 @@ public class MPEInference implements PointEstimator {
             // GIVE VALUES
             nextAssignment=obtainValues(evidence, random);
 
-            nextProbability=this.model.getLogProbabiltyOf(nextAssignment);
+            nextProbability=this.model.getLogProbabilityOf(nextAssignment);
 
             if (nextProbability > currentProbability) {
                 currentAssignment = nextAssignment;
@@ -619,7 +619,7 @@ public class MPEInference implements PointEstimator {
 
 
         Assignment currentAssignment=new HashMapAssignment(initialGuess);
-        double currentProbability=this.model.getLogProbabiltyOf(currentAssignment);
+        double currentProbability=this.model.getLogProbabilityOf(currentAssignment);
 
         Assignment nextAssignment;
         double nextProbability;
@@ -645,8 +645,8 @@ public class MPEInference implements PointEstimator {
 //
 //            result.setValue(selectedVariable,selectedVariableNewValue);
 
-            //currentProbability=this.model.getLogProbabiltyOf(initialGuess);
-            nextProbability=this.model.getLogProbabiltyOf(nextAssignment);
+            //currentProbability=this.model.getLogProbabilityOf(initialGuess);
+            nextProbability=this.model.getLogProbabilityOf(nextAssignment);
 
             if (nextProbability > currentProbability) {
                 currentAssignment = nextAssignment;
@@ -717,8 +717,8 @@ public class MPEInference implements PointEstimator {
                         configs.set(i,bestConfig(configs.get(i),varIndex+1));
                     }
                 }
-                return configs.stream().max((cnf1, cnf2) -> Double.compare(model.getLogProbabiltyOf(cnf1), model.getLogProbabiltyOf(cnf2))).get();
-                //return (model.getLogProbabiltyOf(config0) > model.getLogProbabiltyOf(config1) ? config0 : config1);
+                return configs.stream().max((cnf1, cnf2) -> Double.compare(model.getLogProbabilityOf(cnf1), model.getLogProbabilityOf(cnf2))).get();
+                //return (model.getLogProbabilityOf(config0) > model.getLogProbabilityOf(config1) ? config0 : config1);
             }
             else {
                 Assignment config0 = new HashMapAssignment(current);
@@ -759,7 +759,7 @@ public class MPEInference implements PointEstimator {
 //                    config0 = bestConfig(config0, varIndex + 1);
 //                    config1 = bestConfig(config1, varIndex + 1);
 //                }
-//                return (model.getLogProbabiltyOf(config0) > model.getLogProbabiltyOf(config1) ? config0 : config1);
+//                return (model.getLogProbabilityOf(config0) > model.getLogProbabilityOf(config1) ? config0 : config1);
 //            }
 //            else {
 //                double newValue;

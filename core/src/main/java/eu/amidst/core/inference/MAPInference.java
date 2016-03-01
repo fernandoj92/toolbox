@@ -219,7 +219,7 @@ public class MAPInference implements PointEstimator {
 
 
     private double getProbabilityOf(Assignment as1) {
-        return Math.exp(this.model.getLogProbabiltyOf(as1));
+        return Math.exp(this.model.getLogProbabilityOf(as1));
     }
 
 
@@ -319,7 +319,7 @@ public class MAPInference implements PointEstimator {
 
 
 //            case -1:    // NO OPTIMIZATION ALGORITHM, JUST PICKING THE SAMPLE WITH HIGHEST PROBABILITY
-//                MAPestimate = sample.reduce((s1, s2) -> (model.getLogProbabiltyOf(s1) > model.getLogProbabiltyOf(s2) ? s1 : s2)).get();
+//                MAPestimate = sample.reduce((s1, s2) -> (model.getLogProbabilityOf(s1) > model.getLogProbabilityOf(s2) ? s1 : s2)).get();
 //                break;
 //            case -2:   // DETERMINISTIC, MAY BE VERY SLOW ON BIG NETWORKS
 //                MAPestimate = this.sequentialSearch();
@@ -327,8 +327,8 @@ public class MAPInference implements PointEstimator {
 
 
             case SA_LOCAL:     // "SIMULATED ANNEALING", MOVING SOME VARIABLES AT EACH ITERATION
-                //MAPestimate = sample.map(this::simulatedAnnealingOneVar).reduce((s1, s2) -> (model.getLogProbabiltyOf(s1) > model.getLogProbabiltyOf(s2) ? s1 : s2)).get();
-                //weightedAssignment = sample.map(this::simulatedAnnealingOneVar).reduce((wa1, wa2) -> (model.getLogProbabiltyOf(wa1.assignment) > model.getLogProbabiltyOf(wa2.assignment) ? wa1 : wa2)).get();
+                //MAPestimate = sample.map(this::simulatedAnnealingOneVar).reduce((s1, s2) -> (model.getLogProbabilityOf(s1) > model.getLogProbabilityOf(s2) ? s1 : s2)).get();
+                //weightedAssignment = sample.map(this::simulatedAnnealingOneVar).reduce((wa1, wa2) -> (model.getLogProbabilityOf(wa1.assignment) > model.getLogProbabilityOf(wa2.assignment) ? wa1 : wa2)).get();
                 weightedAssignment = sample.map(this::simulatedAnnealingOneVar).reduce((wa1, wa2) -> (wa1.weight > wa2.weight ? wa1 : wa2)).get();
                 //MAPestimate = weightedAssignment.assignment;
                 MAPestimate = fullAssignmentToMAPassignment(weightedAssignment.assignment);
@@ -337,8 +337,8 @@ public class MAPInference implements PointEstimator {
 
             case SA_GLOBAL:
                 // SIMULATED ANNEALING, MOVING ALL VARIABLES AT EACH ITERATION
-                //MAPestimate = sample.map(this::simulatedAnnealingAllVars).reduce((s1, s2) -> (model.getLogProbabiltyOf(s1) > model.getLogProbabiltyOf(s2) ? s1 : s2)).get();
-                //weightedAssignment = sample.map(this::simulatedAnnealingAllVars).reduce((wa1, wa2) -> (model.getLogProbabiltyOf(wa1.assignment) > model.getLogProbabiltyOf(wa2.assignment) ? wa1 : wa2)).get();
+                //MAPestimate = sample.map(this::simulatedAnnealingAllVars).reduce((s1, s2) -> (model.getLogProbabilityOf(s1) > model.getLogProbabilityOf(s2) ? s1 : s2)).get();
+                //weightedAssignment = sample.map(this::simulatedAnnealingAllVars).reduce((wa1, wa2) -> (model.getLogProbabilityOf(wa1.assignment) > model.getLogProbabilityOf(wa2.assignment) ? wa1 : wa2)).get();
                 weightedAssignment = sample.map(this::simulatedAnnealingAllVars).reduce((wa1, wa2) -> (wa1.weight > wa2.weight ? wa1 : wa2)).get();
                 //MAPestimate = weightedAssignment.assignment;
                 MAPestimate = fullAssignmentToMAPassignment(weightedAssignment.assignment);
@@ -346,8 +346,8 @@ public class MAPInference implements PointEstimator {
                 break;
 
             case HC_GLOBAL:     // HILL CLIMBING, MOVING ALL VARIABLES AT EACH ITERATION
-                //MAPestimate = sample.map(this::hillClimbingAllVars).reduce((s1, s2) -> (model.getLogProbabiltyOf(s1) > model.getLogProbabiltyOf(s2) ? s1 : s2)).get();
-                //weightedAssignment = sample.map(this::hillClimbingAllVars).reduce((wa1, wa2) -> (model.getLogProbabiltyOf(wa1.assignment) > model.getLogProbabiltyOf(wa2.assignment) ? wa1 : wa2)).get();
+                //MAPestimate = sample.map(this::hillClimbingAllVars).reduce((s1, s2) -> (model.getLogProbabilityOf(s1) > model.getLogProbabilityOf(s2) ? s1 : s2)).get();
+                //weightedAssignment = sample.map(this::hillClimbingAllVars).reduce((wa1, wa2) -> (model.getLogProbabilityOf(wa1.assignment) > model.getLogProbabilityOf(wa2.assignment) ? wa1 : wa2)).get();
                 weightedAssignment = sample.map(this::hillClimbingAllVars).reduce((wa1, wa2) -> (wa1.weight > wa2.weight ? wa1 : wa2)).get();
                 //MAPestimate = weightedAssignment.assignment;
                 MAPestimate = fullAssignmentToMAPassignment(weightedAssignment.assignment);
@@ -356,8 +356,8 @@ public class MAPInference implements PointEstimator {
 
             case HC_LOCAL:     // HILL CLIMBING, MOVING SOME VARIABLES AT EACH ITERATION
             default:
-                //MAPestimate = sample.map(this::hillClimbingOneVar).reduce((s1, s2) -> (model.getLogProbabiltyOf(s1) > model.getLogProbabiltyOf(s2) ? s1 : s2)).get();
-                //weightedAssignment = sample.map(this::hillClimbingOneVar).reduce((wa1, wa2) -> (model.getLogProbabiltyOf(wa1.assignment) > model.getLogProbabiltyOf(wa2.assignment) ? wa1 : wa2)).get();
+                //MAPestimate = sample.map(this::hillClimbingOneVar).reduce((s1, s2) -> (model.getLogProbabilityOf(s1) > model.getLogProbabilityOf(s2) ? s1 : s2)).get();
+                //weightedAssignment = sample.map(this::hillClimbingOneVar).reduce((wa1, wa2) -> (model.getLogProbabilityOf(wa1.assignment) > model.getLogProbabilityOf(wa2.assignment) ? wa1 : wa2)).get();
                 weightedAssignment = sample.map(this::hillClimbingOneVar).reduce((wa1, wa2) -> (wa1.weight > wa2.weight ? wa1 : wa2)).get();
                 //MAPestimate = weightedAssignment.assignment;
                 MAPestimate = fullAssignmentToMAPassignment(weightedAssignment.assignment);
@@ -604,9 +604,9 @@ public class MAPInference implements PointEstimator {
 
     /*
 
-    private double getLogProbabiltyOf(Assignment assignment) {
+    private double getLogProbabilityOf(Assignment assignment) {
         if(this.MAPvariables==null) {
-            return this.model.getLogProbabiltyOf(assignment);
+            return this.model.getLogProbabilityOf(assignment);
         }
         else {
             MAPvariables.stream().
@@ -625,9 +625,9 @@ public class MAPInference implements PointEstimator {
         final Assignment finalAssignment=new HashMapAssignment(MAPassignment);
 
         IntStream auxIntStream = IntStream.range(0, numSamplesAverage);
-        //probabilityEstimate = auxIntStream.mapToObj(i -> obtainValuesRandomly(finalAssignment,evidenceAugmented,new Random())).mapToDouble(as -> Math.exp(this.model.getLogProbabiltyOf(as))).average().getAsDouble();
+        //probabilityEstimate = auxIntStream.mapToObj(i -> obtainValuesRandomly(finalAssignment,evidenceAugmented,new Random())).mapToDouble(as -> Math.exp(this.model.getLogProbabilityOf(as))).average().getAsDouble();
         try {
-            probabilityEstimate = auxIntStream.mapToObj(i -> obtainValues(finalAssignment, evidenceAugmented, new Random())).mapToDouble(as -> Math.exp(this.model.getLogProbabiltyOf(as))).average().getAsDouble();
+            probabilityEstimate = auxIntStream.mapToObj(i -> obtainValues(finalAssignment, evidenceAugmented, new Random())).mapToDouble(as -> Math.exp(this.model.getLogProbabilityOf(as))).average().getAsDouble();
         }
         catch(Exception e) {
             probabilityEstimate=0;
@@ -649,8 +649,8 @@ public class MAPInference implements PointEstimator {
         final Assignment finalAssignment=new HashMapAssignment(MAPassignment);
 
         IntStream auxIntStream = IntStream.range(0, numSamplesAverage);
-        probabilityEstimate = auxIntStream.mapToObj(i -> obtainValuesRandomly(finalAssignment, evidenceAugmented, new Random())).mapToDouble(as -> Math.exp(this.model.getLogProbabiltyOf(as))).average().getAsDouble();
-        //probabilityEstimate = auxIntStream.mapToObj(i -> obtainValues(finalAssignment, evidenceAugmented, new Random())).mapToDouble(as -> Math.exp(this.model.getLogProbabiltyOf(as))).average().getAsDouble();
+        probabilityEstimate = auxIntStream.mapToObj(i -> obtainValuesRandomly(finalAssignment, evidenceAugmented, new Random())).mapToDouble(as -> Math.exp(this.model.getLogProbabilityOf(as))).average().getAsDouble();
+        //probabilityEstimate = auxIntStream.mapToObj(i -> obtainValues(finalAssignment, evidenceAugmented, new Random())).mapToDouble(as -> Math.exp(this.model.getLogProbabilityOf(as))).average().getAsDouble();
 
         return probabilityEstimate;
 
@@ -702,7 +702,7 @@ public class MAPInference implements PointEstimator {
 
             nextAssignment = obtainValues(currentAssignment, evidence, random);
 
-            //currentProbability=this.model.getLogProbabiltyOf(currentAssignment);
+            //currentProbability=this.model.getLogProbabilityOf(currentAssignment);
             nextProbability=estimateProbabilityOfPartialAssignment(nextAssignment);
 
             if (nextProbability > currentProbability) {
@@ -867,7 +867,7 @@ public class MAPInference implements PointEstimator {
             nextAssignment = assignContinuousVariables(nextAssignment);
 
 
-            //currentProbability=this.model.getLogProbabiltyOf(currentAssignment);
+            //currentProbability=this.model.getLogProbabilityOf(currentAssignment);
             nextProbability=estimateProbabilityOfPartialAssignment(nextAssignment);
 
             if (nextProbability > currentProbability) {
@@ -929,8 +929,8 @@ public class MAPInference implements PointEstimator {
 //
 //            result.setValue(selectedVariable,selectedVariableNewValue);
 //
-//            currentProbability=this.model.getLogProbabiltyOf(initialGuess);
-//            nextProbability=this.model.getLogProbabiltyOf(result);
+//            currentProbability=this.model.getLogProbabilityOf(initialGuess);
+//            nextProbability=this.model.getLogProbabilityOf(result);
 //
 //            if (nextProbability>currentProbability) {
 //                initialGuess=result;
@@ -988,14 +988,14 @@ public class MAPInference implements PointEstimator {
 //                final int numSamplesAverage = 50;
 //
 //                IntStream auxIntStream = IntStream.range(0, numSamplesAverage);
-//                currentProbability = auxIntStream.mapToObj(i -> obtainValues(finalInitialGuess,evidenceAugmented,new Random())).mapToDouble(this.model::getLogProbabiltyOf).average().getAsDouble();
+//                currentProbability = auxIntStream.mapToObj(i -> obtainValues(finalInitialGuess,evidenceAugmented,new Random())).mapToDouble(this.model::getLogProbabilityOf).average().getAsDouble();
 //
 //                auxIntStream = IntStream.range(0, numSamplesAverage);
-//                nextProbability = auxIntStream.mapToObj(i -> obtainValues(finalResult,evidenceAugmented,new Random())).mapToDouble(this.model::getLogProbabiltyOf).average().getAsDouble();
+//                nextProbability = auxIntStream.mapToObj(i -> obtainValues(finalResult,evidenceAugmented,new Random())).mapToDouble(this.model::getLogProbabilityOf).average().getAsDouble();
 //            }
 //            else {
-//                currentProbability=this.model.getLogProbabiltyOf(initialGuess);
-//                nextProbability=this.model.getLogProbabiltyOf(result);
+//                currentProbability=this.model.getLogProbabilityOf(initialGuess);
+//                nextProbability=this.model.getLogProbabilityOf(result);
 //            }
 
 
@@ -1050,8 +1050,8 @@ public class MAPInference implements PointEstimator {
 //
 //            result.setValue(selectedVariable,selectedVariableNewValue);
 
-            //currentProbability=this.model.getLogProbabiltyOf(initialGuess);
-            //nextProbability=this.model.getLogProbabiltyOf(result);
+            //currentProbability=this.model.getLogProbabilityOf(initialGuess);
+            //nextProbability=this.model.getLogProbabilityOf(result);
 
             nextProbability=estimateProbabilityOfPartialAssignment(nextAssignment);
 
@@ -1098,8 +1098,8 @@ public class MAPInference implements PointEstimator {
 //
 //            result.setValue(selectedVariable,selectedVariableNewValue);
 //
-//            currentProbability=this.model.getLogProbabiltyOf(initialGuess);
-//            nextProbability=this.model.getLogProbabiltyOf(result);
+//            currentProbability=this.model.getLogProbabilityOf(initialGuess);
+//            nextProbability=this.model.getLogProbabilityOf(result);
 //
 //            if (nextProbability>currentProbability) {
 //                initialGuess=result;
@@ -1327,7 +1327,7 @@ public class MAPInference implements PointEstimator {
 
         Assignment mapEstimate = mapInference.getMAPestimate();
         System.out.println("MAP estimate (SA): " + mapEstimate.outputString(modelVariables));   //toString(modelVariables)
-        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabiltyOf(mapEstimate)));
+        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabilityOf(mapEstimate)));
         timeStop = System.nanoTime();
         execTime = (double) (timeStop - timeStart) / 1000000000.0;
         System.out.println("computed in: " + Double.toString(execTime) + " seconds");
@@ -1343,7 +1343,7 @@ public class MAPInference implements PointEstimator {
         mapEstimate = mapInference.getMAPestimate();
         modelVariables = mapInference.getOriginalModel().getStaticVariables().getListOfVariables();
         System.out.println("MAP estimate (SA): " + mapEstimate.outputString(modelVariables));
-        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabiltyOf(mapEstimate)));
+        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabilityOf(mapEstimate)));
         timeStop = System.nanoTime();
         execTime = (double) (timeStop - timeStart) / 1000000000.0;
         System.out.println("computed in: " + Double.toString(execTime) + " seconds");
@@ -1360,7 +1360,7 @@ public class MAPInference implements PointEstimator {
 
         mapEstimate = mapInference.getMAPestimate();
         System.out.println("MAP estimate  (SA.1V): " + mapEstimate.outputString(modelVariables));   //toString(modelVariables)
-        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabiltyOf(mapEstimate)));
+        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabilityOf(mapEstimate)));
         timeStop = System.nanoTime();
         execTime = (double) (timeStop - timeStart) / 1000000000.0;
         System.out.println("computed in: " + Double.toString(execTime) + " seconds");
@@ -1378,7 +1378,7 @@ public class MAPInference implements PointEstimator {
         mapEstimate = mapInference.getMAPestimate();
         modelVariables = mapInference.getOriginalModel().getStaticVariables().getListOfVariables();
         System.out.println("MAP estimate (HC): " + mapEstimate.outputString(modelVariables));
-        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabiltyOf(mapEstimate)));
+        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabilityOf(mapEstimate)));
         timeStop = System.nanoTime();
         execTime = (double) (timeStop - timeStart) / 1000000000.0;
         System.out.println("computed in: " + Double.toString(execTime) + " seconds");
@@ -1395,7 +1395,7 @@ public class MAPInference implements PointEstimator {
 
         mapEstimate = mapInference.getMAPestimate();
         System.out.println("MAP estimate  (HC.1V): " + mapEstimate.outputString(modelVariables));   //toString(modelVariables)
-        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabiltyOf(mapEstimate)));
+        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabilityOf(mapEstimate)));
         timeStop = System.nanoTime();
         execTime = (double) (timeStop - timeStart) / 1000000000.0;
         System.out.println("computed in: " + Double.toString(execTime) + " seconds");
@@ -1414,7 +1414,7 @@ public class MAPInference implements PointEstimator {
         mapEstimate = mapInference.getMAPestimate();
         modelVariables = mapInference.getOriginalModel().getStaticVariables().getListOfVariables();
         System.out.println("MAP estimate (SAMPLING): " + mapEstimate.outputString(modelVariables));
-        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabiltyOf(mapEstimate)));
+        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabilityOf(mapEstimate)));
         timeStop = System.nanoTime();
         execTime = (double) (timeStop - timeStart) / 1000000000.0;
         System.out.println("computed in: " + Double.toString(execTime) + " seconds");
@@ -1430,7 +1430,7 @@ public class MAPInference implements PointEstimator {
         mapEstimate = mapInference.getMAPestimate();
         modelVariables = mapInference.getOriginalModel().getStaticVariables().getListOfVariables();
         System.out.println("MAP estimate (DETERM.): " + mapEstimate.outputString(modelVariables));
-        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabiltyOf(mapEstimate)));
+        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabilityOf(mapEstimate)));
         timeStop = System.nanoTime();
         execTime = (double) (timeStop - timeStart) / 1000000000.0;
         System.out.println("computed in: " + Double.toString(execTime) + " seconds");

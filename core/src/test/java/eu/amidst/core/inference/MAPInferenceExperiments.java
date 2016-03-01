@@ -528,7 +528,7 @@ public class MAPInferenceExperiments {
 //        Assignment mapEstimate1 = mapInference.getMAPestimate();
 //        List<Variable> modelVariables = mapInference.getOriginalModel().getVariables().getListOfVariables();
 //        System.out.println("MAP estimate: " + mapEstimate1.toString()); //toString(modelVariables);
-//        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabiltyOf(mapEstimate1)));
+//        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabilityOf(mapEstimate1)));
 //        long timeStop = System.nanoTime();
 //        double execTime = (double) (timeStop - timeStart) / 1000000000.0;
 //        System.out.println("computed in: " + Double.toString(execTime) + " seconds");
@@ -545,7 +545,7 @@ public class MAPInferenceExperiments {
 //        Assignment mapEstimate2 = mapInference.getMAPestimate();
 //        modelVariables = mapInference.getOriginalModel().getVariables().getListOfVariables();
 //        System.out.println("MAP estimate (huge sample): " + mapEstimate2.toString());
-//        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabiltyOf(mapEstimate2)));
+//        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabilityOf(mapEstimate2)));
 //        timeStop = System.nanoTime();
 //        execTime = (double) (timeStop - timeStart) / 1000000000.0;
 //        System.out.println("computed in: " + Double.toString(execTime) + " seconds");
@@ -559,7 +559,7 @@ public class MAPInferenceExperiments {
 //        Assignment mapEstimate3 = mapInference.getMAPestimate();
 //        modelVariables = mapInference.getOriginalModel().getVariables().getListOfVariables();
 //        System.out.println("MAP estimate (sequential): " + mapEstimate3.toString());
-//        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabiltyOf(mapEstimate3)));
+//        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabilityOf(mapEstimate3)));
 //        timeStop = System.nanoTime();
 //        execTime = (double) (timeStop - timeStart) / 1000000000.0;
 //        System.out.println("computed in: " + Double.toString(execTime) + " seconds");
@@ -580,7 +580,7 @@ public class MAPInferenceExperiments {
 
         modelVariables = mapInference.getOriginalModel().getVariables().getListOfParamaterVariables();
         System.out.println("Other estimate: " + mapEstimate.toString(modelVariables));
-        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabiltyOf(mapEstimate)));
+        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabilityOf(mapEstimate)));
         */
 
 
@@ -673,7 +673,7 @@ public class MAPInferenceExperiments {
 //
 //        Assignment mapEstimate = mapInference.getMAPestimate();
 //        System.out.println("MAP estimate (SA): " + mapEstimate.outputString(modelVariables));   //toString(modelVariables)
-//        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabiltyOf(mapEstimate)));
+//        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabilityOf(mapEstimate)));
 //        timeStop = System.nanoTime();
 //        execTime = (double) (timeStop - timeStart) / 1000000000.0;
 //        System.out.println("computed in: " + Double.toString(execTime) + " seconds");
@@ -689,7 +689,7 @@ public class MAPInferenceExperiments {
 //        mapEstimate = mapInference.getMAPestimate();
 //        modelVariables = mapInference.getOriginalModel().getStaticVariables().getListOfVariables();
 //        System.out.println("MAP estimate (SA): " + mapEstimate.outputString(modelVariables));
-//        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabiltyOf(mapEstimate)));
+//        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabilityOf(mapEstimate)));
 //        timeStop = System.nanoTime();
 //        execTime = (double) (timeStop - timeStart) / 1000000000.0;
 //        System.out.println("computed in: " + Double.toString(execTime) + " seconds");
@@ -706,7 +706,7 @@ public class MAPInferenceExperiments {
 //
 //        mapEstimate = mapInference.getMAPestimate();
 //        System.out.println("MAP estimate  (SA.1V): " + mapEstimate.outputString(modelVariables));   //toString(modelVariables)
-//        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabiltyOf(mapEstimate)));
+//        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabilityOf(mapEstimate)));
 //        timeStop = System.nanoTime();
 //        execTime = (double) (timeStop - timeStart) / 1000000000.0;
 //        System.out.println("computed in: " + Double.toString(execTime) + " seconds");
@@ -724,7 +724,7 @@ public class MAPInferenceExperiments {
 //        mapEstimate = mapInference.getMAPestimate();
 //        modelVariables = mapInference.getOriginalModel().getStaticVariables().getListOfVariables();
 //        System.out.println("MAP estimate (HC): " + mapEstimate.outputString(modelVariables));
-//        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabiltyOf(mapEstimate)));
+//        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabilityOf(mapEstimate)));
 //        timeStop = System.nanoTime();
 //        execTime = (double) (timeStop - timeStart) / 1000000000.0;
 //        System.out.println("computed in: " + Double.toString(execTime) + " seconds");
@@ -741,7 +741,7 @@ public class MAPInferenceExperiments {
 //
 //        mapEstimate = mapInference.getMAPestimate();
 //        System.out.println("MAP estimate  (HC.1V): " + mapEstimate.outputString(modelVariables));   //toString(modelVariables)
-//        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabiltyOf(mapEstimate)));
+//        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabilityOf(mapEstimate)));
 //        timeStop = System.nanoTime();
 //        execTime = (double) (timeStop - timeStart) / 1000000000.0;
 //        System.out.println("computed in: " + Double.toString(execTime) + " seconds");
@@ -760,7 +760,7 @@ public class MAPInferenceExperiments {
 //        mapEstimate = mapInference.getMAPestimate();
 //        modelVariables = mapInference.getOriginalModel().getStaticVariables().getListOfVariables();
 //        System.out.println("MAP estimate (SAMPLING): " + mapEstimate.outputString(modelVariables));
-//        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabiltyOf(mapEstimate)));
+//        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabilityOf(mapEstimate)));
 //        timeStop = System.nanoTime();
 //        execTime = (double) (timeStop - timeStart) / 1000000000.0;
 //        System.out.println("computed in: " + Double.toString(execTime) + " seconds");
@@ -776,7 +776,7 @@ public class MAPInferenceExperiments {
 //        mapEstimate = mapInference.getMAPestimate();
 //        modelVariables = mapInference.getOriginalModel().getStaticVariables().getListOfVariables();
 //        System.out.println("MAP estimate (DETERM.): " + mapEstimate.outputString(modelVariables));
-//        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabiltyOf(mapEstimate)));
+//        System.out.println("with probability: " + Math.exp(mapInference.getOriginalModel().getLogProbabilityOf(mapEstimate)));
 //        timeStop = System.nanoTime();
 //        execTime = (double) (timeStop - timeStart) / 1000000000.0;
 //        System.out.println("computed in: " + Double.toString(execTime) + " seconds");
