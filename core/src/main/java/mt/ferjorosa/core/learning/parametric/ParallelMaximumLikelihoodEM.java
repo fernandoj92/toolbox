@@ -127,7 +127,12 @@ public class ParallelMaximumLikelihoodEM implements ParameterLearningAlgorithm {
 
         //Por cada batch recibido se realiza una serie de iteraciones del algoritmo EM
         while(localThreshold > threshold || localIterations < numberOfIterations){
-
+            // En el paso de Expectation devolvemos las estadisiticas suficientes compuestas de la LL
+            // y una tabla de datos completada
+            expectationStep();
+            // En el paso de Maximization aplicamos MLE personalizado para estimar los nuevos parámetros de las
+            // distribuciones
+            maximizationStep();
         }
 
         return 0;

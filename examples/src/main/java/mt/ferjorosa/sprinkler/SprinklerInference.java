@@ -1,0 +1,158 @@
+package mt.ferjorosa.sprinkler;
+
+import eu.amidst.core.datastream.DataInstance;
+import eu.amidst.core.datastream.DataOnMemory;
+import eu.amidst.core.datastream.DataStream;
+import eu.amidst.core.inference.InferenceAlgorithm;
+import eu.amidst.core.inference.messagepassing.VMP;
+import eu.amidst.core.io.DataStreamLoader;
+import eu.amidst.core.learning.parametric.ParallelMaximumLikelihood;
+import eu.amidst.core.learning.parametric.ParameterLearningAlgorithm;
+import eu.amidst.core.models.BayesianNetwork;
+import eu.amidst.core.models.DAG;
+import eu.amidst.core.variables.Assignment;
+import eu.amidst.core.variables.HashMapAssignment;
+import eu.amidst.core.variables.Variable;
+import eu.amidst.core.variables.Variables;
+
+/**
+ * Created by Fer on 02/03/2016.
+ */
+public class SprinklerInference {
+
+    private static DataStream<DataInstance> data;
+
+    public static void main(String[] args) throws Exception {
+
+        //We can open the data stream using the static class DataStreamLoader
+        data = DataStreamLoader.openFromFile("datasets/ferjorosaData/sprinklerData300.arff");
+
+        BayesianNetwork bnModel = learnBayesianNetwork(getSprinklerStructure(data));
+
+        //We print the model
+        System.out.println(bnModel.toString());
+
+        // Now we can do some inference in the model
+        // 0 = False / 1 = True
+
+        //First we create an instance of a inference algorithm. In this case, we use
+        //the VMP class.
+        InferenceAlgorithm inferenceAlgorithm = new VMP();
+
+        //Then, we set the BN model
+        inferenceAlgorithm.setModel(bnModel);
+
+        // We recover the variables that interest us (in this case, all of them)
+        Variable vCloudy = bnModel.getVariables().getVariableByName("cloudy");
+        Variable vSprinkler = bnModel.getVariables().getVariableByName("sprinkler");
+        Variable vRain = bnModel.getVariables().getVariableByName("rain");
+        Variable vWetGrass = bnModel.getVariables().getVariableByName("wetGrass");
+
+        // We assign the known evidence for our query
+        Assignment assignment = new HashMapAssignment(1);
+        assignment.setValue(vWetGrass,0);
+        inferenceAlgorithm.setEvidence(assignment);
+
+        //Then we run inference
+        inferenceAlgorithm.runInference();
+
+        //Then we query the posterior of
+        System.out.println("P(Sprinkler|W=1) = " + inferenceAlgorithm.getPosterior(vSprinkler));
+
+        //Then we query the posterior of
+        System.out.println("P(Rain|W=1) = " + inferenceAlgorithm.getPosterior(vRain));
+
+        // -------------------------------------------------------------------------------------
+        // We assign the known evidence for our query
+        Assignment assignment2 = new HashMapAssignment(1);
+        assignment2.setValue(vWetGrass,1);
+        assignment2.setValue(vRain,0);
+        inferenceAlgorithm.setEvidence(assignment2);
+
+        //Then we run inference
+        inferenceAlgorithm.runInference();
+
+        //Then we query the posterior of
+        System.out.println("P(Sprinkler|W=1, R=1) = " + inferenceAlgorithm.getPosterior(vSprinkler));
+
+        // --------------------------------------------------------------------------------------
+        System.out.println("--------------- Sampling Inference Algorithm ---------------");
+        InferenceAlgorithm samplingInferenceAlgorithm = new VMP();
+
+        //Then, we set the BN model
+        samplingInferenceAlgorithm.setModel(bnModel);
+
+        // We assign the known evidence for our query
+        Assignment assignment3 = new HashMapAssignment(1);
+        assignment3.setValue(vWetGrass,1);
+        //assignment3.setValue(vRain,0);
+        samplingInferenceAlgorithm.setEvidence(assignment3);
+
+        //Then we run inference
+        samplingInferenceAlgorithm.runInference();
+
+        //Then we query the posterior of
+        System.out.println("P(Sprinkler|W=1, R=1) = " + samplingInferenceAlgorithm.getPosterior(vSprinkler));
+    }
+
+    private static BayesianNetwork learnBayesianNetwork(DAG dag){
+
+        //We create a ParameterLearningAlgorithm object with the MaximumLikelihood builder
+        ParameterLearningAlgorithm parameterLearningAlgorithm = new ParallelMaximumLikelihood();
+
+        //We fix the DAG structure
+        parameterLearningAlgorithm.setDAG(dag);
+
+        //We should invoke this method before processing any data
+        parameterLearningAlgorithm.initLearning();
+
+        //Then we show how we can perform parameter learning by a sequential updating of data batches.
+        for (DataOnMemory<DataInstance> batch : data.iterableOverBatches(100)){
+            parameterLearningAlgorithm.updateModel(batch);
+        }
+
+        return parameterLearningAlgorithm.getLearntBayesianNetwork();
+    }
+
+    private static DAG getSprinklerStructure(DataStream<DataInstance> dataStream){
+
+        Variables variables = new Variables(dataStream.getAttributes());
+
+        //Pre-defined structure
+        Variable cloudy = variables.getVariableByName("cloudy");
+        Variable sprinkler = variables.getVariableByName("sprinkler");
+        Variable rain = variables.getVariableByName("rain");
+        Variable wetGrass = variables.getVariableByName("wetGrass");
+
+        /**
+         * 1. Once you have defined your {@link Variables} object, the next step is to create
+         * a DAG structure over this set of variables.
+         *
+         * 2. To add parents to each variable, we first recover the ParentSet object by the method
+         * getParentSet(Variable var) and then call the method addParent().
+         */
+
+        DAG dag = new DAG(variables);
+
+        dag.getParentSet(sprinkler).addParent(cloudy);
+        dag.getParentSet(rain).addParent(cloudy);
+        dag.getParentSet(wetGrass).addParent(sprinkler);
+        dag.getParentSet(wetGrass).addParent(rain);
+
+        /**
+         * 1. We first check if the graph contains cycles.
+         *
+         * 2. We print out the created DAG. We can check that everything is as expected.
+         */
+        if (dag.containCycles()) {
+            try {
+            } catch (Exception ex) {
+                throw new IllegalArgumentException(ex);
+            }
+        }
+
+        System.out.println(dag.toString());
+
+        return dag;
+    }
+}

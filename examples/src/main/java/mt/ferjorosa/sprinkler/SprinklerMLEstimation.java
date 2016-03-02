@@ -1,4 +1,4 @@
-package mt.ferjorosa;
+package mt.ferjorosa.sprinkler;
 
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataOnMemory;
@@ -38,6 +38,8 @@ public class SprinklerMLEstimation {
 
         //We print the model
         System.out.println(bnModel.toString());
+
+        // Now we do some inference in the model
     }
 
     private static DAG getSprinklerStructure(DataStream<DataInstance> dataStream){

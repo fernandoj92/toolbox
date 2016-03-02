@@ -61,6 +61,6 @@ public class VMPExample {
         //We can also compute the probability of the evidence
         System.out.println("P(W=0) = "+Math.exp(inferenceAlgorithm.getLogProbabilityOfEvidence()));
 
-
+        System.out.println("Done");
     }
 }

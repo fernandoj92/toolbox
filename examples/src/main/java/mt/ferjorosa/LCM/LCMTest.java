@@ -1,4 +1,4 @@
-package mt.ferjorosa;
+package mt.ferjorosa.LCM;
 
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataStream;

@@ -1,4 +1,4 @@
-package mt.ferjorosa;
+package mt.ferjorosa.LCM;
 
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataStream;
@@ -67,9 +67,9 @@ public class LCMTest2Multinomials {
         dag.getParentSet(a).addParent(hidden);
         dag.getParentSet(e).addParent(hidden);
 
-/**
- * We print the graph to see if is properly created.
- */
+        /**
+         * We print the graph to see if is properly created.
+         */
         System.out.println(dag.toString());
 
         /**
