@@ -1,13 +1,11 @@
 package mt.ferjorosa.sprinkler;
 
 import eu.amidst.core.datastream.DataInstance;
-import eu.amidst.core.datastream.DataOnMemory;
 import eu.amidst.core.datastream.DataStream;
+import eu.amidst.core.distribution.Multinomial;
+import eu.amidst.core.distribution.Multinomial_MultinomialParents;
 import eu.amidst.core.inference.InferenceAlgorithm;
-import eu.amidst.core.inference.messagepassing.VMP;
 import eu.amidst.core.io.DataStreamLoader;
-import eu.amidst.core.learning.parametric.ParallelMaximumLikelihood;
-import eu.amidst.core.learning.parametric.ParameterLearningAlgorithm;
 import eu.amidst.core.models.BayesianNetwork;
 import eu.amidst.core.models.DAG;
 import eu.amidst.core.variables.Assignment;
@@ -17,9 +15,9 @@ import eu.amidst.core.variables.Variables;
 import eu.amidst.huginlink.inference.HuginInference;
 
 /**
- * Created by Fer on 02/03/2016.
+ * TODO: No se puede hacer setProbabilities en una distribucion Multinomial con padres
  */
-public class SprinklerInference {
+public class SprinklerDefinedBN {
 
     private static DataStream<DataInstance> data;
 
@@ -28,7 +26,7 @@ public class SprinklerInference {
         //We can open the data stream using the static class DataStreamLoader
         data = DataStreamLoader.openFromFile("datasets/ferjorosaData/sprinklerData300.arff");
 
-        BayesianNetwork bnModel = learnBayesianNetwork(getSprinklerStructure(data));
+        BayesianNetwork bnModel = defineBN(getSprinklerStructure(data));
 
         //We print the model
         System.out.println(bnModel.toString());
@@ -66,23 +64,30 @@ public class SprinklerInference {
         System.out.println("P(W=1) = " + Math.exp(inferenceAlgorithm.getLogProbabilityOfEvidence()));
     }
 
-    private static BayesianNetwork learnBayesianNetwork(DAG dag){
+    private static BayesianNetwork defineBN(DAG dag){
+        BayesianNetwork bnModel = new BayesianNetwork(dag);
 
-        //We create a ParameterLearningAlgorithm object with the MaximumLikelihood builder
-        ParameterLearningAlgorithm parameterLearningAlgorithm = new ParallelMaximumLikelihood();
+        // We recover the variables that interest us (in this case, all of them)
+        Variable vCloudy = bnModel.getVariables().getVariableByName("cloudy");
+        Variable vSprinkler = bnModel.getVariables().getVariableByName("sprinkler");
+        Variable vRain = bnModel.getVariables().getVariableByName("rain");
+        Variable vWetGrass = bnModel.getVariables().getVariableByName("wetGrass");
 
-        //We fix the DAG structure
-        parameterLearningAlgorithm.setDAG(dag);
+        Multinomial cloudyDist = bnModel.getConditionalDistribution(vCloudy);
+        cloudyDist.setProbabilities(new double[]{0.2, 0.8});
+        Multinomial_MultinomialParents sprinklerDist = bnModel.getConditionalDistribution(vSprinkler);
+        //sprinklerDist.setProbabilities(new double[]{0.2, 0.8});
+        Multinomial rainDist = bnModel.getConditionalDistribution(vRain);
+        rainDist.setProbabilities(new double[]{0.2, 0.8});
+        Multinomial wetGrassDist = bnModel.getConditionalDistribution(vWetGrass);
+        wetGrassDist.setProbabilities(new double[]{0.2, 0.8});
 
-        //We should invoke this method before processing any data
-        parameterLearningAlgorithm.initLearning();
+        bnModel.setConditionalDistribution(vCloudy,cloudyDist);
+        bnModel.setConditionalDistribution(vSprinkler,sprinklerDist);
+        bnModel.setConditionalDistribution(vRain,rainDist);
+        bnModel.setConditionalDistribution(vWetGrass,wetGrassDist);
 
-        //Then we show how we can perform parameter learning by a sequential updating of data batches.
-        for (DataOnMemory<DataInstance> batch : data.iterableOverBatches(100)){
-            parameterLearningAlgorithm.updateModel(batch);
-        }
-
-        return parameterLearningAlgorithm.getLearntBayesianNetwork();
+        return bnModel;
     }
 
     private static DAG getSprinklerStructure(DataStream<DataInstance> dataStream){
@@ -126,4 +131,5 @@ public class SprinklerInference {
 
         return dag;
     }
+
 }

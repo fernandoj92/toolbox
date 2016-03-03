@@ -6,7 +6,7 @@ import eu.amidst.core.io.DataStreamLoader;
 import eu.amidst.core.models.DAG;
 import eu.amidst.core.variables.Variable;
 import eu.amidst.core.variables.Variables;
-import mt.ferjorosa.core.ltm.DiscreteLatentClusterModel;
+import mt.ferjorosa.core.models.DiscreteLatentClusterModel;
 
 import java.util.Arrays;
 import java.util.Random;

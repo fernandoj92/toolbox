@@ -26,25 +26,25 @@ node ClassVar
 potential (DiscreteVar0 | ClassVar)
 {
     data
-     = (( 0.752408 0.247592 )	%  ClassVar=0.0
-	( 0.536612 0.463388 ));	%  ClassVar=1.0
+     = (( 0.678793 0.321207 )	%  ClassVar=0.0
+	( 0.527389 0.472611 ));	%  ClassVar=1.0
 }
 
 potential (GaussianVar0 | ClassVar)
 {
     data
-     = ( normal ( 9.84575, 0.235409 )	%  ClassVar=0.0
-	 normal ( -16.8341, 1.17688 ) );	%  ClassVar=1.0
+     = ( normal ( 9.84575, 4.35189 )	%  ClassVar=0.0
+	 normal ( -16.8341, 10.3484 ) );	%  ClassVar=1.0
 }
 
 potential (GaussianVar1 | ClassVar)
 {
     data
-     = ( normal ( -3.90167, 0.0608124 )	%  ClassVar=0.0
-	 normal ( -6.43389, 0.0151876 ) );	%  ClassVar=1.0
+     = ( normal ( -3.90167, 1.96602 )	%  ClassVar=0.0
+	 normal ( -6.43389, 0.732381 ) );	%  ClassVar=1.0
 }
 
 potential (ClassVar)
 {
-    data = ( 0.361785 0.638215 );
+    data = ( 0.390712 0.609288 );
 }

@@ -1,8 +1,8 @@
-package mt.ferjorosa.core.ltm;
+package mt.ferjorosa.core.models;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import eu.amidst.core.distribution.ConditionalDistribution;
 import eu.amidst.core.distribution.Distribution;
+import eu.amidst.core.models.BayesianNetwork;
 import eu.amidst.core.models.DAG;
 import eu.amidst.core.models.ParentSet;
 import eu.amidst.core.utils.Utils;
@@ -228,6 +228,17 @@ public final class DiscreteLatentClusterModel implements Serializable{
         this.distributions.stream().forEach(w -> w.randomInitialization(random));
 
 
+    }
+
+    /**
+     * Translates the initialized LCM (which is a BN) to a BN model
+     * @return
+     */
+    public BayesianNetwork toBayesianNetwork(){
+        BayesianNetwork bnModel = new BayesianNetwork(this.dag);
+        for(ConditionalDistribution conditionalDist : this.distributions)
+            bnModel.setConditionalDistribution(conditionalDist.getVariable(),conditionalDist);
+        return  bnModel;
     }
 
     /**
