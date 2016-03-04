@@ -1,7 +1,8 @@
-package mt.ferjorosa.models;
+package mt.ferjorosa.core.models;
 
 import eu.amidst.core.models.BayesianNetwork;
 import eu.amidst.core.models.DAG;
+import mt.ferjorosa.core.models.ltdag.LTDAG;
 
 import java.io.Serializable;
 import java.util.Random;
@@ -15,38 +16,26 @@ import java.util.Random;
  * This class will wrap some functionalities from the BayesianNetwork class and add its own methods. This way
  * it will not interfere with the developed code
  */
-public class LatentClusterModel implements Serializable{
+public class LatentTreeModel implements Serializable{
 
     /** Represents the serial version ID for serializing the object. */
     private static final long serialVersionUID = 7107523324501381856L;
 
     /** Represents the Directed Acyclic Graph ({@link DAG}) defining the LCM graphical structure. */
-    private DAG dag;
+    private LTDAG ltdag;
 
     /** Represents the equivalent Bayesian Network object that will be used for inference*/
     private BayesianNetwork equivalentBN;
 
-    public LatentClusterModel(DAG dag) throws IllegalArgumentException{
-        // Check if the DAG structure follows the LCM structure
-        if(isLCM(dag)) {
-            this.dag = dag;
-            equivalentBN = new BayesianNetwork(dag);
-        }else
-            throw new IllegalArgumentException("DAG must follow the LCM structure");
+    public LatentTreeModel(LTDAG dag) throws IllegalArgumentException{
+            this.ltdag = dag;
+            equivalentBN = new BayesianNetwork(ltdag.getDAG());
     }
 
-    public LatentClusterModel(DAG dag, Random randomInitialization) throws IllegalArgumentException{
-        // Check if the DAG structure follows the LCM structure
-        if(isLCM(dag)) {
-            this.dag = dag;
-            equivalentBN = new BayesianNetwork(dag);
+    public LatentTreeModel(LTDAG dag, Random randomInitialization) throws IllegalArgumentException{
+            this.ltdag = dag;
+            equivalentBN = new BayesianNetwork(ltdag.getDAG());
             equivalentBN.randomInitialization(randomInitialization);
-        }else
-            throw new IllegalArgumentException("DAG must follow the LCM structure");
     }
 
-    private boolean isLCM(DAG dag){
-        //Solo puede existir una variable oculta y dicha variable debe de ser el padre de todas las demás
-        return true;
-    }
 }

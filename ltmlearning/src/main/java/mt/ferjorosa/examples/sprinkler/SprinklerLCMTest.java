@@ -1,4 +1,4 @@
-package mt.ferjorosa.sprinkler;
+package mt.ferjorosa.examples.sprinkler;
 
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataStream;
@@ -9,7 +9,7 @@ import eu.amidst.core.models.DAG;
 import eu.amidst.core.variables.Variable;
 import eu.amidst.core.variables.Variables;
 import eu.amidst.huginlink.inference.HuginInference;
-import mt.ferjorosa.models.DiscreteLatentClusterModel;
+import mt.ferjorosa.core.models.DiscreteLatentClusterModel;
 
 import java.util.Arrays;
 import java.util.Random;

@@ -1,4 +1,4 @@
-package mt.ferjorosa.sprinkler;
+package mt.ferjorosa.examples.sprinkler;
 
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataStream;

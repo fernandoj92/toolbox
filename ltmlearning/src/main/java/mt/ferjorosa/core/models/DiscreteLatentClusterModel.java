@@ -1,4 +1,4 @@
-package mt.ferjorosa.models;
+package mt.ferjorosa.core.models;
 
 import eu.amidst.core.distribution.ConditionalDistribution;
 import eu.amidst.core.distribution.Distribution;
