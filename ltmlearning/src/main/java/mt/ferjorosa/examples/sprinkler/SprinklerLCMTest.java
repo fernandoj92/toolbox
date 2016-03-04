@@ -9,7 +9,7 @@ import eu.amidst.core.models.DAG;
 import eu.amidst.core.variables.Variable;
 import eu.amidst.core.variables.Variables;
 import eu.amidst.huginlink.inference.HuginInference;
-import mt.ferjorosa.core.models.DiscreteLatentClusterModel;
+import mt.ferjorosa.models.DiscreteLatentClusterModel;
 
 import java.util.Arrays;
 import java.util.Random;

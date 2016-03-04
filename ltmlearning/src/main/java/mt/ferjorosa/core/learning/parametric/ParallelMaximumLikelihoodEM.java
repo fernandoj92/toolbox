@@ -1,4 +1,4 @@
-package mt.ferjorosa.core.learning.parametric;
+package mt.ferjorosa.core.parametric;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import eu.amidst.core.datastream.DataInstance;

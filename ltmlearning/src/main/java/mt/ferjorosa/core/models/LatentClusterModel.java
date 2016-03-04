@@ -1,11 +1,9 @@
-package mt.ferjorosa.core.models;
+package mt.ferjorosa.models;
 
-import eu.amidst.core.distribution.ConditionalDistribution;
 import eu.amidst.core.models.BayesianNetwork;
 import eu.amidst.core.models.DAG;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Random;
 
 /**

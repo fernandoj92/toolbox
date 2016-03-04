@@ -6,7 +6,7 @@ import eu.amidst.core.io.DataStreamLoader;
 import eu.amidst.core.models.DAG;
 import eu.amidst.core.variables.Variable;
 import eu.amidst.core.variables.Variables;
-import mt.ferjorosa.core.models.DiscreteLatentClusterModel;
+import mt.ferjorosa.models.DiscreteLatentClusterModel;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -14,12 +14,12 @@ import java.util.Random;
 /**
  * Created by Fer on 01/03/2016.
  */
-public class LCMTest2Multinomials {
+public class LCMTest {
 
     public static void main(String[] args) throws Exception {
 
         //We can open the data stream using the static class DataStreamLoader
-        DataStream<DataInstance> data = DataStreamLoader.openFromFile("datasets/ferjorosaData/syntheticData2multinomial.arff");
+        DataStream<DataInstance> data = DataStreamLoader.openFromFile("datasets/syntheticData.arff");
 
         /**
          * 1. Once the data is loaded, we create a random variable for each of the attributes (i.e. data columns)
@@ -33,9 +33,14 @@ public class LCMTest2Multinomials {
          */
         Variables variables = new Variables(data.getAttributes());
 
-        Variable a = variables.getVariableByName("a");
-        Variable e = variables.getVariableByName("e");
-
+        Variable a = variables.getVariableByName("A");
+        Variable b = variables.getVariableByName("B");
+        Variable c = variables.getVariableByName("C");
+        Variable d = variables.getVariableByName("D");
+        Variable e = variables.getVariableByName("E");
+        Variable g = variables.getVariableByName("G");
+        Variable h = variables.getVariableByName("H");
+        Variable i = variables.getVariableByName("I");
 
         /**
          * 1. We create the hidden variable. For doing that we make use of the method "newMultionomialVariable". When
@@ -65,11 +70,17 @@ public class LCMTest2Multinomials {
         DAG dag = new DAG(variables);
 
         dag.getParentSet(a).addParent(hidden);
+        dag.getParentSet(b).addParent(hidden);
+        dag.getParentSet(c).addParent(hidden);
+        dag.getParentSet(d).addParent(hidden);
         dag.getParentSet(e).addParent(hidden);
+        dag.getParentSet(g).addParent(hidden);
+        dag.getParentSet(h).addParent(hidden);
+        dag.getParentSet(i).addParent(hidden);
 
-        /**
-         * We print the graph to see if is properly created.
-         */
+/**
+ * We print the graph to see if is properly created.
+ */
         System.out.println(dag.toString());
 
         /**

@@ -88,6 +88,7 @@
         <module>core-dynamic</module>
         <module>examples</module>
         <module>moalink</module>
+        <module>ltmlearning</module>
     </modules>
 
 
