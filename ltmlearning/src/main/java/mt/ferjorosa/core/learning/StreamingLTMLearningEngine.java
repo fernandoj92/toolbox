@@ -10,7 +10,7 @@ import eu.amidst.core.datastream.DataStream;
  * Tras tener todos los LCMs creados, iteramos por ellos asignando la cardinalidad a las LVs de los disferentes LCMs. Para ello debemos estimar los parámetros primero.
  * Consideramos que la cardinalidad es binaria, calculamos los parametros y vemos el score de la estructura, despues aumentamos la cardinalidad en 1 y comparamos el score, de forma greedy.
  */
-public class StreamingStructuralVB {
+public class StreamingLTMLearningEngine {
 
     /**
      *

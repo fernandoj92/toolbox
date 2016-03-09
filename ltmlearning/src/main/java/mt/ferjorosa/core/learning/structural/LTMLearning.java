@@ -6,12 +6,7 @@ import eu.amidst.core.datastream.DataOnMemory;
 /**
  * Created by Fernando on 3/8/2016.
  */
-public interface StructuralLearning {
-
-    /**
-     * Initializes the structural learning process.
-     */
-    void initLearning();
+public interface LTMLearning {
 
     /**
      * Updates the model using a given {@link DataOnMemory} object.

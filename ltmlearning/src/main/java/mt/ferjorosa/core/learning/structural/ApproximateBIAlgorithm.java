@@ -2,6 +2,7 @@ package mt.ferjorosa.core.learning.structural;
 
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataOnMemory;
+import eu.amidst.core.learning.parametric.ParameterLearningAlgorithm;
 import mt.ferjorosa.core.learning.structural.variables.FSSMeasure;
 import mt.ferjorosa.core.learning.structural.variables.MutualInformation;
 
@@ -15,11 +16,14 @@ import mt.ferjorosa.core.learning.structural.variables.MutualInformation;
  * 1 - Calculate the sibling clusters.
  * 2 - Generate a LCM (a LCM is a LTM with only one Latent variable)from each sibling cluster by assigning a Latent
  * variable on top of the chosen observed variables.
- * 3 - Learn each LCM's parameters, then consider repeatedly to increase the cardinality of the LV, stopping when the
+ * 3 - Learn each LCM's parameters, then repeatedly consider to increase the cardinality of the LV, stopping when the
  * used score decreases (BIC, BDe, AIC,etc., depending on the parameter Learning algorithm used).
  * 4 - Determine the connections among the latent variables so that they form a tree (LTM).
+ * 5 - Refine the model.
+ * 6* - Determine possible connections between the observed variables.
+ *
  */
-public class ApproximateBIAlgorithm implements StructuralLearning{
+public class ApproximateBIAlgorithm implements LTMLearning {
 
     /**
      *
@@ -29,10 +33,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning{
     /**
      *
      */
-    @Override
-    public void initLearning() {
-        siblingClustersMeasure = new MutualInformation();
-    }
+    private ParameterLearningAlgorithm parameterLearning;
 
     /**
      *
@@ -44,12 +45,29 @@ public class ApproximateBIAlgorithm implements StructuralLearning{
         siblingClustersMeasure.setData(batch);
         // 1 - Calculate sibling clusters
         calculateSiblingClusters();
-        // 2 -
+        // 2 - Generate LCMs
+        generateLCMs();
+        // 3 - Learn the LCM parameters and determine their LV's cardinality
+        learnLCMs();
+        // 4 - Generate the LTM
+        generateLTM();
 
         return 0;
     }
 
     private void calculateSiblingClusters(){
+
+    }
+
+    private void generateLCMs(){
+
+    }
+
+    private void learnLCMs(){
+
+    }
+
+    private void generateLTM(){
 
     }
 
