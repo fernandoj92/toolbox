@@ -1,12 +1,13 @@
 package mt.ferjorosa.core.learning.structural.variables;
 
 import eu.amidst.core.datastream.Attribute;
+import eu.amidst.core.datastream.Attributes;
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataOnMemory;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * La forma optimizada tendría que mantener una estrucutra de datos alternativa que guardase todas las posibles combinaciones
@@ -23,6 +24,9 @@ public class MutualInformation implements FSSMeasure, Serializable{
 
     /** Indicates if it should calculate all the attributes' probabilities, initialized to {@code true}. */
     private boolean allAttributes = true;
+
+    /** */
+    private Map<Pair<Attribute,Attribute>,Double> pairScores = new HashMap<>();
 
     public void setData(DataOnMemory<DataInstance> data){
         this.data = data;
@@ -92,5 +96,89 @@ public class MutualInformation implements FSSMeasure, Serializable{
         // Calculation needed to make it a logarithm with base @logBase
         return sum/Math.log(logBase);
     }
+
+    /**
+     * Computes all the pair scores and returns the best one
+     * @param attributes
+     * @return
+     */
+    public void computeAllPairScores(List<Attribute> attributes){
+
+        //
+        double bivariateScore;
+
+        // SIMÉTRICO: El score es identico para (i,j) que para (j,i)
+        Set<Pair<Attribute, Attribute>> possiblePairs = new HashSet<>();
+
+        for(Attribute attr : attributes)
+            for(Attribute attr1 : attributes)
+                if(attr1.getIndex() != attr.getIndex()){
+                    Pair<Attribute,Attribute> pair = Pair.of(attr, attr1);
+                    if(!possiblePairs.contains(pair)){
+                        // 1 - Almacenar su valor
+                        possiblePairs.add(pair);
+                        bivariateScore = computeBivariateScore(attr,attr1);
+                        // Almacenarlo con el Pair como Key o hacer dos HashMaps?
+                        pairScores.put(pair,bivariateScore);
+                    }
+                }
+    }
+
+    /**
+     *
+     * @param attributes
+     * @return
+     */
+    public Pair<Attribute, Attribute> getBestPair(List<Attribute> attributes){
+
+        if(this.pairScores.isEmpty())
+            throw new IllegalStateException("No Pair scores have been computed");
+
+        //
+        double bivariateScore;
+        //
+        double maxScore = Double.NEGATIVE_INFINITY;
+        Attribute first = null;
+        Attribute second = null;
+
+        for(Attribute attr : attributes)
+            for(Attribute attr1 : attributes)
+                if(attr1.getIndex() != attr.getIndex()){
+                    bivariateScore = pairScores.get(Pair.of(attr,attr1));
+                    if(bivariateScore > maxScore){
+                        first = attr;
+                        second = attr1;
+                    }
+                }
+
+        return Pair.of(first,second);
+    }
+
+    /**
+     *
+     * @param activeSet
+     * @param outSet
+     * @return
+     */
+    public Attribute getClosestAttributeToSet(List<Attribute> activeSet, List<Attribute> outSet){
+
+        Attribute closestOutAttribute = null;
+        double maxScore = Double.NEGATIVE_INFINITY;
+        double bivariateScore = Double.NEGATIVE_INFINITY;
+
+        for(Attribute outAttribute : outSet)
+            for(Attribute activeAttribute : activeSet){
+                Pair<Attribute, Attribute> currentPair =Pair.of(outAttribute,activeAttribute);
+                bivariateScore = pairScores.get(currentPair);
+                if(bivariateScore > maxScore){
+                    maxScore = bivariateScore;
+                    closestOutAttribute = outAttribute;
+                }
+            }
+        return closestOutAttribute;
+    }
+
+
+
 
 }

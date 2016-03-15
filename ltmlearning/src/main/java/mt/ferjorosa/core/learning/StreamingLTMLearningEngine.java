@@ -8,17 +8,20 @@ import mt.ferjorosa.core.learning.structural.LTMLearning;
 import mt.ferjorosa.core.models.LatentTreeModel;
 
 /**
- * En este método al crear el LTM presuponemos ue las variable son condicionalmente independientes con respecto a su LV asociada
  *
- * Por tanto, el primer paso es crear los LCM (sibling clusters en el BI). Para ello utilizamos la información mútua entre las OVs y vamos creando LCMs.
- * Tras tener todos los LCMs creados, iteramos por ellos asignando la cardinalidad a las LVs de los disferentes LCMs. Para ello debemos estimar los parámetros primero.
- * Consideramos que la cardinalidad es binaria, calculamos los parametros y vemos el score de la estructura, despues aumentamos la cardinalidad en 1 y comparamos el score, de forma greedy.
  */
 public class StreamingLTMLearningEngine {
 
+    /** */
     protected FadingLearner conceptDriftMeasure;
+
+    /** */
     protected DataStream<DataInstance> dataStream;
+
+    /** */
     protected LTMLearning LTMLearningEngine;
+
+    /** */
     protected LatentTreeModel LTM;
 
     /**
@@ -31,10 +34,10 @@ public class StreamingLTMLearningEngine {
 
     /**
      *
-     * @param dataStream_ a {@link DataStream} object.
+     * @param dataStream a {@link DataStream} object.
      */
-    public void setDataStream(DataStream<DataInstance> dataStream_) {
-        this.dataStream = dataStream_;
+    public void setDataStream(DataStream<DataInstance> dataStream) {
+        this.dataStream = dataStream;
     }
 
     /**
@@ -49,8 +52,8 @@ public class StreamingLTMLearningEngine {
         // En este caso el initLearning lo que hace es pasar un primer batch de instancias que son los que serviran
         // para poder aprender el LTM inicial y que sera posteriormente modificado segun se vayan produciendo
         // concept drifts.
-
-
+        LTMLearningEngine.updateModel(batch);
+        this.LTM = LTMLearningEngine.getLatentTreeModel();
     }
 
     /**
@@ -59,7 +62,7 @@ public class StreamingLTMLearningEngine {
     public void runLearning() {
         // Con cada batch de instancias que le lleguen se comprueba que no exista un concept drift
         // mediante la comparación de la measure con un factor establecido, dependiendo de como se
-        // supere dicho factor se  producir< un CONCEPT_DRIFT o un CONCEPT_SHIFT
+        // supere dicho factor se  producir un CONCEPT_DRIFT o un CONCEPT_SHIFT
 
 
     }
