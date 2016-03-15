@@ -5,6 +5,7 @@ import eu.amidst.core.datastream.DataOnMemory;
 import eu.amidst.core.learning.parametric.ParameterLearningAlgorithm;
 import mt.ferjorosa.core.learning.structural.variables.FSSMeasure;
 import mt.ferjorosa.core.learning.structural.variables.MutualInformation;
+import mt.ferjorosa.core.models.LatentTreeModel;
 
 /**
  * This is an approximation of the Bridged Islands algorithm proposed by Liu et.al in their article:
@@ -34,6 +35,19 @@ public class ApproximateBIAlgorithm implements LTMLearning {
      *
      */
     private ParameterLearningAlgorithm parameterLearning;
+
+    /**
+     *
+     */
+    private LatentTreeModel ltmLearned;
+
+    /**
+     *
+     * @return
+     */
+    public LatentTreeModel getLatentTreeModel(){
+        return this.ltmLearned;
+    }
 
     /**
      *
