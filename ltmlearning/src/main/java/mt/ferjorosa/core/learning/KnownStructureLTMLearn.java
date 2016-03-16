@@ -3,6 +3,7 @@ package mt.ferjorosa.core.learning;
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataOnMemory;
 import eu.amidst.core.learning.parametric.ParameterLearningAlgorithm;
+import eu.amidst.core.models.BayesianNetwork;
 import mt.ferjorosa.core.models.LatentTreeModel;
 import mt.ferjorosa.core.models.ltdag.LTDAG;
 
@@ -15,18 +16,22 @@ public class KnownStructureLTMLearn {
     // de parametros seleccionado
 
     /** Parameter learning algorithm used to fully learn the LTM */
-    private ParameterLearningAlgorithm parameterLearning;
+    private ParameterLearningAlgorithm parameterLearningAlgorithm;
 
-    public KnownStructureLTMLearn(ParameterLearningAlgorithm parameterLearningAlgorithm){
-        this.parameterLearning = parameterLearningAlgorithm;
+    public KnownStructureLTMLearn(ParameterLearningAlgorithm parameterLearningAlgorithm, LTDAG ltdag){
+        this.parameterLearningAlgorithm = parameterLearningAlgorithm;
+        parameterLearningAlgorithm.setDAG(ltdag.getDAG());
+        this.parameterLearningAlgorithm.initLearning();
     }
 
     /**
      *
      * @param batch
-     * @param ltdag
      */
-    public LatentTreeModel learnModel(DataOnMemory<DataInstance> batch, LTDAG ltdag){
-
+    public BayesianNetwork learnModel(DataOnMemory<DataInstance> batch){
+        parameterLearningAlgorithm.updateModel(batch);
+        BayesianNetwork learntModel = parameterLearningAlgorithm.getLearntBayesianNetwork();
+        return learntModel;
     }
+
 }

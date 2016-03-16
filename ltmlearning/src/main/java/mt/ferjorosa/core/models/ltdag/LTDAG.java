@@ -46,7 +46,7 @@ public class LTDAG {
      */
     public void addParent(LTVariable variable, LTVariable parent){
         // LTM restriction
-        if(variable instanceof ObservedVariable && parent instanceof ObservedVariable)
+        if(variable instanceof LatentVariable && parent instanceof ObservedVariable)
             throw new IllegalArgumentException("A Latent Variable cannot have an Observed Variable as parent");
 
         dag.getParentSet(variable.getVariable()).addParent(parent.getVariable());

@@ -51,16 +51,20 @@ public class LTVariables{
      *
      * @param variable
      */
-    public void newObservedVariable(Variable variable){
-        latentVariables.add(new LatentVariable(variable));
+    public ObservedVariable newObservedVariable(Variable variable){
+        ObservedVariable observedVar = new ObservedVariable(variable);
+        observedVariables.add(observedVar);
+        return observedVar;
     }
 
     /**
      *
      * @param variable
      */
-    public void newLatentVariable(Variable variable){
-        observedVariables.add(new ObservedVariable(variable));
+    public LatentVariable newLatentVariable(Variable variable){
+        LatentVariable latentVar = new LatentVariable(variable);
+        latentVariables.add(latentVar);
+        return latentVar;
     }
 
 }

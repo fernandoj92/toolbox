@@ -22,8 +22,11 @@ public class MutualInformationExample {
         Attributes attributes = data.getAttributes();
 
         double MI = 0;
+
+        MutualInformation mutualInformation = new MutualInformation();
+
         for (DataOnMemory<DataInstance> batch : data.iterableOverBatches(300)) {
-            MutualInformation mutualInformation = new MutualInformation(batch);
+            mutualInformation.setData(batch);
             MI = mutualInformation.computeBivariateScore(attributes.getAttributeByName("wetGrass"), attributes.getAttributeByName("cloudy"));
         }
 

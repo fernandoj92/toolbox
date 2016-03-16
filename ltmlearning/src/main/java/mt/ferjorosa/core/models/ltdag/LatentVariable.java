@@ -25,6 +25,8 @@ public class LatentVariable implements LTVariable {
     public LatentVariable(Variable variable){
         if(variable.getDistributionTypeEnum() != DistributionTypeEnum.MULTINOMIAL)
             throw new IllegalArgumentException("Only Multinomial variables are allowed");
+
+        this.variable = variable;
     }
 
 }
