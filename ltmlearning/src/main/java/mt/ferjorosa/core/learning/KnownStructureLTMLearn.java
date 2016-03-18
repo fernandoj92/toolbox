@@ -4,6 +4,7 @@ import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataOnMemory;
 import eu.amidst.core.learning.parametric.ParameterLearningAlgorithm;
 import eu.amidst.core.models.BayesianNetwork;
+import mt.ferjorosa.core.models.LTM;
 import mt.ferjorosa.core.models.LatentTreeModel;
 import mt.ferjorosa.core.models.ltdag.LTDAG;
 
@@ -28,10 +29,10 @@ public class KnownStructureLTMLearn {
      *
      * @param batch
      */
-    public BayesianNetwork learnModel(DataOnMemory<DataInstance> batch){
-        parameterLearningAlgorithm.updateModel(batch);
+    public LTM learnModel(DataOnMemory<DataInstance> batch){
+        double modelScore = parameterLearningAlgorithm.updateModel(batch);
         BayesianNetwork learntModel = parameterLearningAlgorithm.getLearntBayesianNetwork();
-        return learntModel;
+        return new LTM(learntModel, modelScore);
     }
 
 }
