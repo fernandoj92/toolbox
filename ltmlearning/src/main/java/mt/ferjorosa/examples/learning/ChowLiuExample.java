@@ -5,20 +5,22 @@ import eu.amidst.core.datastream.DataOnMemory;
 import eu.amidst.core.datastream.DataStream;
 import eu.amidst.core.io.DataStreamLoader;
 import eu.amidst.core.learning.parametric.bayesian.SVB;
-import eu.amidst.core.models.BayesianNetwork;
 import eu.amidst.core.variables.Variable;
 import eu.amidst.core.variables.Variables;
 import mt.ferjorosa.core.learning.KnownStructureLTMLearn;
+import mt.ferjorosa.core.learning.structural.variables.MutualInformation;
 import mt.ferjorosa.core.models.LTM;
-import mt.ferjorosa.core.models.ltdag.*;
+import mt.ferjorosa.core.models.ltdag.LTDAG;
+import mt.ferjorosa.core.models.ltdag.LTVariables;
+import mt.ferjorosa.core.models.ltdag.LatentVariable;
+import mt.ferjorosa.core.models.ltdag.ObservedVariable;
 
 import java.util.Arrays;
 
-// En este ejemplo vamos a utilizar la estructura de la red de sprinkler y vamos a convertir la
-// variable cloudy en latente y luego vamos a aprender los parametros. Puede que sea necesario implementar
-// una proyeccion del dataSet, aunque espero que no porque seria estupido y podria llevar un tiempo extra de
-// procesamiento.
-public class KnownLTMLearningExample {
+/**
+ * Created by Fernando on 3/21/2016.
+ */
+public class ChowLiuExample {
 
     public static void main(String[] args) throws Exception {
 
@@ -64,9 +66,23 @@ public class KnownLTMLearningExample {
 
         for (DataOnMemory<DataInstance> batch : data.iterableOverBatches(100)){
             LTM learntModel = learner.learnModel(batch);
+            LTM copyleanrtModel = learner.learnModel(batch);
             //We print the model
             System.out.println("-----------------------------------");
             System.out.println(learntModel.getLearntModel().toString());
+            System.out.println("-----------------------------------");
+            System.out.println(copyleanrtModel.getLearntModel().toString());
+
+            System.out.println("===================================");
+
+            // Ahora intentamos calcular la informacion mútua entre dos variables latentes
+
+            MutualInformation MI = new MutualInformation();
+            MI.setData(batch);
+
+            learntModel.getLearntModel().
         }
+
+
     }
 }

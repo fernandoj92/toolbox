@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Fer on 04/03/2016.
+ * 'Variables' class equivalent for LTVariables
  */
 public class LTVariables{
 
-    private List<LTVariable> latentVariables;
+    private List<LatentVariable> latentVariables;
 
-    private List<LTVariable> observedVariables;
+    private List<ObservedVariable> observedVariables;
 
     private Variables variables;
 
@@ -24,31 +24,31 @@ public class LTVariables{
     }
 
     /**
-     *
-     * @return
+     * Returns the wrapped Variables object
+     * @return the Variables object
      */
     public Variables getVariablesObject(){
         return this.variables;
     }
 
     /**
-     *
-     * @return
+     * Returns a list of the latent variables
+     * @return the latent variables
      */
-    public List<LTVariable> getLatentVariables(){
+    public List<LatentVariable> getLatentVariables(){
         return this.latentVariables;
     }
 
     /**
-     *
-     * @return
+     * Returns a list of the observed variables
+     * @return the observed variables
      */
-    public List<LTVariable> getObservedVariables(){
+    public List<ObservedVariable> getObservedVariables(){
         return this.observedVariables;
     }
 
     /**
-     *
+     * Creates a new Observed Variable from a variable object, by wrapping it and adding the extra logic
      * @param variable
      */
     public ObservedVariable newObservedVariable(Variable variable){
@@ -58,7 +58,7 @@ public class LTVariables{
     }
 
     /**
-     *
+     * Creates a new Latent Variable from a variable object, by wrapping it and adding the extra logic
      * @param variable
      */
     public LatentVariable newLatentVariable(Variable variable){

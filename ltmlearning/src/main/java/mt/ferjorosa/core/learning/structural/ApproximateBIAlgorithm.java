@@ -63,9 +63,10 @@ public class ApproximateBIAlgorithm implements LTMLearning {
     /** Valor asignado segun el código original de Zhang */
     private int maxIslandSize = 30;
 
+    /** Valor asignado segun el código original de Zhang */
     private int baseLvCardinality = 2;
 
-    /** */
+    /** Valor asignado segun el código original de Zhang */
     private List<LTM> siblingClusters = new ArrayList<>();
 
     /**
@@ -373,7 +374,13 @@ public class ApproximateBIAlgorithm implements LTMLearning {
         this.siblingClusters = newSiblingClusters;
     }
 
+    // Chow Liu
     private void connectSiblingClusters(){
+        // Entendemos cada sibling cluster como un nodo, ya que la union solo se va a realizar sobre sus LVs
+
+        // Chow-Liu’s algorithm can be adapted to link up the latent variables of the sibling clusters. We only
+        // need to specify how the MI between two latent variables from two disjoint LCMs is to be estimated.
+
 
     }
 

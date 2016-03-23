@@ -3,17 +3,13 @@ package mt.ferjorosa.core.models.ltdag;
 import eu.amidst.core.models.DAG;
 
 /**
- * Wrapper de la clase DAG que me permite crear un DAG con las restricciones propias de los Latent Tree Models
- * - Existen dos tipos de variables: Observables y Latentes
- * - Las variables observables pueden tener como padres otras variables observables o latentes
- * - Las variables latentes solo pueden tener como padres otras variables latentes
+ * DAG class wrapper that represents the Latent Tree Model (LTM) structure. LTMs have some characteristics that make
+ * suitable to create a specific class instead of simply reusing the DAG one:
  *
- * Para separar esta clase de las restricciones propias del tipo de red bayesiana utilizada (en este caso son Conjugate
- * exponentials, cuyas restricciones coinciden en su mayor parte con las restricciones impuestas por los LTMs en cuanto
- * al tipo y jerarquía de las variables utilizadas)
+ * - There are two types of variables: Observed and Latent (hidden).
+ * - Observed variables can hav other observed variables or latent variables as parents.
+ * - Latent variables cannot have observed variables as parents.
  */
-// Basicamente lo único que tiene que comprobar diferente de
-// los DAGs es que la variable padre de una LV no sea una OV
 public class LTDAG {
 
     /** Represents the set of variables. */

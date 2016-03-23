@@ -3,7 +3,7 @@ package mt.ferjorosa.core.models.ltdag;
 import eu.amidst.core.variables.Variable;
 
 /**
- * Created by Fer on 04/03/2016.
+ * Interface for the variables that are used inside the LTDAG (Observed and Latent variables)
  */
 public interface LTVariable {
 

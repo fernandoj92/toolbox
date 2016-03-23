@@ -13,6 +13,8 @@ import java.util.*;
  * La forma optimizada tendría que mantener una estrucutra de datos alternativa que guardase todas las posibles combinaciones
  *
  * Usa el paso de valor a string porque es la unica manera de acceder al valor de un atributo de la instancia
+ *
+ * TODO: Revisar como seria el funcionamiento para un mismo objeto y varios SetData.
  */
 public class MutualInformation implements FSSMeasure, Serializable{
 
@@ -98,7 +100,7 @@ public class MutualInformation implements FSSMeasure, Serializable{
     }
 
     /**
-     * Computes all the pair scores and returns the best one
+     * Computes all the pair scores
      * @param attributes
      * @return
      */
