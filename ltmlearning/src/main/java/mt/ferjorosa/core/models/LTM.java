@@ -1,11 +1,14 @@
 package mt.ferjorosa.core.models;
 
 import eu.amidst.core.models.BayesianNetwork;
+import mt.ferjorosa.core.models.ltdag.LTDAG;
 
 /**
  * Created by Fer on 18/03/2016.
  */
 public class LTM {
+
+    private LTDAG ltdag;
 
     /** Represents the learnt Bayesian Network*/
     private BayesianNetwork learntModel;
@@ -29,9 +32,14 @@ public class LTM {
         return this.learntModel;
     }
 
-    public LTM(BayesianNetwork learntModel, double modelScore){
+    public LTDAG getLtdag(){
+        return this.ltdag;
+    }
+
+    public LTM(BayesianNetwork learntModel, double modelScore, LTDAG ltdag){
         this.learntModel = learntModel;
         this.modelScore = modelScore;
+        this.ltdag = ltdag;
     }
 
 }

@@ -2,6 +2,8 @@ package mt.ferjorosa.core.models.ltdag;
 
 import eu.amidst.core.models.DAG;
 
+import java.util.List;
+
 /**
  * DAG class wrapper that represents the Latent Tree Model (LTM) structure. LTMs have some characteristics that make
  * suitable to create a specific class instead of simply reusing the DAG one:
@@ -25,6 +27,14 @@ public class LTDAG {
 
     public LTVariables getLTVariables(){
         return this.ltVariables;
+    }
+
+    public List<ObservedVariable> getObservedVariables(){
+        return this.getLTVariables().getObservedVariables();
+    }
+
+    public List<LatentVariable> getLatentVariables(){
+        return this.getLTVariables().getLatentVariables();
     }
 
     /**

@@ -164,6 +164,9 @@ public class MutualInformation implements FSSMeasure, Serializable{
      */
     public Attribute getClosestAttributeToSet(List<Attribute> activeSet, List<Attribute> outSet){
 
+        if(this.pairScores.isEmpty())
+            throw new IllegalStateException("No Pair scores have been computed");
+
         Attribute closestOutAttribute = null;
         double maxScore = Double.NEGATIVE_INFINITY;
         double bivariateScore = Double.NEGATIVE_INFINITY;
@@ -180,7 +183,25 @@ public class MutualInformation implements FSSMeasure, Serializable{
         return closestOutAttribute;
     }
 
+    public double getMaxBivariateScore(List<Attribute> firstSet, List<Attribute> secondSet){
 
+        if(this.pairScores.isEmpty())
+            throw new IllegalStateException("No Pair scores have been computed");
+
+        double maxScore = Double.NEGATIVE_INFINITY;
+        double bivariateScore = Double.NEGATIVE_INFINITY;
+
+        for(Attribute firstAttribute : firstSet)
+            for(Attribute secondAttribute : secondSet){
+                Pair<Attribute, Attribute> currentPair =Pair.of(firstAttribute,secondAttribute);
+                bivariateScore = pairScores.get(currentPair);
+                if(bivariateScore > maxScore){
+                    maxScore = bivariateScore;
+                }
+            }
+
+        return maxScore;
+    }
 
 
 }

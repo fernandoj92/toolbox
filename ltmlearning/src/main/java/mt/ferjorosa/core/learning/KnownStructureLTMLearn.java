@@ -19,8 +19,11 @@ public class KnownStructureLTMLearn {
     /** Parameter learning algorithm used to fully learn the LTM */
     private ParameterLearningAlgorithm parameterLearningAlgorithm;
 
+    private LTDAG ltdag;
+
     public KnownStructureLTMLearn(ParameterLearningAlgorithm parameterLearningAlgorithm, LTDAG ltdag){
         this.parameterLearningAlgorithm = parameterLearningAlgorithm;
+        this.ltdag = ltdag;
         parameterLearningAlgorithm.setDAG(ltdag.getDAG());
         this.parameterLearningAlgorithm.initLearning();
     }
@@ -32,7 +35,7 @@ public class KnownStructureLTMLearn {
     public LTM learnModel(DataOnMemory<DataInstance> batch){
         double modelScore = parameterLearningAlgorithm.updateModel(batch);
         BayesianNetwork learntModel = parameterLearningAlgorithm.getLearntBayesianNetwork();
-        return new LTM(learntModel, modelScore);
+        return new LTM(learntModel, modelScore, ltdag);
     }
 
 }

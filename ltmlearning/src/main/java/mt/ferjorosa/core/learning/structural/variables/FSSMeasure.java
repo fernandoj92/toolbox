@@ -22,4 +22,6 @@ public interface FSSMeasure {
     Pair<Attribute, Attribute> getBestPair(List<Attribute> attributes);
 
     Attribute getClosestAttributeToSet(List<Attribute> activeSet, List<Attribute> outSet);
+
+    double getMaxBivariateScore(List<Attribute> firstSet, List<Attribute> secondSet);
 }

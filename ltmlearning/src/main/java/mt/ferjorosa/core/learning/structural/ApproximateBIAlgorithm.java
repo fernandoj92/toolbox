@@ -14,6 +14,8 @@ import mt.ferjorosa.core.learning.structural.variables.MutualInformation;
 import mt.ferjorosa.core.models.LTM;
 import mt.ferjorosa.core.models.LatentTreeModel;
 import mt.ferjorosa.core.models.ltdag.*;
+import mt.ferjorosa.core.util.graph.DirectedTree;
+import mt.ferjorosa.core.util.graph.UndirectedGraph;
 import org.apache.commons.lang3.tuple.Pair;
 
 
@@ -374,12 +376,52 @@ public class ApproximateBIAlgorithm implements LTMLearning {
         this.siblingClusters = newSiblingClusters;
     }
 
-    // Chow Liu
+    // Chow Liu approximation
     private void connectSiblingClusters(){
         // Entendemos cada sibling cluster como un nodo, ya que la union solo se va a realizar sobre sus LVs
 
         // Chow-Liu’s algorithm can be adapted to link up the latent variables of the sibling clusters. We only
         // need to specify how the MI between two latent variables from two disjoint LCMs is to be estimated.
+
+        // In this case we are using an approximation to the MI between two LVs. Its value will be the highest MI between
+        // their OV children
+
+        UndirectedGraph completeGraph = new UndirectedGraph(siblingClusters.size());
+
+        // Iteramos por cada sibling cluster para rellenar los pesos del grafo no dirigido
+        for(int i =0; i < siblingClusters.size(); i++)
+            for(int j =0; j < siblingClusters.size(); j++){
+                if(i != j){
+                    List<Attribute> clusterAttributes = new ArrayList<>();
+                    List<Attribute> pairClusterAttributes = new ArrayList<>();
+
+                    List<ObservedVariable> clusterOVs = siblingClusters.get(i).getLtdag().getObservedVariables();
+                    List<ObservedVariable> pairClusterOVs = siblingClusters.get(j).getLtdag().getObservedVariables();
+
+                    for(ObservedVariable observedVariable: clusterOVs)
+                        clusterAttributes.add(observedVariable.getVariable().getAttribute());
+
+                    for(ObservedVariable observedVariable: pairClusterOVs)
+                        pairClusterAttributes.add(observedVariable.getVariable().getAttribute());
+
+                    // Ahora que ya tenemos los atributos de ambos clusters, calculamos la maxima MI
+                    // y la almacenamos como el peso del edge entre ambos nodos del grafo
+
+                    double score = siblingClustersMeasure.getMaxBivariateScore(clusterAttributes,pairClusterAttributes);
+
+                    completeGraph.addEdge(i,j,score);
+                }
+            }
+
+        // Una vez tenemos el grafo completo, calculamos el MWST
+        UndirectedGraph mwst = UndirectedGraph.obtainMaximumWeightSpanningTree(completeGraph);
+
+        // Tras obtener el MWST seleccionamos un nodo como raiz y lo convertimos en un arbol dirigido
+        Random rn = new Random();
+        int rootIndex = rn.nextInt(mwst.getNVertices());
+        DirectedTree rootedMWST = new DirectedTree(mwst, rootIndex);
+
+        // Finalmente conectamos los clusters según el MWST formando un LTM
 
 
     }
