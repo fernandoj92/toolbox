@@ -5,7 +5,7 @@ import eu.amidst.core.datastream.DataOnMemory;
 import eu.amidst.core.datastream.DataStream;
 import mt.ferjorosa.core.learning.conceptdrift.FadingLearner;
 import mt.ferjorosa.core.learning.structural.StructuralLearning;
-import mt.ferjorosa.core.models.LatentTreeModel;
+import mt.ferjorosa.core.models.LTM;
 
 /**
  *
@@ -22,7 +22,7 @@ public class StreamingLTMLearningEngine {
     protected StructuralLearning LTMLearningEngine;
 
     /** */
-    protected LatentTreeModel LTM;
+    protected LTM latentTreeModel;
 
     /**
      *
@@ -52,8 +52,7 @@ public class StreamingLTMLearningEngine {
         // En este caso el initLearning lo que hace es pasar un primer batch de instancias que son los que serviran
         // para poder aprender el LTM inicial y que sera posteriormente modificado segun se vayan produciendo
         // concept drifts.
-        LTMLearningEngine.updateModel(batch);
-        this.LTM = LTMLearningEngine.getLatentTreeModel();
+        this.latentTreeModel = LTMLearningEngine.learnModel(batch);
     }
 
     /**

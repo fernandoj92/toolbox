@@ -18,6 +18,7 @@ import mt.ferjorosa.core.util.graph.DirectedTree;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  *  Esta va ser la clase que tenga varios metodos de aprendizaje de LTMS, en vez de Known LTM learner
@@ -57,7 +58,7 @@ public class LTMLearningEngine {
         }
 
         Variable latentVariable = variables.newMultionomialVariable("LatentVar", Arrays.asList(latentVarStates));
-        LatentVariable latentVar = ltVariables.newLatentVariable(latentVariable);
+        LatentVariable latentVar = ltVariables.newLatentVariable(latentVariable, 0);
 
         // Creamos el LTDAG
         LTDAG ltdag = new LTDAG(ltVariables);
@@ -67,14 +68,14 @@ public class LTMLearningEngine {
             ltdag.addParent(observedVar,latentVar);
         }
 
-        // Aprendemos los parámetros del LCM
+        // Aprendemos los parámetros del LTM
         LearnKnownStructureLTM learner = new LearnKnownStructureLTM(parameterLearningAlgorithm, ltdag);
         return learner.learnModel(batch);
     }
 
     public LTM learn2dimensionalLTM(List<Attribute> leftAttributes, List<Attribute> rightAttributes, DataOnMemory<DataInstance> batch){
 
-        List<Attribute> allAttributes = new ArrayList<Attribute>(leftAttributes);
+        List<Attribute> allAttributes = new ArrayList<>(leftAttributes);
         allAttributes.addAll(rightAttributes);
 
         // Transformamos las listas de atributos objetos 'Attributes', necesario para crear las variables
@@ -91,8 +92,8 @@ public class LTMLearningEngine {
         // Creamos 2 variables latentes, una para cada subarbol
         Variable leftLatentVariable = variables.newMultionomialVariable("LeftLV", Arrays.asList("0", "1"));
         Variable rightLatentVariable = variables.newMultionomialVariable("RightLV", Arrays.asList("0", "1"));
-        LatentVariable leftLatentVar = ltVariables.newLatentVariable(leftLatentVariable);
-        LatentVariable rightLatentVar = ltVariables.newLatentVariable(rightLatentVariable);
+        LatentVariable leftLatentVar = ltVariables.newLatentVariable(leftLatentVariable, 0);
+        LatentVariable rightLatentVar = ltVariables.newLatentVariable(rightLatentVariable, 1);
 
         // Creamos el LTDAG
         LTDAG ltdag = new LTDAG(ltVariables);
@@ -116,8 +117,82 @@ public class LTMLearningEngine {
     }
 
     // Metodo que aprende un flat-LTM a partir de un arbol dirigido y una lista de LTMs
-    public LTM learnFlatLTM(DirectedTree latentVarsTree, ArrayList ltms){
+    public LTM learnFlatLTM(DirectedTree latentVarsTree, ArrayList<LTM> ltms, DataOnMemory<DataInstance> batch){
 
+        // El primer paso es crear el objeto variables. La unica forma es mediante un objeto Attributes, el cual se crea
+        // a partir de una lista de Attribute objects. El porque no utilizamos los attributes del batch es por si no
+        // se utilizan todos, es decir, por si se ha hecho algun tipo de Feature Subset Selection al crear los LTMs
+        List<Attribute> observedAttributes = new ArrayList<>();
+        for(LTM latentTreeModel : ltms) {
+            // Iteramos por sus variables observadas para obtener los objetos Attribute asociados
+            for (ObservedVariable var : latentTreeModel.getLtdag().getObservedVariables())
+                observedAttributes.add(var.getVariable().getAttribute());
+        }
+        Attributes selectedAttributes = new Attributes(observedAttributes);
+
+        // Transformamos la lista de atributos en un objeto Attributes, necesario para crear las variables
+        // de nuestro modelo
+        Variables variables = new Variables(selectedAttributes);
+        LTVariables ltVariables = new LTVariables(variables);
+
+        // Creamos las variables observadas del nuevo LTM
+        List<ObservedVariable> observedVariables = new ArrayList<>();
+        for(Variable var: variables){
+            ObservedVariable observedVar = ltVariables.newObservedVariable(var);
+            observedVariables.add(observedVar);
+        }
+
+        // Ahora creamos las variables latentes del nuevo LTM, que coinciden con las variables latentes del array de LTMs
+        List<LatentVariable> latentVariables = new ArrayList<>();
+        for(int treeIndex = 0; treeIndex < ltms.size(); treeIndex++) {
+            int lvCardinality = ltms.get(treeIndex).getLtdag().getLatentVariables().get(0).getVariable().getNumberOfStates();
+            String[] latentVarStates = new String[lvCardinality];
+            for(int i = 0; i<lvCardinality;i++){
+                latentVarStates[i] = i+"";
+            }
+            Variable latentVariable = variables.newMultionomialVariable("H"+treeIndex, Arrays.asList(latentVarStates));
+            latentVariables.add(ltVariables.newLatentVariable(latentVariable, treeIndex));
+        }
+
+        // Creamos el LTDAG con las anteriores variables
+        LTDAG ltdag = new LTDAG(ltVariables);
+
+        // Añadimos las conexiones entre las variables observadas y las variables latentes
+        // Iteramos por los LTMs y conectamos las variables observadas del LTM con su variable
+
+        // Nota: Este rollo es porque trabajamos con 2 objetos casi identicos de variables, los de los antiguos LTMs separados
+        // Y los del neuvo LTM conjunto
+        // TODO: Revisar este codigo posteriormente para reducirlo ya que a lo mejor no es necesaria tanta comprobacion
+        for(LTM ltm : ltms){
+
+            for(LatentVariable ltVar : ltm.getLtdag().getLatentVariables()){
+
+                LatentVariable latentVar = null;
+                for(LatentVariable latentVariable : latentVariables){
+                    if(latentVariable.getIndex() == ltVar.getIndex())
+                        latentVar = latentVariable;
+                }
+
+                for(ObservedVariable obvVar : ltm.getLtdag().getObservedVariables()){
+                    for(ObservedVariable observedVariable : observedVariables)
+                        if(observedVariable.getVariable().getAttribute().equals(obvVar.getVariable().getAttribute()))
+                            ltdag.addParent(observedVariable,latentVar);
+                }
+            }
+
+        }
+
+        // Añadimos las conexiones entre las variables latentes
+        Map<Integer, Integer> latentVarConnections = latentVarsTree.getEdges();
+        for(Integer parentIndex: latentVarConnections.keySet()){
+            LatentVariable parent = latentVariables.get(parentIndex);
+            LatentVariable son = latentVariables.get(latentVarConnections.get(parentIndex));
+            ltdag.addParent(parent, son);
+        }
+
+        // Aprendemos los parámetros del LTM
+        LearnKnownStructureLTM learner = new LearnKnownStructureLTM(parameterLearningAlgorithm, ltdag);
+        return learner.learnModel(batch);
     }
 
     private class LearnKnownStructureLTM {

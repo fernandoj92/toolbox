@@ -52,6 +52,9 @@ public class LTVariables{
      * @param variable
      */
     public ObservedVariable newObservedVariable(Variable variable){
+        if(!variables.getListOfVariables().contains(variable))
+            throw new IllegalArgumentException("Variable doesn't belong to the LTVariables object");
+
         ObservedVariable observedVar = new ObservedVariable(variable);
         observedVariables.add(observedVar);
         return observedVar;
@@ -61,8 +64,11 @@ public class LTVariables{
      * Creates a new Latent Variable from a variable object, by wrapping it and adding the extra logic
      * @param variable
      */
-    public LatentVariable newLatentVariable(Variable variable){
-        LatentVariable latentVar = new LatentVariable(variable);
+    public LatentVariable newLatentVariable(Variable variable, int index){
+        if(!variables.getListOfVariables().contains(variable))
+            throw new IllegalArgumentException("Variable doesn't belong to the LTVariables object");
+
+        LatentVariable latentVar = new LatentVariable(variable, index);
         latentVariables.add(latentVar);
         return latentVar;
     }

@@ -41,7 +41,7 @@ public class ChowLiuExample {
         ObservedVariable rain = ltVariables.newObservedVariable(variables.getVariableByName("rain"));
         ObservedVariable wetGrass = ltVariables.newObservedVariable(variables.getVariableByName("wetGrass"));
         LatentVariable ltCloudy = ltVariables.newLatentVariable(
-                variables.newMultionomialVariable("latentCloudy", Arrays.asList("TRUE", "FALSE")));
+                variables.newMultionomialVariable("latentCloudy", Arrays.asList("TRUE", "FALSE")), 0);
 
         LTDAG ltdag = new LTDAG(ltVariables);
 

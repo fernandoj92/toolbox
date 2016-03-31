@@ -2,7 +2,7 @@ package mt.ferjorosa.core.learning.structural;
 
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataOnMemory;
-import mt.ferjorosa.core.models.LatentTreeModel;
+import mt.ferjorosa.core.models.LTM;
 
 /**
  * Created by Fernando on 3/8/2016.
@@ -15,12 +15,6 @@ public interface StructuralLearning {
      * @return the log-probability of the data instances of the
      * batch. Or Double.NaN if this log-probability can not be estimated.
      */
-    double updateModel(DataOnMemory<DataInstance> batch);
-
-    /**
-     *
-     * @return
-     */
-    LatentTreeModel getLatentTreeModel();
+    LTM learnModel(DataOnMemory<DataInstance> batch);
 
 }

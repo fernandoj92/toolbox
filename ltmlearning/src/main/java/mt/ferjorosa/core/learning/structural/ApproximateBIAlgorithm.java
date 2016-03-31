@@ -11,7 +11,6 @@ import mt.ferjorosa.core.learning.LTMLearningEngine;
 import mt.ferjorosa.core.learning.structural.variables.FSSMeasure;
 import mt.ferjorosa.core.learning.structural.variables.MutualInformation;
 import mt.ferjorosa.core.models.LTM;
-import mt.ferjorosa.core.models.LatentTreeModel;
 import mt.ferjorosa.core.models.ltdag.*;
 import mt.ferjorosa.core.util.graph.DirectedTree;
 import mt.ferjorosa.core.util.graph.UndirectedGraph;
@@ -57,11 +56,6 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
     private LTMLearningEngine ltmLearner;
 
     /** Valor asignado segun el código original de Zhang */
-    // Seguramente se devuelva como un objeto LTM que contiene tanto el score como la red Bayesiana y
-    // puede que tmb el LTDAG
-    private LatentTreeModel ltmLearned;
-
-    /** Valor asignado segun el código original de Zhang */
     private int maxIslandSize = 30;
 
     /** Valor asignado segun el código original de Zhang */
@@ -70,9 +64,6 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
     /** Valor asignado segun el código original de Zhang */
     private ArrayList<LTM> siblingClusters = new ArrayList<>();
 
-    public LatentTreeModel getLatentTreeModel(){
-        return this.ltmLearned;
-    }
 
     public ApproximateBIAlgorithm(Attributes attributes){
         this.initialAttributes = attributes;
@@ -99,7 +90,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
     // Creo que deberia devolver un score indicando como de bien representa el LTM actual el batch de datos
     // con el cual se ha aprendido (e.g elBO)
     @Override
-    public double updateModel(DataOnMemory<DataInstance> batch) {
+    public LTM learnModel(DataOnMemory<DataInstance> batch) {
         if(batch.getAttributes() != this.initialAttributes)
             throw new IllegalArgumentException("Batch attributes don't correspond with initial attributes");
 
@@ -114,7 +105,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
 
         // 3 - Form a Tree by connecting the sibling clusters
         // One possibility is to use the Chow-Liu's algorithm
-        connectSiblingClusters();
+        LTM ltmLearned = connectSiblingClusters(batch);
 
         // 4 - Refine the model by doing the following:
         /*
@@ -122,9 +113,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
                    Nota: No tiene sentido en mi opinion refinar la cardinalidad en 2 sitios
             4.2 -
          */
-        refineModel();
-
-        return 0;
+        return refineModel(ltmLearned);
     }
 
     private void calculateSiblingClusters(DataOnMemory<DataInstance> batch){
@@ -293,7 +282,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
     }
 
     // Chow Liu approximation
-    private void connectSiblingClusters(){
+    private LTM connectSiblingClusters(DataOnMemory<DataInstance> batch){
         // Entendemos cada sibling cluster como un nodo, ya que la union solo se va a realizar sobre sus LVs
 
         // Chow-Liu’s algorithm can be adapted to link up the latent variables of the sibling clusters. We only
@@ -338,12 +327,12 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
         DirectedTree rootedMWST = new DirectedTree(mwst, rootIndex);
 
         // Finalmente conectamos los clusters según el MWST formando un LTM
-
+        return ltmLearner.learnFlatLTM(rootedMWST,siblingClusters,batch);
 
     }
 
-    private void refineModel(){
-
+    private LTM refineModel(LTM ltm){
+        return ltm;
     }
 
 }

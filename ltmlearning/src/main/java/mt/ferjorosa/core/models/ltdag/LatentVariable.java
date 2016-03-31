@@ -8,10 +8,11 @@ import eu.amidst.core.variables.Variable;
  */
 public class LatentVariable implements LTVariable {
 
-    /**
-     * Represents the Variable object, which contains its core functionality
-     */
+    /** Represents the Variable object, which contains its core functionality */
     private Variable variable;
+
+    /** The index of the LV to distinguish it from other LVs in case we need to combine LTMs*/
+    private int index;
 
     /**
      * Returns the Variable object
@@ -21,8 +22,15 @@ public class LatentVariable implements LTVariable {
         return this.variable;
     }
 
+    /**
+     *
+     * @return
+     */
+    public int getIndex(){
+        return this.index;
+    }
 
-    public LatentVariable(Variable variable){
+    public LatentVariable(Variable variable, int index){
         if(variable.getDistributionTypeEnum() != DistributionTypeEnum.MULTINOMIAL)
             throw new IllegalArgumentException("Only Multinomial variables are allowed");
 
