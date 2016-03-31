@@ -4,7 +4,7 @@ import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataOnMemory;
 import eu.amidst.core.datastream.DataStream;
 import mt.ferjorosa.core.learning.conceptdrift.FadingLearner;
-import mt.ferjorosa.core.learning.structural.LTMLearning;
+import mt.ferjorosa.core.learning.structural.StructuralLearning;
 import mt.ferjorosa.core.models.LatentTreeModel;
 
 /**
@@ -19,7 +19,7 @@ public class StreamingLTMLearningEngine {
     protected DataStream<DataInstance> dataStream;
 
     /** */
-    protected LTMLearning LTMLearningEngine;
+    protected StructuralLearning LTMLearningEngine;
 
     /** */
     protected LatentTreeModel LTM;
@@ -44,7 +44,7 @@ public class StreamingLTMLearningEngine {
      *
      * @param ltmLearningEngine
      */
-    public void setLTMLearningEngine(LTMLearning ltmLearningEngine){
+    public void setLTMLearningEngine(StructuralLearning ltmLearningEngine){
         this.LTMLearningEngine = ltmLearningEngine;
     }
 

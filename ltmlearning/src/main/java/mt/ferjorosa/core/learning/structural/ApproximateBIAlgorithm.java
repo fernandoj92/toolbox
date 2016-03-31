@@ -7,8 +7,7 @@ import eu.amidst.core.datastream.DataOnMemory;
 import eu.amidst.core.learning.parametric.ParameterLearningAlgorithm;
 import eu.amidst.core.learning.parametric.bayesian.SVB;
 import eu.amidst.core.variables.Variable;
-import eu.amidst.core.variables.Variables;
-import mt.ferjorosa.core.learning.KnownStructureLTMLearn;
+import mt.ferjorosa.core.learning.LTMLearningEngine;
 import mt.ferjorosa.core.learning.structural.variables.FSSMeasure;
 import mt.ferjorosa.core.learning.structural.variables.MutualInformation;
 import mt.ferjorosa.core.models.LTM;
@@ -43,7 +42,7 @@ import java.util.stream.Collectors;
  * TODO: Es posible hacer estatica la clase y utilizarla como un gran método, pero bueno, depende de como se aplique en el
  * streaming
  */
-public class ApproximateBIAlgorithm implements LTMLearning {
+public class ApproximateBIAlgorithm implements StructuralLearning {
 
     /** Valor asignado segun el código original de Zhang */
     private FSSMeasure siblingClustersMeasure;
@@ -55,7 +54,7 @@ public class ApproximateBIAlgorithm implements LTMLearning {
     private List<Attribute> outSetAttributes;
 
     /** Valor asignado segun el código original de Zhang */
-    private ParameterLearningAlgorithm parameterLearningAlgorithm;
+    private LTMLearningEngine ltmLearner;
 
     /** Valor asignado segun el código original de Zhang */
     // Seguramente se devuelva como un objeto LTM que contiene tanto el score como la red Bayesiana y
@@ -69,31 +68,27 @@ public class ApproximateBIAlgorithm implements LTMLearning {
     private int baseLvCardinality = 2;
 
     /** Valor asignado segun el código original de Zhang */
-    private List<LTM> siblingClusters = new ArrayList<>();
+    private ArrayList<LTM> siblingClusters = new ArrayList<>();
 
-    /**
-     *
-     * @return
-     */
     public LatentTreeModel getLatentTreeModel(){
         return this.ltmLearned;
     }
 
     public ApproximateBIAlgorithm(Attributes attributes){
         this.initialAttributes = attributes;
-        this.parameterLearningAlgorithm = new SVB();
+        this.ltmLearner = new LTMLearningEngine(new SVB());
         this.siblingClustersMeasure = new MutualInformation();
     }
 
     public ApproximateBIAlgorithm(Attributes attributes, ParameterLearningAlgorithm parameterLearningAlgorithm){
         this.initialAttributes = attributes;
-        this.parameterLearningAlgorithm = parameterLearningAlgorithm;
+        this.ltmLearner = new LTMLearningEngine(parameterLearningAlgorithm);
         this.siblingClustersMeasure = new MutualInformation();
     }
 
     public ApproximateBIAlgorithm(Attributes attributes, ParameterLearningAlgorithm parameterLearningAlgorithm, FSSMeasure siblingClustersMeasure){
         this.initialAttributes = attributes;
-        this.parameterLearningAlgorithm = parameterLearningAlgorithm;
+        this.ltmLearner = new LTMLearningEngine(parameterLearningAlgorithm);
         this.siblingClustersMeasure = siblingClustersMeasure;
     }
 
@@ -175,7 +170,7 @@ public class ApproximateBIAlgorithm implements LTMLearning {
             activeSet.add(closestAttribute);
 
             if(activeSet.size() >= 4 || outSetAttributes.size() < 4){
-                LTM ltmSubModel = learnUnidimensionalLTM(activeSet, batch,2);
+                LTM ltmSubModel = ltmLearner.learnUnidimensionalLTM(activeSet, batch, 2);
                 LTM ltm2dimensionalBestModel = findBest2dimensionalLTM(activeSet, batch);
 
                 islandLTM = ltmSubModel;
@@ -190,45 +185,9 @@ public class ApproximateBIAlgorithm implements LTMLearning {
         }
         // Siempre se aprende al menos un LTM de dos variables, las 2 variables con mayor MI del outSet de atributos
         if(islandLTM == null)
-            islandLTM = learnUnidimensionalLTM(activeSet,batch,2);
+            islandLTM = ltmLearner.learnUnidimensionalLTM(activeSet, batch, 2);
 
         return islandLTM;
-    }
-    // Probablemente sea refactorizado en una clase especifica
-    private LTM learnUnidimensionalLTM(List<Attribute> attributes, DataOnMemory<DataInstance> batch, int lvCardinality){
-        // Transformamos la lista de atributos en un objeto Attributes, necesario para crear las variables
-        // de nuestro modelo
-        Variables variables = new Variables(new Attributes(attributes));
-        LTVariables ltVariables = new LTVariables(variables);
-
-        // Creamos las variables del LTDAG, señalando que cada una de ellas es una variable observada
-        List<ObservedVariable> observedVariables = new ArrayList<>();
-        for(Variable var: variables){
-            ObservedVariable observedVar = ltVariables.newObservedVariable(var);
-            observedVariables.add(observedVar);
-        }
-
-        // Creamos la variable latente que sera de tipo multinomial con X estados inicialmente
-        // y asignamos cada variable observada como hijo de esta
-        String[] latentVarStates = new String[lvCardinality];
-        for(int i = 0; i<lvCardinality;i++){
-            latentVarStates[i] = i+"";
-        }
-
-        Variable latentVariable = variables.newMultionomialVariable("LatentVar", Arrays.asList(latentVarStates));
-        LatentVariable latentVar = ltVariables.newLatentVariable(latentVariable);
-
-        // Creamos el LTDAG
-        LTDAG ltdag = new LTDAG(ltVariables);
-
-        // Añadimos los arcos de la variable latente a las variables observadas
-        for(ObservedVariable observedVar : observedVariables){
-            ltdag.addParent(observedVar,latentVar);
-        }
-
-        // Aprendemos los parámetros del LCM
-        KnownStructureLTMLearn learner = new KnownStructureLTMLearn(parameterLearningAlgorithm, ltdag);
-        return learner.learnModel(batch);
     }
 
     private LTM findBest2dimensionalLTM(List<Attribute> attributes, DataOnMemory<DataInstance> batch){
@@ -248,54 +207,11 @@ public class ApproximateBIAlgorithm implements LTMLearning {
                     .filter( leftAttributes::contains)
                     .collect(Collectors.toList());
 
-            LTM model = learn2dimensionalLTM(leftAttributes,rightAttributes,batch);
+            LTM model = ltmLearner.learn2dimensionalLTM(leftAttributes, rightAttributes, batch);
             if(model.getScore() > bestScore)
                 bestLTM = model;
         }
         return bestLTM;
-    }
-    // Probablemente sea refactorizado en una clase nueva especifica
-    private LTM learn2dimensionalLTM(List<Attribute> leftAttributes, List<Attribute> rightAttributes, DataOnMemory<DataInstance> batch){
-
-        List<Attribute> allAttributes = new ArrayList<Attribute>(leftAttributes);
-        allAttributes.addAll(rightAttributes);
-
-        // Transformamos las listas de atributos objetos 'Attributes', necesario para crear las variables
-        // de nuestro modelo
-        Variables variables = new Variables(new Attributes(allAttributes));
-        LTVariables ltVariables = new LTVariables(variables);
-
-        // Los atributos son variables observadas en nuestro modelo
-        List<ObservedVariable> observedVariables = new ArrayList<>();
-        for(Variable var: variables){
-            ObservedVariable observedVar = ltVariables.newObservedVariable(var);
-            observedVariables.add(observedVar);
-        }
-        // Creamos 2 variables latentes, una para cada subarbol
-        Variable leftLatentVariable = variables.newMultionomialVariable("LeftLV", Arrays.asList("0", "1"));
-        Variable rightLatentVariable = variables.newMultionomialVariable("RightLV", Arrays.asList("0", "1"));
-        LatentVariable leftLatentVar = ltVariables.newLatentVariable(leftLatentVariable);
-        LatentVariable rightLatentVar = ltVariables.newLatentVariable(rightLatentVariable);
-
-        // Creamos el LTDAG
-        LTDAG ltdag = new LTDAG(ltVariables);
-
-        // Añadimos los arcos de las variable latentes a las variables observadas
-        // Cada variable observada pertenece solo a una LV
-        for(ObservedVariable observedVar : observedVariables){
-            if(leftAttributes.contains(observedVar.getVariable().getAttribute()))
-                ltdag.addParent(observedVar,leftLatentVar);
-            else
-                ltdag.addParent(observedVar,rightLatentVar);
-        }
-
-        // Convertimos la LV de la izquierda en raiz del LTM (teoricamente,  tal y como explica Zhang,
-        // da igual quien sea la raiz, y con esto reducimos el numero de posibilidades a la mitad)
-        ltdag.addParent(rightLatentVar,leftLatentVar);
-
-        // Aprendemos los parámetros del LTM
-        KnownStructureLTMLearn learner = new KnownStructureLTMLearn(parameterLearningAlgorithm, ltdag);
-        return learner.learnModel(batch);
     }
 
     private ArrayList<int[]> generateAttributeCombinations(List<Attribute> attributes){
@@ -343,7 +259,7 @@ public class ApproximateBIAlgorithm implements LTMLearning {
 
     private void refineSiblingClustersCardinality(DataOnMemory<DataInstance> batch){
 
-        List<LTM> newSiblingClusters = new ArrayList<>();
+        ArrayList<LTM> newSiblingClusters = new ArrayList<>();
 
         for(LTM cluster: siblingClusters){
 
@@ -360,7 +276,7 @@ public class ApproximateBIAlgorithm implements LTMLearning {
             while(isNotFalse) {
                 currentCardinality++;
 
-                LTM newModel = learnUnidimensionalLTM(clusterAttributes, batch, currentCardinality);
+                LTM newModel = ltmLearner.learnUnidimensionalLTM(clusterAttributes, batch, currentCardinality);
 
                 if(newModel.getScore() < currentModel.getScore())
                     // La nueva cardinalidad da un score inferior y por lo tanto cortamos la greedy search

@@ -5,10 +5,9 @@ import eu.amidst.core.datastream.DataOnMemory;
 import eu.amidst.core.datastream.DataStream;
 import eu.amidst.core.io.DataStreamLoader;
 import eu.amidst.core.learning.parametric.bayesian.SVB;
-import eu.amidst.core.models.BayesianNetwork;
 import eu.amidst.core.variables.Variable;
 import eu.amidst.core.variables.Variables;
-import mt.ferjorosa.core.learning.KnownStructureLTMLearn;
+import mt.ferjorosa.core.learning.LTMLearningEngine;
 import mt.ferjorosa.core.models.LTM;
 import mt.ferjorosa.core.models.ltdag.*;
 
@@ -60,10 +59,10 @@ public class KnownLTMLearningExample {
         //We can activate the output
         parameterLearningAlgorithm.setOutput(true);
         // Normally we would need to call initLearning(), but the learner do it for us, so no need to call it 2 times
-        KnownStructureLTMLearn learner = new KnownStructureLTMLearn(parameterLearningAlgorithm, ltdag);
+        LTMLearningEngine learner = new LTMLearningEngine(parameterLearningAlgorithm);
 
         for (DataOnMemory<DataInstance> batch : data.iterableOverBatches(100)){
-            LTM learntModel = learner.learnModel(batch);
+            LTM learntModel = learner.learnKnownStructureLTM(batch, ltdag);
             //We print the model
             System.out.println("-----------------------------------");
             System.out.println(learntModel.getLearntModel().toString());

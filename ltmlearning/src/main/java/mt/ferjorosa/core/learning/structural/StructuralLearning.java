@@ -7,7 +7,7 @@ import mt.ferjorosa.core.models.LatentTreeModel;
 /**
  * Created by Fernando on 3/8/2016.
  */
-public interface LTMLearning {
+public interface StructuralLearning {
 
     /**
      * Updates the model using a given {@link DataOnMemory} object.
