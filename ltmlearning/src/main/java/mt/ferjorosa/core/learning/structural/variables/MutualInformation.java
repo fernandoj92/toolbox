@@ -15,30 +15,29 @@ import java.util.*;
  * Usa el paso de valor a string porque es la unica manera de acceder al valor de un atributo de la instancia
  *
  * TODO: Revisar como seria el funcionamiento para un mismo objeto y varios SetData.
+ * TODO: Es posible que sea necesario dividir esta clase en 2, hay parte del estado que no se utiliza siempre y es liante
+ * por ejemplo si solo queremos computar bivariates
  */
-public class MutualInformation implements FSSMeasure, Serializable{
+public class MutualInformation implements FSSMeasure{
 
-    /** Represents the serial version ID for serializing the object. */
-    private static final long serialVersionUID = 5461283324939870839L;
-
-    /** Represents the data to be used for calculating the MI. */
+    /** The data used for calculating the MI. */
     private DataOnMemory<DataInstance> data;
 
-    /** Indicates if it should calculate all the attributes' probabilities, initialized to {@code true}. */
-    private boolean allAttributes = true;
-
-    /** */
+    /**
+     * The stored pair scores. It cannot contain scores between a pair of attributes not present in the data, but
+     * it doesnt have to contain all the pair-scores between all the attributes presented in the data.
+     */
     private Map<Pair<Attribute,Attribute>,Double> pairScores = new HashMap<>();
 
+    /**
+     * {@inheritDoc}
+     */
     public void setData(DataOnMemory<DataInstance> data){
         this.data = data;
     }
 
     /**
-     * Computes the Bivariate Mutual Information of two attributes of the DataSet
-     * @param attributeX the first attribute
-     * @param attributeY the second attribute
-     * @return the bivariate Mutual Information of the attributes
+     * {@inheritDoc}
      */
     public double computeBivariateScore(Attribute attributeX, Attribute attributeY){
         int logBase = 2; // Bivariate Mutual Information
@@ -100,9 +99,7 @@ public class MutualInformation implements FSSMeasure, Serializable{
     }
 
     /**
-     * Computes all the pair scores
-     * @param attributes
-     * @return
+     * {@inheritDoc}
      */
     public void computeAllPairScores(List<Attribute> attributes){
 
@@ -127,9 +124,7 @@ public class MutualInformation implements FSSMeasure, Serializable{
     }
 
     /**
-     *
-     * @param attributes
-     * @return
+     * {@inheritDoc}
      */
     public Pair<Attribute, Attribute> getBestPair(List<Attribute> attributes){
 
@@ -157,10 +152,7 @@ public class MutualInformation implements FSSMeasure, Serializable{
     }
 
     /**
-     *
-     * @param activeSet
-     * @param outSet
-     * @return
+     * {@inheritDoc}
      */
     public Attribute getClosestAttributeToSet(List<Attribute> activeSet, List<Attribute> outSet){
 
@@ -183,6 +175,9 @@ public class MutualInformation implements FSSMeasure, Serializable{
         return closestOutAttribute;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public double getMaxBivariateScore(List<Attribute> firstSet, List<Attribute> secondSet){
 
         if(this.pairScores.isEmpty())

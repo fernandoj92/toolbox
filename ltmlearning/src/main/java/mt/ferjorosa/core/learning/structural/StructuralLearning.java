@@ -5,15 +5,14 @@ import eu.amidst.core.datastream.DataOnMemory;
 import mt.ferjorosa.core.models.LTM;
 
 /**
- * Created by Fernando on 3/8/2016.
+ This interface defines the Algorithm for learning the Latent Tree Model structure from data.
  */
 public interface StructuralLearning {
 
     /**
-     * Updates the model using a given {@link DataOnMemory} object.
-     * @param batch a {@link DataOnMemory} object.
-     * @return the log-probability of the data instances of the
-     * batch. Or Double.NaN if this log-probability can not be estimated.
+     * Learns a LTM using a given {@link DataOnMemory} object.
+     * @param batch a {@link DataOnMemory} object that is going to be used to learn the model.
+     * @return the learnt LTM.
      */
     LTM learnModel(DataOnMemory<DataInstance> batch);
 

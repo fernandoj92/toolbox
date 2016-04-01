@@ -4,7 +4,7 @@ import eu.amidst.core.variables.DistributionTypeEnum;
 import eu.amidst.core.variables.Variable;
 
 /**
- * Represent a partition of the data, it is a hidden variable and can only be multinomial.
+ * Represents a partition of the data, it is a hidden variable and can only be multinomial.
  */
 public class LatentVariable implements LTVariable {
 
