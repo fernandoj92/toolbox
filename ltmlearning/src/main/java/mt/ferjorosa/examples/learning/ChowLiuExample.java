@@ -24,7 +24,7 @@ public class ChowLiuExample {
 
     public static void main(String[] args) throws Exception {
 
-        DataStream<DataInstance > data = DataStreamLoader.
+        DataStream<DataInstance> data = DataStreamLoader.
                 openFromFile("datasets/ferjorosaData/sprinklerDataHidden.arff");
 
         /**

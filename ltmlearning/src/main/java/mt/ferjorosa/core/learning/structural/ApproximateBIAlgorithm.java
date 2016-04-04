@@ -142,7 +142,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
     /**
      * Learns a LCM (a LTM with only one Latent variable) by using a heuristic proposed by Liu et.al
      * @param batch a {@link DataOnMemory} object that is going to be used to learn the model.
-     * @return the cluster
+     * @return the cluster.
      */
     private LTM singleIslandLearner(DataOnMemory<DataInstance> batch){
 

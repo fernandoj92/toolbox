@@ -9,7 +9,7 @@ import java.util.List;
  * suitable to create a specific class instead of simply reusing the DAG one:
  *
  * - There are two types of variables: Observed and Latent (hidden).
- * - Observed variables can hav other observed variables or latent variables as parents.
+ * - Observed variables can have other observed variables or latent variables as parents.
  * - Latent variables cannot have observed variables as parents.
  */
 public class LTDAG {
@@ -17,22 +17,38 @@ public class LTDAG {
     /** Represents the set of variables. */
     private LTVariables ltVariables;
 
-    /** The internal DAG, which contains the core functionality */
+    /** The internal DAG, which contains the core functionality. */
     private DAG dag;
 
+    /**
+     * Creates an instance of the class from a set of LT Variables
+     * @param ltVariables the set of variables of type {@link LTVariables}.
+     */
     public LTDAG(LTVariables ltVariables){
         this.ltVariables = ltVariables;
         this.dag = new DAG(ltVariables.getVariablesObject());
     }
 
+    /**
+     * Returns the set of LT Variables in this LTDAG.
+     * @return the 'LTVariables' object containing the variables of the LTM.
+     */
     public LTVariables getLTVariables(){
         return this.ltVariables;
     }
 
+    /**
+     * Returns the observed variables of the LTM.
+     * @return the list of observed variables.
+     */
     public List<ObservedVariable> getObservedVariables(){
         return this.getLTVariables().getObservedVariables();
     }
 
+    /**
+     * Returns the latent variables of the LTM.
+     * @return the list of latent variables.
+     */
     public List<LatentVariable> getLatentVariables(){
         return this.getLTVariables().getLatentVariables();
     }

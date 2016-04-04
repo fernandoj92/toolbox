@@ -9,9 +9,7 @@ import eu.amidst.core.variables.Variable;
  */
 public class ObservedVariable implements LTVariable {
 
-    /**
-    * Represents the Variable object, which contains its core functionality
-    */
+    /** Represents the Variable object, which contains its core functionality */
     private Variable variable;
 
     /**
@@ -23,10 +21,11 @@ public class ObservedVariable implements LTVariable {
     }
 
     /**
-     * In the very beggining we only accept multinomial variables
-     * @param variable
+     * Creates an instance of the class by passing the required variable.
+     * @param variable the wrapped variable.
      */
     public ObservedVariable(Variable variable){
+        // For the moment multinomial variables only.
         if(variable.getDistributionTypeEnum() != DistributionTypeEnum.MULTINOMIAL)
             throw new IllegalArgumentException("Only Multinomial variables are allowed");
 
