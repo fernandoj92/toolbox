@@ -1,7 +1,6 @@
 package mt.ferjorosa.core.learning.structural;
 
 import eu.amidst.core.datastream.Attribute;
-import eu.amidst.core.datastream.Attributes;
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataOnMemory;
 import eu.amidst.core.learning.parametric.ParameterLearningAlgorithm;

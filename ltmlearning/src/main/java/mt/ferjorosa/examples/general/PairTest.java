@@ -4,11 +4,15 @@ import eu.amidst.core.datastream.Attribute;
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataStream;
 import eu.amidst.core.io.DataStreamLoader;
+import mt.ferjorosa.core.util.pair.PairImplementation;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.w3c.dom.Attr;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Fer on 17/03/2016.
@@ -36,5 +40,42 @@ public class PairTest {
             System.out.println("Toca currar");
         else
             System.out.println("Ayyyyyyyyy");
+
+        Attribute leftAttribute = attributes.get(0);
+        Attribute leftRepetido = attributes.get(0);
+        Attribute rightAttribute = attributes.get(1);
+
+        Pair<Attribute, Attribute> leftPair = Pair.of(leftAttribute, rightAttribute);
+        Pair<Attribute, Attribute> rightPair = Pair.of(rightAttribute, leftAttribute);
+
+        Set<Pair<Attribute,Attribute>> pairSet = new HashSet<>();
+
+        pairSet.add(leftPair);
+        pairSet.add(rightPair);
+/*
+        if(leftPair.hashCode() == rightPair.hashCode())
+            System.out.println("Los hashcodes coinciden");
+
+        if(leftPair.equals(rightPair))
+            System.out.println("Los equals coinciden");
+
+        if(leftAttribute.equals(leftRepetido))
+            System.out.println("Los equals de los atributos coinciden");
+
+        if(leftAttribute.hashCode() == leftRepetido.hashCode())
+            System.out.println("Los hashcodes de los atributos coinciden");
+
+        if(pairSet.size() > 1)
+            System.out.println("Mi no entender");
+
+*/
+        PairImplementation<Attribute, Attribute> newLeftPair = new PairImplementation<>(leftAttribute,rightAttribute);
+        PairImplementation<Attribute, Attribute> newRightPair = new PairImplementation<>(leftAttribute,rightAttribute);
+
+        if(newLeftPair.equals(newRightPair))
+            System.out.println("Los equals de los PairImplementations coinciden");
+
+        if(newLeftPair.hashCode() == newRightPair.hashCode())
+            System.out.println("Los hashcodes de los PairImplementations coinciden");
     }
 }

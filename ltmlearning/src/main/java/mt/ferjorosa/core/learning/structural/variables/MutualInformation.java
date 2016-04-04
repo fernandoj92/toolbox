@@ -91,7 +91,13 @@ public class MutualInformation implements FSSMeasure{
                 double Py = Ny/Ninstances;
                 double Pxy = Nxy/Ninstances;
 
-                sum += Pxy * Math.log(Pxy/(Px*Py));
+                /** log(0) = -Infinity
+                 *  To deal with that, in information theory there is a convention stating that log(0) = 0
+                 */
+                if(Pxy == 0 || Px == 0 || Py == 0)
+                    sum += 0;
+                else
+                    sum += Pxy * Math.log(Pxy/(Px*Py));
             }
         }
         // Calculation needed to make it a logarithm with base @logBase
@@ -103,10 +109,9 @@ public class MutualInformation implements FSSMeasure{
      */
     public void computeAllPairScores(List<Attribute> attributes){
 
-        //
         double bivariateScore;
 
-        // SIMÉTRICO: El score es identico para (i,j) que para (j,i)
+        // Simetric: The score is the same for (i,j) that for (j,i)
         Set<Pair<Attribute, Attribute>> possiblePairs = new HashSet<>();
 
         for(Attribute attr : attributes)
@@ -114,11 +119,11 @@ public class MutualInformation implements FSSMeasure{
                 if(attr1.getIndex() != attr.getIndex()){
                     Pair<Attribute,Attribute> pair = Pair.of(attr, attr1);
                     if(!possiblePairs.contains(pair)){
-                        // 1 - Almacenar su valor
+                        // Store its value
                         possiblePairs.add(pair);
                         bivariateScore = computeBivariateScore(attr,attr1);
-                        // Almacenarlo con el Pair como Key o hacer dos HashMaps?
-                        pairScores.put(pair,bivariateScore);
+                        if(!pairScores.containsKey(pair))
+                            pairScores.put(pair,bivariateScore);
                     }
                 }
     }
