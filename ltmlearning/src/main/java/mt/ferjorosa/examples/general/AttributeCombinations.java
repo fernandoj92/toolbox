@@ -11,8 +11,8 @@ public class AttributeCombinations {
 
     public static void main(String[] args) throws Exception {
         int contarCombinacion = 0;
-        int numberOfAttributes = 30;
-        int[] attributeIndexes ={3,4,5,9,6,12,3,4,5,9,6,12,0,0,0,3,4,5,9,6,12,3,4,5,9,6,12,0,0,0}; // arraySize == numberOfAttributes
+        int numberOfAttributes = 4;
+        int[] attributeIndexes ={3,4,5,9}; // arraySize == numberOfAttributes
 
         for(int i=2;i<=numberOfAttributes/2;i++) {
             int left = i;
@@ -31,7 +31,7 @@ public class AttributeCombinations {
                 // Generar combinacion
                 // Siempre iteramos en la última posicion, lo demas son resets
                 while(leftIndexes[pos] < numberOfAttributes){
-                    //mostrarCombinacion(leftIndexes);
+                    mostrarCombinacion(leftIndexes);
                     contarCombinacion++;
                     leftIndexes[pos]++;
                 }

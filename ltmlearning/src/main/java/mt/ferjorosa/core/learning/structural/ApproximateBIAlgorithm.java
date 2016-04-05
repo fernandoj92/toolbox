@@ -230,7 +230,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
         ArrayList<int[]> leftCombinations = generateAttributeCombinations(attributes.size());
 
         // The score of the best model
-        double bestScore = 0;
+        double bestScore = Double.NEGATIVE_INFINITY;
 
         // The best known model
         LTM bestLTM = null;
@@ -245,10 +245,10 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
 
             // It only returns the left tree attributes, so to know the right tree attributes it is necessary to filter.
             rightAttributes = attributes.stream()
-                    .filter(leftAttributes::contains)
+                    .filter(attribute -> !leftAttributes.contains(attribute))
                     .collect(Collectors.toList());
 
-            LTM model = ltmLearner.learn2dimensionalLTM(leftAttributes, rightAttributes, 2, 2, batch);
+            LTM model = ltmLearner.learn2dimensionalLTM(leftAttributes, rightAttributes, baseLvCardinality, baseLvCardinality, batch);
 
             // TODO: Definir un metodo que compare scores, ya que dependiendo del score la comparacion es diferente
             // (mayor que no tiene porque significar siempre que el score sea mejor)
@@ -287,7 +287,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
 
                 // It always iterates through the last position, everything else is called a "reset"
                 while(leftIndexes[pos] < numberOfAttributes){
-                    leftCombinations.add(leftIndexes);
+                    leftCombinations.add(leftIndexes.clone());
                     leftIndexes[pos]++;
                 }
 
@@ -337,7 +337,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
 
                 LTM newModel = ltmLearner.learnUnidimensionalLTM(clusterAttributes, batch, currentCardinality);
 
-                if(newModel.getScore() > currentModel.getScore())
+                if(newModel.getScore()  < currentModel.getScore())
                     // New cardinality doesn't improve the score, therefore the while loop is stopped
                     increaseCardinality = false;
                 else
