@@ -4,10 +4,8 @@ import eu.amidst.core.datastream.Attribute;
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataStream;
 import eu.amidst.core.io.DataStreamLoader;
-import mt.ferjorosa.core.util.pair.PairImplementation;
-import org.apache.commons.lang3.SystemUtils;
+import mt.ferjorosa.core.util.pair.SymmetricPair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.w3c.dom.Attr;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -69,13 +67,13 @@ public class PairTest {
             System.out.println("Mi no entender");
 
 */
-        PairImplementation<Attribute, Attribute> newLeftPair = new PairImplementation<>(leftAttribute,rightAttribute);
-        PairImplementation<Attribute, Attribute> newRightPair = new PairImplementation<>(leftAttribute,rightAttribute);
+        SymmetricPair<Attribute, Attribute> newLeftPair = new SymmetricPair<>(leftAttribute,rightAttribute);
+        SymmetricPair<Attribute, Attribute> newRightPair = new SymmetricPair<>(rightAttribute,leftAttribute);
 
         if(newLeftPair.equals(newRightPair))
-            System.out.println("Los equals de los PairImplementations coinciden");
+            System.out.println("Los equals de los SymmetricPairs coinciden");
 
         if(newLeftPair.hashCode() == newRightPair.hashCode())
-            System.out.println("Los hashcodes de los PairImplementations coinciden");
+            System.out.println("Los hashcodes de los SymmetricPairs coinciden");
     }
 }

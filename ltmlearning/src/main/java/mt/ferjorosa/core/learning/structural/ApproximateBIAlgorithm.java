@@ -10,13 +10,14 @@ import mt.ferjorosa.core.learning.LTMLearningEngine;
 import mt.ferjorosa.core.learning.structural.variables.FSSMeasure;
 import mt.ferjorosa.core.learning.structural.variables.MutualInformation;
 import mt.ferjorosa.core.models.LTM;
-import mt.ferjorosa.core.models.ltdag.*;
+import mt.ferjorosa.core.models.ltdag.ObservedVariable;
 import mt.ferjorosa.core.util.graph.DirectedTree;
 import mt.ferjorosa.core.util.graph.UndirectedGraph;
-import org.apache.commons.lang3.tuple.Pair;
+import mt.ferjorosa.core.util.pair.SymmetricPair;
 
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -154,16 +155,16 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
         boolean UnidimensionalityTestCondition = true;
 
         // Selects the pair of attributes with the highest MI.
-        Pair<Attribute, Attribute> bestPair =  siblingClustersMeasure.getBestPair(outSetAttributes);
+        SymmetricPair<Attribute, Attribute> bestPair =  siblingClustersMeasure.getBestPair(outSetAttributes);
 
         // Creates the activeSet, containing the list of attributes that belong only to this cluster.
         List<Attribute> activeSet = new ArrayList<>();
 
-        activeSet.add(bestPair.getLeft());
-        activeSet.add(bestPair.getRight());
+        activeSet.add(bestPair.getFirst());
+        activeSet.add(bestPair.getSecond());
 
-        outSetAttributes.remove(bestPair.getLeft());
-        outSetAttributes.remove(bestPair.getRight());
+        outSetAttributes.remove(bestPair.getFirst());
+        outSetAttributes.remove(bestPair.getSecond());
 
         LTM islandLTM = null;
 

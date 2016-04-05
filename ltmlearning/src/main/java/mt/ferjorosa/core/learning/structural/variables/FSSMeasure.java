@@ -1,10 +1,9 @@
 package mt.ferjorosa.core.learning.structural.variables;
 
 import eu.amidst.core.datastream.Attribute;
-import eu.amidst.core.datastream.Attributes;
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataOnMemory;
-import org.apache.commons.lang3.tuple.Pair;
+import mt.ferjorosa.core.util.pair.SymmetricPair;
 
 import java.util.List;
 
@@ -41,7 +40,7 @@ public interface FSSMeasure {
      * @param attributes the considered attributes.
      * @return the pair of attributes with the highest bivariate score.
      */
-    Pair<Attribute, Attribute> getBestPair(List<Attribute> attributes);
+    SymmetricPair<Attribute, Attribute> getBestPair(List<Attribute> attributes);
 
     /**
      * Returns the attribute of the "outSet" that has the highest bivariate score with any of the attributes of the

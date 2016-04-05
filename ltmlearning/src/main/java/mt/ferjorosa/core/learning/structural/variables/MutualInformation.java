@@ -1,12 +1,10 @@
 package mt.ferjorosa.core.learning.structural.variables;
 
 import eu.amidst.core.datastream.Attribute;
-import eu.amidst.core.datastream.Attributes;
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataOnMemory;
-import org.apache.commons.lang3.tuple.Pair;
+import mt.ferjorosa.core.util.pair.SymmetricPair;
 
-import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -27,7 +25,7 @@ public class MutualInformation implements FSSMeasure{
      * The stored pair scores. It cannot contain scores between a pair of attributes not present in the data, but
      * it doesnt have to contain all the pair-scores between all the attributes presented in the data.
      */
-    private Map<Pair<Attribute,Attribute>,Double> pairScores = new HashMap<>();
+    private Map<SymmetricPair<Attribute,Attribute>,Double> pairScores = new HashMap<>();
 
     /**
      * {@inheritDoc}
@@ -91,7 +89,8 @@ public class MutualInformation implements FSSMeasure{
                 double Py = Ny/Ninstances;
                 double Pxy = Nxy/Ninstances;
 
-                /** log(0) = -Infinity
+                /**
+                 * log(0) = -Infinity
                  *  To deal with that, in information theory there is a convention stating that log(0) = 0
                  */
                 if(Pxy == 0 || Px == 0 || Py == 0)
@@ -111,13 +110,13 @@ public class MutualInformation implements FSSMeasure{
 
         double bivariateScore;
 
-        // Simetric: The score is the same for (i,j) that for (j,i)
-        Set<Pair<Attribute, Attribute>> possiblePairs = new HashSet<>();
+        // Symmetric: The score is the same for (i,j) that for (j,i)
+        Set<SymmetricPair<Attribute, Attribute>> possiblePairs = new HashSet<>();
 
         for(Attribute attr : attributes)
             for(Attribute attr1 : attributes)
                 if(attr1.getIndex() != attr.getIndex()){
-                    Pair<Attribute,Attribute> pair = Pair.of(attr, attr1);
+                    SymmetricPair<Attribute,Attribute> pair = new SymmetricPair<>(attr, attr1);
                     if(!possiblePairs.contains(pair)){
                         // Store its value
                         possiblePairs.add(pair);
@@ -131,14 +130,12 @@ public class MutualInformation implements FSSMeasure{
     /**
      * {@inheritDoc}
      */
-    public Pair<Attribute, Attribute> getBestPair(List<Attribute> attributes){
+    public SymmetricPair<Attribute, Attribute> getBestPair(List<Attribute> attributes){
 
         if(this.pairScores.isEmpty())
             throw new IllegalStateException("No Pair scores have been computed");
 
-        //
         double bivariateScore;
-        //
         double maxScore = Double.NEGATIVE_INFINITY;
         Attribute first = null;
         Attribute second = null;
@@ -146,14 +143,14 @@ public class MutualInformation implements FSSMeasure{
         for(Attribute attr : attributes)
             for(Attribute attr1 : attributes)
                 if(attr1.getIndex() != attr.getIndex()){
-                    bivariateScore = pairScores.get(Pair.of(attr,attr1));
+                    bivariateScore = pairScores.get(new SymmetricPair<>(attr,attr1));
                     if(bivariateScore > maxScore){
                         first = attr;
                         second = attr1;
                     }
                 }
 
-        return Pair.of(first,second);
+        return new SymmetricPair<>(first,second);
     }
 
     /**
@@ -170,7 +167,7 @@ public class MutualInformation implements FSSMeasure{
 
         for(Attribute outAttribute : outSet)
             for(Attribute activeAttribute : activeSet){
-                Pair<Attribute, Attribute> currentPair =Pair.of(outAttribute,activeAttribute);
+                SymmetricPair<Attribute, Attribute> currentPair = new SymmetricPair<>(outAttribute,activeAttribute);
                 bivariateScore = pairScores.get(currentPair);
                 if(bivariateScore > maxScore){
                     maxScore = bivariateScore;
@@ -193,7 +190,7 @@ public class MutualInformation implements FSSMeasure{
 
         for(Attribute firstAttribute : firstSet)
             for(Attribute secondAttribute : secondSet){
-                Pair<Attribute, Attribute> currentPair =Pair.of(firstAttribute,secondAttribute);
+                SymmetricPair<Attribute, Attribute> currentPair = new SymmetricPair<>(firstAttribute,secondAttribute);
                 bivariateScore = pairScores.get(currentPair);
                 if(bivariateScore > maxScore){
                     maxScore = bivariateScore;
