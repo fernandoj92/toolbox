@@ -152,11 +152,12 @@ public class LTMLearningEngine {
     }
 
     /**
-     *
-     * @param latentVarsTree
-     * @param ltms
+     * Learns a LTM from a list of LCMs and directed tree that represents the connections between the Latent variables of
+     * the unconnected LCMs.
+     * @param latentVarsTree the directed tree that represents the connections between the tree's latent variables.
+     * @param ltms the array of unconnected Latent Tree Models.
      * @param batch a {@link DataOnMemory} object that is going to be used to learn the model.
-     * @return
+     * @return the new directed Latent Tree Model.
      */
     public LTM learnFlatLTM(DirectedTree latentVarsTree, ArrayList<LTM> ltms, DataOnMemory<DataInstance> batch){
 
@@ -216,6 +217,7 @@ public class LTMLearningEngine {
                         latentVar = latentVariable;
                 }
 
+                // obvVar & observedVariable represent the same object, but are different instances
                 for(ObservedVariable obvVar : ltm.getLtdag().getObservedVariables()){
                     for(ObservedVariable observedVariable : observedVariables)
                         if(observedVariable.getVariable().getAttribute().equals(obvVar.getVariable().getAttribute()))
@@ -239,7 +241,7 @@ public class LTMLearningEngine {
     }
 
     /**
-     * Private class that learns the parameters of a LTM
+     * Private class that learns the parameters of a LTM.
      */
     private class LearnKnownStructureLTM {
 

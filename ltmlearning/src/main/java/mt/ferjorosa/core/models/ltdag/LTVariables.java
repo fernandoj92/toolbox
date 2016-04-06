@@ -1,5 +1,6 @@
 package mt.ferjorosa.core.models.ltdag;
 
+import eu.amidst.core.datastream.Attribute;
 import eu.amidst.core.variables.Variable;
 import eu.amidst.core.variables.Variables;
 
@@ -84,4 +85,14 @@ public class LTVariables{
         return latentVar;
     }
 
+    /**
+     * Returns the list of {@link Attribute} associated with the LTDAG's observed variables.
+     * @return the LTDAG's list of {@link Attribute}.
+     */
+    public List<Attribute> getAttributes(){
+        List<Attribute> attributes = new ArrayList<>();
+        for(ObservedVariable observedVariable : this.observedVariables)
+            attributes.add(observedVariable.getAttribute());
+        return attributes;
+    }
 }

@@ -14,6 +14,7 @@ import mt.ferjorosa.core.models.ltdag.ObservedVariable;
 import mt.ferjorosa.core.util.graph.DirectedTree;
 import mt.ferjorosa.core.util.graph.UndirectedGraph;
 import mt.ferjorosa.core.util.pair.SymmetricPair;
+import org.w3c.dom.Attr;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,8 @@ import java.util.stream.Collectors;
  * TODO: Mirar si un mejor score es MAYOR o MENOR que un peor score (findBest2dimensionalModel)
  * TODO: Recordar  al hacer ejemplos o tests de el metodo de generar combinaciones el añadir un comentario en la doc del metodo
  * TODO: Punto 6 del algoritmo
+ * TODO: Este algoritmo siempre genera un LCM de 3 variables cuando recibe solo 3 atributos, aunque busque un arbol de 2 LVs, siempre queda igual.
+ * TODO: connectSiblingClusters escoge una raiz del MWST de forma aleatoria.
  */
 public class ApproximateBIAlgorithm implements StructuralLearning {
 
@@ -133,10 +136,59 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
         siblingClustersMeasure.computeAllPairScores(outSetAttributes);
 
         while(outSetAttributes.size() > 0){
-            LTM singleIslandLTM = singleIslandLearner(batch);
-            // Store each cluster that has been learnt
-            siblingClusters.add(singleIslandLTM);
+
+            // Special case when we only have 2 attributes left
+            if(outSetAttributes.size() <= 2){
+                if(siblingClusters.isEmpty()){
+                    // If we only have 2 attributes in the dataSet, a LCM is learned and most the next steps will be avoided
+                    LTM ltmWith2Variables = ltmLearner.learnUnidimensionalLTM(outSetAttributes,batch,baseLvCardinality);
+                    siblingClusters.add(ltmWith2Variables);
+                }else{
+                    // We look for the best sibling cluster to add each of these attributes
+                    // when we find it, we remove that substitute that sibling cluster with a  new one with an extra
+                    // observed variable.
+                    LTM improvedLTM = searchBestCluster(outSetAttributes.get(0), batch);
+                    outSetAttributes.remove(outSetAttributes.get(0));
+                    siblingClusters.add(improvedLTM);
+                }
+            }else {
+                LTM singleIslandLTM = singleIslandLearner(batch);
+                siblingClusters.add(singleIslandLTM);
+            }
         }
+    }
+
+    /**
+     * Searches in all the learnt clusters
+     * @param attribute
+     * @param batch a {@link DataOnMemory} object that is going to be used to learn the model.
+     * @return
+     */
+    private LTM searchBestCluster(Attribute attribute, DataOnMemory<DataInstance> batch){
+
+        // simple initialization.
+        LTM bestcluster = siblingClusters.get(0);
+        double bestScore = 0;
+
+        // Creates a single item list.
+        List<Attribute> attributes = new ArrayList<>();
+        attributes.add(attribute);
+
+        // Iterates the sibling clusters looking for the cluster that maximizes the bivariate score with the attribute
+        // to find the best-suited cluster.
+        for(LTM cluster: siblingClusters){
+            List<Attribute> clusterAttributes = cluster.getLtdag().getLTVariables().getAttributes();
+            double currentScore = siblingClustersMeasure.getMaxBivariateScore(clusterAttributes, attributes);
+            if(currentScore > bestScore){
+                bestScore = currentScore;
+                bestcluster = cluster;
+            }
+        }
+
+        // Learns a new LTM with one more attribute, removes the old cluster and returns the new one.
+        List<Attribute> newClusterAttributes = bestcluster.getLtdag().getLTVariables().getAttributes();
+        newClusterAttributes.add(attribute);
+        return ltmLearner.learnUnidimensionalLTM(newClusterAttributes, batch, baseLvCardinality);
     }
 
     /**
@@ -183,7 +235,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
             outSetAttributes.remove(closestAttribute);
 
             // BI uses heuristics to construct the LTM. After >= 4 attributes in the activeSet, it starts executing the UD test.
-            if(activeSet.size() >= 4 || outSetAttributes.size() < 4){
+            if(activeSet.size() >= 4){
 
                 LTM ltmSubModel = ltmLearner.learnUnidimensionalLTM(activeSet, batch, baseLvCardinality);
                 LTM ltm2dimensionalBestModel = findBest2dimensionalLTM(activeSet, batch);
@@ -323,9 +375,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
         for(LTM cluster: siblingClusters){
 
             LTM currentModel = cluster;
-            List<Attribute> clusterAttributes = new ArrayList<>();
-            for(Variable variable : cluster.getLearntModel().getVariables())
-                clusterAttributes.add(variable.getAttribute());
+            List<Attribute> clusterAttributes = cluster.getLtdag().getLTVariables().getAttributes();
 
             // Starting with the base cardinality
             int currentCardinality = baseLvCardinality;
@@ -400,7 +450,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
         int rootIndex = rn.nextInt(mwst.getNVertices());
         DirectedTree rootedMWST = new DirectedTree(mwst, rootIndex);
 
-        // Finally, a flat-LTM is learnt in relationship with the previouly calculated MWST
+        // Finally, a flat-LTM is learnt in relation to the previously calculated MWST
         return ltmLearner.learnFlatLTM(rootedMWST,siblingClusters,batch);
 
     }

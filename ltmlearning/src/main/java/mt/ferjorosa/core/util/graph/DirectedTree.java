@@ -1,6 +1,6 @@
 package mt.ferjorosa.core.util.graph;
 
-import org.apache.commons.lang3.tuple.Pair;
+import mt.ferjorosa.core.util.pair.SymmetricPair;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,8 +9,6 @@ import java.util.Map;
  * Utility class that represents a Directed Tree, used for representing connections between LTVariables
  * when a structural algorithm is being used to create a Latent Tree Model
  * (i.e @link mt.ferjorosa.core.learning.structural.ApproximateBIAlgorithm}).
- *
- * TODO: Take a look at the rootIndex attribute
  */
 public class DirectedTree {
 
@@ -27,7 +25,8 @@ public class DirectedTree {
      */
     public DirectedTree(UndirectedGraph graph, int rootIndex){
         this.edges = new HashMap<>();
-        addEdgesRecursively(graph, rootIndex);
+        this.rootIndex = rootIndex;
+        createEdges(graph, rootIndex);
     }
 
     /**
@@ -53,14 +52,33 @@ public class DirectedTree {
     }
 
     /**
+     *
+     * @param graph
+     * @param index
+     */
+    private void createEdges(UndirectedGraph graph, int index){
+        Boolean visited[] = new Boolean[graph.getNVertices()];
+        for (int i = 0; i < visited.length; i++)
+            visited[i] = false;
+
+        // Recursively add the directed edges
+        addEdgesRecursively(graph, visited, index);
+    }
+
+    /**
      * Private method that allows to add new edges recursively to the tree by traversing an undirected graph.
      * @param graph the undirected graph being traversed.
      * @param index the node's index.
      */
-    private void addEdgesRecursively(UndirectedGraph graph, int index){
+    private void addEdgesRecursively(UndirectedGraph graph, Boolean[] visited, int index){
+        // Marks current node as visited
+        visited[index] = true;
+
         for(Integer i :  graph.getAdjacentEdges()[index]){
-            addEdge(index, i, graph.getEdges().get(Pair.of(index,i)));
-            addEdgesRecursively(graph, i);
+            if (!visited[i]) {
+                addEdge(index, i, graph.getEdges().get(new SymmetricPair<>(index, i)));
+                addEdgesRecursively(graph, visited, i);
+            }
         }
     }
 

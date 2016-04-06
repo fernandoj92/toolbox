@@ -16,6 +16,20 @@ public class LatentVariable implements LTVariable {
     private int index;
 
     /**
+     * Creates an instance of the class by passing the required variable.
+     * @param variable the wrapped variable.
+     * @param index the required index to distinguish the LV.
+     */
+    public LatentVariable(Variable variable, int index){
+        // Latent variables can only be multinomially distributed.
+        if(variable.getDistributionTypeEnum() != DistributionTypeEnum.MULTINOMIAL)
+            throw new IllegalArgumentException("Only Multinomial variables are allowed");
+
+        this.variable = variable;
+        this.index = index;
+    }
+
+    /**
      * Returns the Variable object.
      * @return the accessible variable.
      */
@@ -31,17 +45,6 @@ public class LatentVariable implements LTVariable {
         return this.index;
     }
 
-    /**
-     * Creates an instance of the class by passing the required variable.
-     * @param variable the wrapped variable.
-     * @param index the required index to distinguish the LV.
-     */
-    public LatentVariable(Variable variable, int index){
-        // Latent variables can only be multinomially distributed.
-        if(variable.getDistributionTypeEnum() != DistributionTypeEnum.MULTINOMIAL)
-            throw new IllegalArgumentException("Only Multinomial variables are allowed");
 
-        this.variable = variable;
-    }
 
 }

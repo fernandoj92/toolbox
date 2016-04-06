@@ -5,6 +5,7 @@ import eu.amidst.core.datastream.DataOnMemory;
 import eu.amidst.core.datastream.DataStream;
 import eu.amidst.core.io.BayesianNetworkWriter;
 import eu.amidst.core.io.DataStreamLoader;
+import eu.amidst.huginlink.io.BNWriterToHugin;
 import mt.ferjorosa.core.learning.structural.ApproximateBIAlgorithm;
 import mt.ferjorosa.core.learning.structural.StructuralLearning;
 import mt.ferjorosa.core.models.LTM;
@@ -27,6 +28,7 @@ public class AsiaDataset {
         }
 
         BayesianNetworkWriter.saveToFile(learntModel.getLearntModel(),"networks/asia_train.bn");
+        BNWriterToHugin.saveToHuginFile(learntModel.getLearntModel(),"networks/asia_train.net");
 
     }
 }

@@ -1,6 +1,7 @@
 package mt.ferjorosa.core.util.graph;
 
-import org.apache.commons.lang3.tuple.Pair;
+import eu.amidst.core.datastream.Attribute;
+import mt.ferjorosa.core.util.pair.SymmetricPair;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -16,7 +17,7 @@ public class UndirectedGraph {
     private int nVertices;
 
     /** Set of undirected edges, represented as a Map. */
-    private Map<Pair<Integer,Integer>,Double> edges;
+    private Map<SymmetricPair<Integer,Integer>,Double> edges;
 
     /** Set of adjacent nodes of a node. */
     private Set<Integer> adjacentEdges[];
@@ -47,7 +48,7 @@ public class UndirectedGraph {
     public static UndirectedGraph obtainMaximumWeightSpanningTree(UndirectedGraph graph){
 
         // First we sort the edges by its weight, from big to small
-        Map<Pair<Integer,Integer>, Double> sortedEdges = graph.getEdges().entrySet().stream()
+        Map<SymmetricPair<Integer,Integer>, Double> sortedEdges = graph.getEdges().entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
@@ -56,13 +57,13 @@ public class UndirectedGraph {
 
         // Iterate through the edges and add them one by one to the tree and checking that there are no cycles
         for(Map.Entry entry: sortedEdges.entrySet()){
-            Pair<Integer,Integer> key = (Pair<Integer,Integer>) entry.getKey();
+            SymmetricPair<Integer,Integer> key = (SymmetricPair<Integer,Integer>) entry.getKey();
             Double value = (Double) entry.getValue();
 
-            mwst.addEdge(key.getLeft(),key.getRight(),value);
+            mwst.addEdge(key.getFirst(),key.getSecond(),value);
             nEdges++;
             if(mwst.isCyclic()) {
-                mwst.removeEdge(key.getLeft(), key.getRight());
+                mwst.removeEdge(key.getFirst(), key.getSecond());
                 nEdges--;
             }
             // If the number of edges in the tree is equal to nVertices - 1, there is no need to add more edges
@@ -77,7 +78,7 @@ public class UndirectedGraph {
      * Returns the graph's set of edges with their associated weights.
      * @return the graph's set of edges with their associated weights.
      */
-    public Map<Pair<Integer,Integer>,Double> getEdges(){
+    public Map<SymmetricPair<Integer,Integer>,Double> getEdges(){
         return this.edges;
     }
 
@@ -109,7 +110,7 @@ public class UndirectedGraph {
 
         adjacentEdges[parent].add(son);
         adjacentEdges[son].add(parent);
-        edges.put(Pair.of(parent, son), weight);
+        edges.put(new SymmetricPair<>(parent,son), weight);
     }
 
     /**
@@ -123,7 +124,7 @@ public class UndirectedGraph {
 
         adjacentEdges[parent].remove(son);
         adjacentEdges[son].remove(parent);
-        edges.remove(Pair.of(parent, son));
+        edges.remove(new SymmetricPair<>(parent, son));
     }
 
     /**
@@ -157,8 +158,7 @@ public class UndirectedGraph {
         visited[v] = true;
 
         for(Integer i : adjacentEdges[v]){
-            // If an adjacent is not visited, then recur for that
-            // adjacent
+            // If an adjacent is not visited, then recur for that adjacent
             if (!visited[i])
             {
                 if (recursiveIsCyclic(i, visited, v))

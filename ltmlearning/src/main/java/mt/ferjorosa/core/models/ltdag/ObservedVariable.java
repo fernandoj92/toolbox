@@ -1,5 +1,6 @@
 package mt.ferjorosa.core.models.ltdag;
 
+import eu.amidst.core.datastream.Attribute;
 import eu.amidst.core.variables.DistributionTypeEnum;
 import eu.amidst.core.variables.Variable;
 
@@ -13,14 +14,6 @@ public class ObservedVariable implements LTVariable {
     private Variable variable;
 
     /**
-     * Returns the Variable object
-     * @return the accessible variable
-     */
-    public Variable getVariable(){
-        return this.variable;
-    }
-
-    /**
      * Creates an instance of the class by passing the required variable.
      * @param variable the wrapped variable.
      */
@@ -30,5 +23,21 @@ public class ObservedVariable implements LTVariable {
             throw new IllegalArgumentException("Only Multinomial variables are allowed");
 
         this.variable = variable;
+    }
+
+    /**
+     * Returns the Variable object
+     * @return the accessible variable
+     */
+    public Variable getVariable(){
+        return this.variable;
+    }
+
+    /**
+     * Returns the {@link Attribute} associated with this Variable.
+     * @return the attribute associated with this Variable.
+     */
+    public Attribute getAttribute(){
+        return this.variable.getAttribute();
     }
 }
