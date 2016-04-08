@@ -50,7 +50,7 @@ public class MutualInformation implements FSSMeasure{
             attrXCounts.put(i + "",0);
         }
         // Attribute2 counts initialization
-        for(int i=0; i<attributeX.getNumberOfStates();i++){
+        for(int i=0; i<attributeY.getNumberOfStates();i++){
             attrYCounts.put(i + "",0);
         }
         // Cross-attribute counts initialization

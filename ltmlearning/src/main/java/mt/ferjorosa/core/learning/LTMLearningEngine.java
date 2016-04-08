@@ -58,9 +58,10 @@ public class LTMLearningEngine {
      * @param attributes the list of  {@link Attribute} that are going to be used as the observed variables of the LTM
      * @param batch a {@link DataOnMemory} object that is going to be used to learn the model.
      * @param lvCardinality the hidden variable cardinality.
+     * @param lvIndex the latent variable's index to distinguish it from other LVs
      * @return a fully learnt LTM.
      */
-    public LTM learnUnidimensionalLTM(List<Attribute> attributes, DataOnMemory<DataInstance> batch, int lvCardinality){
+    public LTM learnUnidimensionalLTM(List<Attribute> attributes, DataOnMemory<DataInstance> batch, int lvCardinality, int lvIndex){
 
         // First creates an 'Attributes' object, necessary for the 'Variables' object creation.
         Variables variables = new Variables(new Attributes(attributes));
@@ -78,8 +79,8 @@ public class LTMLearningEngine {
         for(int i = 0; i<lvCardinality;i++)
             latentVarStates[i] = i+"";
 
-        Variable latentVariable = variables.newMultionomialVariable("LatentVar", Arrays.asList(latentVarStates));
-        LatentVariable latentVar = ltVariables.newLatentVariable(latentVariable, 0);
+        Variable latentVariable = variables.newMultionomialVariable("H"+lvIndex, Arrays.asList(latentVarStates));
+        LatentVariable latentVar = ltVariables.newLatentVariable(latentVariable, lvIndex);
 
         // Creates the LTDAG
         LTDAG ltdag = new LTDAG(ltVariables);
@@ -97,6 +98,8 @@ public class LTMLearningEngine {
      * Learns 2 unidimensional LTMs connected by their class variables.
      * @param leftAttributes left tree attributes.
      * @param rightAttributes right tree attributes.
+     * @param leftCardinality the cardinality of the left latent variable
+     * @param rightCardinality the cardinality of the right latent variable
      * @param batch a {@link DataOnMemory} object that is going to be used to learn the model.
      * @return a fully learnt LTM.
      */
@@ -261,7 +264,6 @@ public class LTMLearningEngine {
             this.parameterLearningAlgorithm = parameterLearningAlgorithm;
             this.ltdag = ltdag;
             parameterLearningAlgorithm.setDAG(ltdag.getDAG());
-            this.parameterLearningAlgorithm.initLearning();
         }
 
         /**
@@ -270,9 +272,16 @@ public class LTMLearningEngine {
          * @return the fully learnt LTM
          */
         public LTM learnModel(DataOnMemory<DataInstance> batch){
-            double modelScore = parameterLearningAlgorithm.updateModel(batch);
+            //Sets the data that is going to be used for learning the LTM parameters
+            parameterLearningAlgorithm.setDataStream(batch);
+            //Performs the learning
+            parameterLearningAlgorithm.runLearning();
+            // And stores the learnt model
             BayesianNetwork learntModel = parameterLearningAlgorithm.getLearntBayesianNetwork();
-            return new LTM(learntModel, modelScore, ltdag);
+            // Creates a LTM object  that contains, the LTM structure, its final model and the score
+            double score = parameterLearningAlgorithm.getLogMarginalProbability();
+            //Returns the LTM
+            return new LTM(learntModel, score, ltdag);
         }
 
     }
