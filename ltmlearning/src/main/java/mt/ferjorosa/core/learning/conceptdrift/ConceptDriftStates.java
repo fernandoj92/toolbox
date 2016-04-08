@@ -1,10 +1,19 @@
 package mt.ferjorosa.core.learning.conceptdrift;
 
 /**
- * Created by Fernando on 14/03/2016.
+ * Enumerates all the possible concept drift states:
+ * <li>{@link #CONCEPT_SHIFT}</li>
+ * <li>{@link #CONCEPT_DRIFT}</li>
+ * <li>{@link #NONE}</li>
  */
 public enum ConceptDriftStates {
-    CONCEPT_DRIFT,
+
+    /** This term is usually associated to abrupt changes in the model. */
     CONCEPT_SHIFT,
+
+    /** This term is usually associated to gradual changes in the model. */
+    CONCEPT_DRIFT,
+
+    /** When there is no concept drift. */
     NONE
 }

@@ -65,7 +65,7 @@ public class KnownLTMLearningExample {
             LTM learntModel = learner.learnKnownStructureLTM(ltdag,batch);
             //We print the model
             System.out.println("-----------------------------------");
-            System.out.println(learntModel.getLearntModel().toString());
+            System.out.println(learntModel.getLearntBayesianNetwork().toString());
         }
     }
 }

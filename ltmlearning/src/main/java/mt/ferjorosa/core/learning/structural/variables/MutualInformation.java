@@ -30,6 +30,7 @@ public class MutualInformation implements FSSMeasure{
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setData(DataOnMemory<DataInstance> data){
         this.data = data;
     }
@@ -37,6 +38,7 @@ public class MutualInformation implements FSSMeasure{
     /**
      * {@inheritDoc}
      */
+    @Override
     public double computeBivariateScore(Attribute attributeX, Attribute attributeY){
         int logBase = 2; // Bivariate Mutual Information
 
@@ -106,6 +108,7 @@ public class MutualInformation implements FSSMeasure{
     /**
      * {@inheritDoc}
      */
+    @Override
     public void computeAllPairScores(List<Attribute> attributes){
 
         double bivariateScore;
@@ -130,6 +133,7 @@ public class MutualInformation implements FSSMeasure{
     /**
      * {@inheritDoc}
      */
+    @Override
     public SymmetricPair<Attribute, Attribute> getBestPair(List<Attribute> attributes){
 
         if(this.pairScores.isEmpty())
@@ -156,6 +160,7 @@ public class MutualInformation implements FSSMeasure{
     /**
      * {@inheritDoc}
      */
+    @Override
     public Attribute getClosestAttributeToSet(List<Attribute> activeSet, List<Attribute> outSet){
 
         if(this.pairScores.isEmpty())
@@ -180,6 +185,7 @@ public class MutualInformation implements FSSMeasure{
     /**
      * {@inheritDoc}
      */
+    @Override
     public double getMaxBivariateScore(List<Attribute> firstSet, List<Attribute> secondSet){
 
         if(this.pairScores.isEmpty())
