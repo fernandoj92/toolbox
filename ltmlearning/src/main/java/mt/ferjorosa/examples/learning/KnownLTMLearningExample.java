@@ -58,11 +58,11 @@ public class KnownLTMLearningExample {
         SVB parameterLearningAlgorithm = new SVB();
         //We can activate the output
         parameterLearningAlgorithm.setOutput(true);
-        // Normally we would need to call initLearning(), but the learner do it for us, so no need to call it 2 times
+        // Normally we would need to call initLearning(), but the learner does it for us, so no need to call it 2 times
         LTMLearningEngine learner = new LTMLearningEngine(parameterLearningAlgorithm);
 
         for (DataOnMemory<DataInstance> batch : data.iterableOverBatches(100)){
-            LTM learntModel = learner.learnKnownStructureLTM(batch, ltdag);
+            LTM learntModel = learner.learnKnownStructureLTM(ltdag,batch);
             //We print the model
             System.out.println("-----------------------------------");
             System.out.println(learntModel.getLearntModel().toString());

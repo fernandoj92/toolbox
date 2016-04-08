@@ -5,6 +5,7 @@ import eu.amidst.core.datastream.DataOnMemory;
 import eu.amidst.core.datastream.DataStream;
 import eu.amidst.core.io.BayesianNetworkWriter;
 import eu.amidst.core.io.DataStreamLoader;
+import eu.amidst.core.learning.parametric.bayesian.ParallelSVB;
 import eu.amidst.huginlink.io.BNWriterToHugin;
 import mt.ferjorosa.core.learning.structural.ApproximateBIAlgorithm;
 import mt.ferjorosa.core.learning.structural.StructuralLearning;
@@ -19,7 +20,13 @@ public class AlarmDataset {
 
         DataStream<DataInstance> data = DataStreamLoader.openFromFile("datasets/ferjorosaData/Alarm_train.arff");
 
-        StructuralLearning structuralLearningAlgorithm = new ApproximateBIAlgorithm();
+        //We create a ParallelSVB object
+        ParallelSVB parameterLearningAlgorithm = new ParallelSVB();
+
+        //We fix the number of cores we want to exploit
+        parameterLearningAlgorithm.setNCores(4);
+
+        StructuralLearning structuralLearningAlgorithm = new ApproximateBIAlgorithm(parameterLearningAlgorithm);
 
         LTM learntModel = null;
 
@@ -32,9 +39,10 @@ public class AlarmDataset {
         System.out.println(learntModel.getLearntModel().toString());
 
         System.out.println("elapsed time: "+estimatedTime);
+        System.out.println("ABI score: "+ learntModel.getScore());
 
-        BayesianNetworkWriter.saveToFile(learntModel.getLearntModel(),"networks/alarm/alarm_train1.bn");
-        BNWriterToHugin.saveToHuginFile(learntModel.getLearntModel(),"networks/alarm/alarm_train1.net");
+        //BayesianNetworkWriter.saveToFile(learntModel.getLearntModel(),"networks/alarm/alarm_train1.bn");
+        //BNWriterToHugin.saveToHuginFile(learntModel.getLearntModel(),"networks/alarm/alarm_train1.net");
 
     }
 }

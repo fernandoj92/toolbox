@@ -35,6 +35,7 @@ public class AsiaDataset {
         for (DataOnMemory<DataInstance> batch : data.iterableOverBatches(100)){
             learntModel = structuralLearningAlgorithm.learnModel(batch);
         }
+        long estimatedTime = System.currentTimeMillis() - startTime;
 
         DataStream<DataInstance> data2 = DataStreamLoader.openFromFile("datasets/ferjorosaData/Asia_train.arff");
 
@@ -42,9 +43,9 @@ public class AsiaDataset {
             zhangModel = buildZhangLTM(batch);
         }
 
-        long estimatedTime = System.currentTimeMillis() - startTime;
-
         System.out.println("elapsed time: "+estimatedTime);
+        System.out.println("ABI score: "+ learntModel.getScore());
+        System.out.println("Zhang's BI score: "+ learntModel.getScore());
 
         //BayesianNetworkWriter.saveToFile(learntModel.getLearntModel(),"networks/asia_train.bn");
         //BNWriterToHugin.saveToHuginFile(learntModel.getLearntModel(),"networks/asia_train.net");

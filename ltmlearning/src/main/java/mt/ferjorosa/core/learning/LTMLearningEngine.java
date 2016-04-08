@@ -48,7 +48,7 @@ public class LTMLearningEngine {
      * @param ltdag the LTM structure.
      * @return the fully learnt LTM.
      */
-    public LTM learnKnownStructureLTM(DataOnMemory<DataInstance> batch, LTDAG ltdag){
+    public LTM learnKnownStructureLTM(LTDAG ltdag, DataOnMemory<DataInstance> batch){
         LearnKnownStructureLTM learner = new LearnKnownStructureLTM(parameterLearningAlgorithm, ltdag);
         return learner.learnModel(batch);
     }

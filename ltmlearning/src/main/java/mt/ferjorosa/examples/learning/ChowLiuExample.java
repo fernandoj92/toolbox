@@ -65,8 +65,8 @@ public class ChowLiuExample {
         LTMLearningEngine ltmLearner = new LTMLearningEngine(parameterLearningAlgorithm);
 
         for (DataOnMemory<DataInstance> batch : data.iterableOverBatches(100)){
-            LTM learntModel = ltmLearner.learnKnownStructureLTM(batch, ltdag);
-            LTM copyleanrtModel = ltmLearner.learnKnownStructureLTM(batch, ltdag);
+            LTM learntModel = ltmLearner.learnKnownStructureLTM(ltdag,batch);
+            LTM copyleanrtModel = ltmLearner.learnKnownStructureLTM(ltdag, batch);
             //We print the model
             System.out.println("-----------------------------------");
             System.out.println(learntModel.getLearntModel().toString());
