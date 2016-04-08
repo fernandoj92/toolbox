@@ -11,6 +11,7 @@ import eu.amidst.core.learning.parametric.bayesian.SVB;
 import eu.amidst.huginlink.io.BNWriterToHugin;
 import mt.ferjorosa.core.learning.LTMLearningEngine;
 import mt.ferjorosa.core.learning.structural.ApproximateBIAlgorithm;
+import mt.ferjorosa.core.learning.structural.ApproximateBIConfig;
 import mt.ferjorosa.core.learning.structural.StructuralLearning;
 import mt.ferjorosa.core.models.LTM;
 
@@ -26,7 +27,7 @@ public class AsiaDataset {
 
         DataStream<DataInstance> data = DataStreamLoader.openFromFile("datasets/ferjorosaData/Asia_train.arff");
 
-        StructuralLearning structuralLearningAlgorithm = new ApproximateBIAlgorithm();
+        StructuralLearning structuralLearningAlgorithm = new ApproximateBIAlgorithm(new ApproximateBIConfig());
 
         LTM learntModel = null;
         LTM zhangModel = null;
@@ -47,8 +48,8 @@ public class AsiaDataset {
         System.out.println("ABI score: "+ learntModel.getScore());
         System.out.println("Zhang's BI score: "+ learntModel.getScore());
 
-        //BayesianNetworkWriter.saveToFile(learntModel.getLearntModel(),"networks/asia_train.bn");
-        //BNWriterToHugin.saveToHuginFile(learntModel.getLearntModel(),"networks/asia_train.net");
+        //BayesianNetworkWriter.saveToFile(learntModel.getLearntBayesianNetwork(),"networks/asia_train.bn");
+        //BNWriterToHugin.saveToHuginFile(learntModel.getLearntBayesianNetwork(),"networks/asia_train.net");
 
     }
 

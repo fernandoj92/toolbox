@@ -69,9 +69,9 @@ public class ChowLiuExample {
             LTM copyleanrtModel = ltmLearner.learnKnownStructureLTM(ltdag, batch);
             //We print the model
             System.out.println("-----------------------------------");
-            System.out.println(learntModel.getLearntModel().toString());
+            System.out.println(learntModel.getLearntBayesianNetwork().toString());
             System.out.println("-----------------------------------");
-            System.out.println(copyleanrtModel.getLearntModel().toString());
+            System.out.println(copyleanrtModel.getLearntBayesianNetwork().toString());
 
             System.out.println("===================================");
 

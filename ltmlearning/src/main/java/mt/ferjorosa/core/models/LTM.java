@@ -17,7 +17,7 @@ public class LTM {
     /** Represents the LTM structure. */
     private LTDAG ltdag;
 
-    /** Represents the learnt LTM model. */
+    /** Represents the learnt Bayesian network. */
     private BayesianNetwork learntModel;
 
     /** Represents the score of the learned model (depends on the parameter learning algorithm). */
@@ -47,7 +47,7 @@ public class LTM {
      * Returns the fully learnt LTM, which is a Bayesian network.
      * @return the fully learnt model.
      */
-    public BayesianNetwork getLearntModel(){
+    public BayesianNetwork getLearntBayesianNetwork(){
         return this.learntModel;
     }
 

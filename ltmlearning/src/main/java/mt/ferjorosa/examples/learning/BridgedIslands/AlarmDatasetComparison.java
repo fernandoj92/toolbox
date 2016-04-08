@@ -13,6 +13,7 @@ import eu.amidst.core.variables.Variables;
 import eu.amidst.huginlink.io.BNWriterToHugin;
 import mt.ferjorosa.core.learning.LTMLearningEngine;
 import mt.ferjorosa.core.learning.structural.ApproximateBIAlgorithm;
+import mt.ferjorosa.core.learning.structural.ApproximateBIConfig;
 import mt.ferjorosa.core.learning.structural.StructuralLearning;
 import mt.ferjorosa.core.models.LTM;
 import mt.ferjorosa.core.models.ltdag.LTDAG;
@@ -29,7 +30,7 @@ public class AlarmDatasetComparison {
 
     public static void main(String[] args) throws Exception {
 
-        StructuralLearning structuralLearningAlgorithm = new ApproximateBIAlgorithm();
+        StructuralLearning structuralLearningAlgorithm = new ApproximateBIAlgorithm(new ApproximateBIConfig());
 
         LTM learntModel = null;
         LTM zhangModel = null;
@@ -262,7 +263,7 @@ public class AlarmDatasetComparison {
         //We fix the number of cores we want to exploit
         parameterLearningAlgorithm.setNCores(4);
 
-        StructuralLearning parallelStructuralLearning = new ApproximateBIAlgorithm(parameterLearningAlgorithm);
+        StructuralLearning parallelStructuralLearning = new ApproximateBIAlgorithm(new ApproximateBIConfig(),parameterLearningAlgorithm);
 
         return parallelStructuralLearning.learnModel(batch);
     }

@@ -25,6 +25,11 @@ import java.util.stream.Collectors;
  * Liu, T., Zhang, N. L., Poon, K. M., Liu, H., & Wang, Y. (2012, September). A novel ltm-based method for multi-partition
  * clustering. In 6th European Workshop on Probabilistic Graphical Models (pp. 203-210).
  *
+ * Later extended in this article:
+ *
+ * Liu, T. F., Zhang, N. L., Chen, P., Liu, A. H., Poon, L. K., & Wang, Y. (2015). Greedy learning of latent tree models
+ * for multidimensional clustering. Machine Learning, 98(1-2), 301-330.
+ *
  * This algorithm learns both the structure and the parameters of a Bayesian network. Its composed of 4 stages
  * 1 - Calculate the sibling clusters.
  * 2 - Generate a LCM (a LCM is a LTM with only one Latent variable) from each sibling cluster by assigning a Latent
@@ -45,32 +50,26 @@ import java.util.stream.Collectors;
  */
 public class ApproximateBIAlgorithm implements StructuralLearning {
 
-    /** The measure that is going to be used to select the closest attributes when forming the sibling clusters */
+    /** The measure that is going to be used to select the closest attributes when forming the sibling clusters. */
     private FSSMeasure siblingClustersMeasure;
 
-    /** List of attributes used when constructing a single cluster (island) */
+    /** List of attributes used when constructing a single cluster (island). */
     private List<Attribute> outSetAttributes;
 
-    /** The Latent Tree Model learning engine */
+    /** The Latent Tree Model learning engine. */
     private LTMLearningEngine ltmLearner;
 
-    /** Valor asignado segun el código original de Zhang */
+    /** The list of unconnected LCMs, also called sibling clusters. */
     private ArrayList<LTM> siblingClusters = new ArrayList<>();
 
-    /** A restriction about the maximum number of observed variables in a single cluster, under a single latent variable */
-    private int maxIslandSize = 30;
-
-    /** The base cardinality of every Latent variable created in the algorithm */
-    private int baseLvCardinality = 2;
-
-    /** Percentage value used in the UD test */
-    private double udTestThreshold = 3.0;
+    /** Configuration parameters for the algorithm. */
+    private ApproximateBIConfig config;
 
     /**
      * Default constructor for the Bridged Islands algorithm. It creates an instance of the algorithm with the
      * "Streaming Variational Bayes" as the parameter learning algorithm and the "Mutual Information" as the FSS Measure
      */
-    public ApproximateBIAlgorithm(){
+    public ApproximateBIAlgorithm(ApproximateBIConfig config){
 
         // Defines the default parameter learning algorithm
         SVB streamingVariationalBayes = new SVB();
@@ -79,6 +78,9 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
         // Assign the parameter learning algorithm to the LTM learning engine
         this.ltmLearner = new LTMLearningEngine(streamingVariationalBayes);
         this.siblingClustersMeasure = new MutualInformation();
+
+        // Algorithm's configuration
+        this.config = config;
     }
 
     /**
@@ -87,7 +89,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
      * @param parameterLearningAlgorithm the selected parameter learning algorithm that is going to be used after
      *                                   learning the LTM structure.
      */
-    public ApproximateBIAlgorithm(ParameterLearningAlgorithm parameterLearningAlgorithm){
+    public ApproximateBIAlgorithm(ApproximateBIConfig config, ParameterLearningAlgorithm parameterLearningAlgorithm){
         this.ltmLearner = new LTMLearningEngine(parameterLearningAlgorithm);
         this.siblingClustersMeasure = new MutualInformation();
     }
@@ -99,7 +101,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
      * @param siblingClustersMeasure the measure that is going to be used to select the closest attributes when forming
      *                               the sibling clusters.
      */
-    public ApproximateBIAlgorithm(ParameterLearningAlgorithm parameterLearningAlgorithm, FSSMeasure siblingClustersMeasure){
+    public ApproximateBIAlgorithm(ApproximateBIConfig config, ParameterLearningAlgorithm parameterLearningAlgorithm, FSSMeasure siblingClustersMeasure){
         this.ltmLearner = new LTMLearningEngine(parameterLearningAlgorithm);
         this.siblingClustersMeasure = siblingClustersMeasure;
     }
@@ -159,7 +161,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
             if(outSetAttributes.size() <= 2){
                 if(siblingClusters.isEmpty()){
                     // If we only have 2 attributes in the dataSet, a LCM is learned and most the next steps will be avoided
-                    LTM ltmWith2Variables = ltmLearner.learnUnidimensionalLTM(outSetAttributes,batch,baseLvCardinality, siblingClusters.size());
+                    LTM ltmWith2Variables = ltmLearner.learnUnidimensionalLTM(outSetAttributes,batch,config.getBaseLvCardinality(), siblingClusters.size());
                     siblingClusters.add(ltmWith2Variables);
                 }else{
                     // We look for the best sibling cluster to add each of these attributes
@@ -207,7 +209,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
         List<Attribute> newClusterAttributes = bestcluster.getLtdag().getLTVariables().getAttributes();
         newClusterAttributes.add(attribute);
         siblingClusters.remove(bestcluster);
-        return ltmLearner.learnUnidimensionalLTM(newClusterAttributes, batch, baseLvCardinality, siblingClusters.size());
+        return ltmLearner.learnUnidimensionalLTM(newClusterAttributes, batch, config.getBaseLvCardinality(), siblingClusters.size());
     }
 
     /**
@@ -246,7 +248,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
          * - There are no more attributes left.
          * - The maximum allowed number of attributes inside an island have been reached.
          */
-        while(!outSetAttributes.isEmpty() && UnidimensionalityTestCondition && activeSet.size() <= maxIslandSize) {
+        while(!outSetAttributes.isEmpty() && UnidimensionalityTestCondition && activeSet.size() <= config.getMaxIslandSize()) {
 
             // Looks for the next closest attribute to the activeSet
             Attribute closestAttribute = siblingClustersMeasure.getClosestAttributeToSet(activeSet,outSetAttributes);
@@ -256,7 +258,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
             // BI uses heuristics to construct the LTM. After >= 4 attributes in the activeSet, it starts executing the UD test.
             if(activeSet.size() >= 4){
 
-                LTM ltmSubModel = ltmLearner.learnUnidimensionalLTM(activeSet, batch, baseLvCardinality, siblingClusters.size());
+                LTM ltmSubModel = ltmLearner.learnUnidimensionalLTM(activeSet, batch, config.getBaseLvCardinality(), siblingClusters.size());
                 LTM ltm2dimensionalBestModel = findBest2dimensionalLTM(activeSet, batch);
 
                 islandLTM = ltmSubModel;
@@ -270,10 +272,10 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
                 double unidimensionalScore = ltmSubModel.getScore();
                 double bidimensionalScore = ltm2dimensionalBestModel.getScore();
                 double resta = unidimensionalScore - bidimensionalScore;
-                double threshold = udTestThreshold * unidimensionalScore / 100;
+                double threshold = config.getUdTestThreshold() * unidimensionalScore / 100;
                 // Fails the UD test if its score difference is lower than the threshold
                 if(unidimensionalScore < bidimensionalScore ||
-                        (unidimensionalScore - bidimensionalScore) < (udTestThreshold * (-unidimensionalScore) / 100))
+                        (unidimensionalScore - bidimensionalScore) < (config.getUdTestThreshold() * (-unidimensionalScore) / 100))
                 {
                     UnidimensionalityTestCondition = false;
                     activeSet.remove(closestAttribute);
@@ -285,7 +287,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
 
         // It always learns a LTM, at least with 2 variables, current best pair.
         if(islandLTM == null)
-            islandLTM = ltmLearner.learnUnidimensionalLTM(activeSet, batch, baseLvCardinality, siblingClusters.size());
+            islandLTM = ltmLearner.learnUnidimensionalLTM(activeSet, batch, config.getBaseLvCardinality(), siblingClusters.size());
 
 
         System.out.println("isla de "+islandLTM.getLtdag().getObservedVariables().size()+" variables");
@@ -330,7 +332,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
                     .filter(attribute -> !leftAttributes.contains(attribute))
                     .collect(Collectors.toList());
 
-            LTM model = ltmLearner.learn2dimensionalLTM(leftAttributes, rightAttributes, baseLvCardinality, baseLvCardinality, batch);
+            LTM model = ltmLearner.learn2dimensionalLTM(leftAttributes, rightAttributes, config.getBaseLvCardinality(), config.getBaseLvCardinality(), batch);
 
             // TODO: Definir un metodo que compare scores, ya que dependiendo del score la comparacion es diferente
             // (mayor que no tiene porque significar siempre que el score sea mejor)
@@ -408,7 +410,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
             List<Attribute> clusterAttributes = cluster.getLtdag().getLTVariables().getAttributes();
 
             // Starting with the base cardinality
-            int currentCardinality = baseLvCardinality;
+            int currentCardinality = config.getBaseLvCardinality();
             boolean increaseCardinality = true;
 
             // Increase the model's cardinality until its score ceases to increase.

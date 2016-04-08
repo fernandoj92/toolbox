@@ -36,7 +36,7 @@ public class LTMLearningEngine {
 
     /**
      * Creates a LTM learning engine by passing the parameter learning algorithm that is going to be used.
-     * @param parameterLearningAlgorithm
+     * @param parameterLearningAlgorithm the parameter learning algorithm that is going to be used.
      */
     public LTMLearningEngine(ParameterLearningAlgorithm parameterLearningAlgorithm){
         this.parameterLearningAlgorithm = parameterLearningAlgorithm;
