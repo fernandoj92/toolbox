@@ -1,4 +1,4 @@
-package mt.ferjorosa.core.models.ltdag;
+package mt.ferjorosa.core.models.ltvariables;
 
 import eu.amidst.core.datastream.Attribute;
 import eu.amidst.core.variables.Variable;
@@ -38,6 +38,25 @@ public class LTVariables{
      */
     public Variables getVariablesObject(){
         return this.variables;
+    }
+
+    /**
+     * Returns the list of {@link Attribute} associated with the LTDAG's observed variables.
+     * @return the LTDAG's list of {@link Attribute}.
+     */
+    public List<Attribute> getAttributes(){
+        List<Attribute> attributes = new ArrayList<>();
+        for(ObservedVariable observedVariable : this.observedVariables)
+            attributes.add(observedVariable.getAttribute());
+        return attributes;
+    }
+
+    /**
+     * Returns the number of LTVariables contained (both observed and latent variables)
+     * @return the number of LTVariables contained (both observed and latent variables)
+     */
+    public int size(){
+        return observedVariables.size() + latentVariables.size();
     }
 
     /**
@@ -85,14 +104,4 @@ public class LTVariables{
         return latentVar;
     }
 
-    /**
-     * Returns the list of {@link Attribute} associated with the LTDAG's observed variables.
-     * @return the LTDAG's list of {@link Attribute}.
-     */
-    public List<Attribute> getAttributes(){
-        List<Attribute> attributes = new ArrayList<>();
-        for(ObservedVariable observedVariable : this.observedVariables)
-            attributes.add(observedVariable.getAttribute());
-        return attributes;
-    }
 }

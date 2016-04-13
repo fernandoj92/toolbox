@@ -1,4 +1,4 @@
-package mt.ferjorosa.core.models.ltdag;
+package mt.ferjorosa.core.models.ltvariables;
 
 import eu.amidst.core.datastream.Attribute;
 import eu.amidst.core.variables.DistributionTypeEnum;

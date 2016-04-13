@@ -1,6 +1,10 @@
-package mt.ferjorosa.core.models.ltdag;
+package mt.ferjorosa.core.models;
 
 import eu.amidst.core.models.DAG;
+import mt.ferjorosa.core.models.ltvariables.LTVariable;
+import mt.ferjorosa.core.models.ltvariables.LTVariables;
+import mt.ferjorosa.core.models.ltvariables.LatentVariable;
+import mt.ferjorosa.core.models.ltvariables.ObservedVariable;
 
 import java.util.List;
 
