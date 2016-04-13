@@ -8,8 +8,9 @@ import eu.amidst.core.learning.parametric.bayesian.SVB;
 import eu.amidst.core.variables.Variable;
 import eu.amidst.core.variables.Variables;
 import mt.ferjorosa.core.learning.LTMLearningEngine;
+import mt.ferjorosa.core.models.LTDAG;
 import mt.ferjorosa.core.models.LTM;
-import mt.ferjorosa.core.models.ltdag.*;
+import mt.ferjorosa.core.models.ltvariables.*;
 
 import java.util.Arrays;
 
@@ -21,7 +22,7 @@ public class KnownLTMLearningExample {
 
     public static void main(String[] args) throws Exception {
 
-        DataStream<DataInstance > data = DataStreamLoader.
+        DataStream<DataInstance> data = DataStreamLoader.
                 openFromFile("datasets/ferjorosaData/sprinklerDataHidden.arff");
 
         /**

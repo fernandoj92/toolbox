@@ -51,15 +51,15 @@
 
 
     <dependencies>
-
         <dependency>
-            <artifactId>core</artifactId>
-            <groupId>eu.amidst</groupId>
-            <version>1.0.0</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
-            <artifactId>core-dynamic</artifactId>
+            <artifactId>core</artifactId>
             <groupId>eu.amidst</groupId>
             <version>1.0.0</version>
         </dependency>
@@ -79,9 +79,20 @@
 
     </dependencies>
 
-
-
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

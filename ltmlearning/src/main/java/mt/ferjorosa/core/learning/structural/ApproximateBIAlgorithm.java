@@ -9,7 +9,7 @@ import mt.ferjorosa.core.learning.LTMLearningEngine;
 import mt.ferjorosa.core.learning.structural.variables.FSSMeasure;
 import mt.ferjorosa.core.learning.structural.variables.MutualInformation;
 import mt.ferjorosa.core.models.LTM;
-import mt.ferjorosa.core.models.ltdag.ObservedVariable;
+import mt.ferjorosa.core.models.ltvariables.ObservedVariable;
 import mt.ferjorosa.core.util.graph.DirectedTree;
 import mt.ferjorosa.core.util.graph.UndirectedGraph;
 import mt.ferjorosa.core.util.pair.SymmetricPair;

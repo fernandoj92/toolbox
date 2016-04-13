@@ -1,7 +1,6 @@
 package mt.ferjorosa.core.models;
 
 import eu.amidst.core.models.BayesianNetwork;
-import mt.ferjorosa.core.models.ltdag.LTDAG;
 
 /**
  * Latent Tree Model class that is returned by the Learning Engines. It is structure is fully represented by the

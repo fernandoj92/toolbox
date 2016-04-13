@@ -9,10 +9,10 @@ import eu.amidst.core.models.BayesianNetwork;
 import eu.amidst.core.variables.Variable;
 import eu.amidst.core.variables.Variables;
 import mt.ferjorosa.core.models.LTM;
-import mt.ferjorosa.core.models.ltdag.LTDAG;
-import mt.ferjorosa.core.models.ltdag.LTVariables;
-import mt.ferjorosa.core.models.ltdag.LatentVariable;
-import mt.ferjorosa.core.models.ltdag.ObservedVariable;
+import mt.ferjorosa.core.models.LTDAG;
+import mt.ferjorosa.core.models.ltvariables.LTVariables;
+import mt.ferjorosa.core.models.ltvariables.LatentVariable;
+import mt.ferjorosa.core.models.ltvariables.ObservedVariable;
 import mt.ferjorosa.core.util.graph.DirectedTree;
 
 import java.util.ArrayList;

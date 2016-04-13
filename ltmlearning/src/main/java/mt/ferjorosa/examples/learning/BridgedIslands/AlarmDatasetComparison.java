@@ -3,23 +3,20 @@ package mt.ferjorosa.examples.learning.BridgedIslands;
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataOnMemory;
 import eu.amidst.core.datastream.DataStream;
-import eu.amidst.core.io.BayesianNetworkWriter;
 import eu.amidst.core.io.DataStreamLoader;
 import eu.amidst.core.learning.parametric.bayesian.ParallelSVB;
 import eu.amidst.core.learning.parametric.bayesian.SVB;
-import eu.amidst.core.models.BayesianNetwork;
 import eu.amidst.core.utils.DAGGenerator;
 import eu.amidst.core.variables.Variables;
-import eu.amidst.huginlink.io.BNWriterToHugin;
 import mt.ferjorosa.core.learning.LTMLearningEngine;
 import mt.ferjorosa.core.learning.structural.ApproximateBIAlgorithm;
 import mt.ferjorosa.core.learning.structural.ApproximateBIConfig;
 import mt.ferjorosa.core.learning.structural.StructuralLearning;
 import mt.ferjorosa.core.models.LTM;
-import mt.ferjorosa.core.models.ltdag.LTDAG;
-import mt.ferjorosa.core.models.ltdag.LTVariables;
-import mt.ferjorosa.core.models.ltdag.LatentVariable;
-import mt.ferjorosa.core.models.ltdag.ObservedVariable;
+import mt.ferjorosa.core.models.LTDAG;
+import mt.ferjorosa.core.models.ltvariables.LTVariables;
+import mt.ferjorosa.core.models.ltvariables.LatentVariable;
+import mt.ferjorosa.core.models.ltvariables.ObservedVariable;
 
 import java.util.Arrays;
 
