@@ -90,6 +90,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
      *                                   learning the LTM structure.
      */
     public ApproximateBIAlgorithm(ApproximateBIConfig config, ParameterLearningAlgorithm parameterLearningAlgorithm){
+        this.config = config;
         this.ltmLearner = new LTMLearningEngine(parameterLearningAlgorithm);
         this.siblingClustersMeasure = new MutualInformation();
     }
@@ -102,6 +103,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
      *                               the sibling clusters.
      */
     public ApproximateBIAlgorithm(ApproximateBIConfig config, ParameterLearningAlgorithm parameterLearningAlgorithm, FSSMeasure siblingClustersMeasure){
+        this.config = config;
         this.ltmLearner = new LTMLearningEngine(parameterLearningAlgorithm);
         this.siblingClustersMeasure = siblingClustersMeasure;
     }

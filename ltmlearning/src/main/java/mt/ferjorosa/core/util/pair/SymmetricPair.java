@@ -29,6 +29,22 @@ public class SymmetricPair<A, B> {
     }
 
     /**
+     * Returns the first element of the pair.
+     * @return the first element of the pair.
+     */
+    public A getFirst() {
+        return first;
+    }
+
+    /**
+     * Returns the second element of the pair.
+     * @return the second element of the pair.
+     */
+    public B getSecond() {
+        return second;
+    }
+
+    /**
      * Returns the hashCode of this Pair of objects.
      * @return the hashCode of this Pair of objects.
      */
@@ -74,22 +90,6 @@ public class SymmetricPair<A, B> {
     public String toString()
     {
         return "(" + first + ", " + second + ")";
-    }
-
-    /**
-     * Returns the first element of the pair.
-     * @return the first element of the pair.
-     */
-    public A getFirst() {
-        return first;
-    }
-
-    /**
-     * Returns the second element of the pair.
-     * @return the second element of the pair.
-     */
-    public B getSecond() {
-        return second;
     }
 
 }

@@ -251,7 +251,7 @@ public class LTMLearningEngine {
         /** Parameter learning algorithm used to fully learn the LTM */
         private ParameterLearningAlgorithm parameterLearningAlgorithm;
 
-        /** The LTM structure */
+        /** The LTM's structure */
         private LTDAG ltdag;
 
         /**
@@ -267,7 +267,7 @@ public class LTMLearningEngine {
         }
 
         /**
-         * Returns the learnt LTM model
+         * Returns the learnt Latent Tree Model
          * @param batch a {@link DataOnMemory} object that is going to be used to learn the model.
          * @return the fully learnt LTM
          */

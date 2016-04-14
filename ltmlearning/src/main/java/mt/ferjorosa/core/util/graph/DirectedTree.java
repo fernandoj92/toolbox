@@ -19,7 +19,8 @@ public class DirectedTree {
     private Map<Integer,Map<Integer,Double>> edges;
 
     /**
-     * Creates a directed tree from an undirected graph.
+     * Creates a directed tree from an undirected graph. Even though it is purpose is to work with undirected trees, it
+     * doesn't check if the undirected graph is a tree, it just assumes that it is.
      * @param graph the base graph being required.
      * @param rootIndex the index of the node that is going to be the root.
      */
@@ -52,9 +53,37 @@ public class DirectedTree {
     }
 
     /**
-     *
-     * @param graph
-     * @param index
+     * Tests whether two Directed Trees are equal or not.
+     * @param o the Directed Tree object that is going to be compared with the first one.
+     * @return true if the two Directed Trees are equals, false otherwise.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DirectedTree that = (DirectedTree) o;
+
+        if (rootIndex != that.rootIndex) return false;
+        return edges.equals(that.edges);
+
+    }
+
+    /**
+     * Returns the hashcode of equivalent of the Directed Tree.
+     * @return the hashcode that defines the Directed Tree.
+     */
+    @Override
+    public int hashCode() {
+        int result = rootIndex;
+        result = 31 * result + edges.hashCode();
+        return result;
+    }
+
+    /**
+     * Private method used in the class constructor to transform all the undirected graph's edges into directed ones.
+     * @param graph the undirected graph used as reference.
+     * @param index the vertex index.
      */
     private void createEdges(UndirectedGraph graph, int index){
         Boolean visited[] = new Boolean[graph.getNVertices()];
@@ -89,9 +118,15 @@ public class DirectedTree {
      * @param weight the associated weight.
      */
     private void addEdge(int parent, int son, double weight){
-        Map sonAndValue = new HashMap<Integer, Double>();
-        sonAndValue.put(son, weight);
-        edges.put(parent, sonAndValue);
+
+        if(edges.get(parent) == null){
+            Map sonAndValue = new HashMap<Integer, Double>();
+            sonAndValue.put(son, weight);
+            edges.put(parent, sonAndValue);
+        }else{
+            Map edge = edges.get(parent);
+            edge.put(son, weight);
+        }
     }
 
 }

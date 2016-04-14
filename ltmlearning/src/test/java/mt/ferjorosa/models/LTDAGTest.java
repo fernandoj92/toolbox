@@ -20,9 +20,6 @@ import java.util.Arrays;
  */
 public class LTDAGTest {
 
-    private DataStream<DataInstance> data  = DataStreamLoader.
-            openFromFile("datasets/ferjorosaData/sprinklerDataHidden.arff");
-
     private LTDAG ltdag;
     private ObservedVariable sprinkler;
     private ObservedVariable rain;
@@ -33,6 +30,10 @@ public class LTDAGTest {
     public void createLTDAG(){
 
         /* Creates the LTM structure (LTDAG) */
+
+        // The ClassLoader adds a "/" at the beginning of the path that makes it throw an exception when loading
+        String resourcePath = getClass().getResource("/sprinklerDataHidden.arff").getPath().substring(1);
+        DataStream<DataInstance> data  = DataStreamLoader.openFromFile(resourcePath);
 
         Variables variables = new Variables(data.getAttributes());
 

@@ -1,6 +1,5 @@
 package mt.ferjorosa.core.util.graph;
 
-import eu.amidst.core.datastream.Attribute;
 import mt.ferjorosa.core.util.pair.SymmetricPair;
 
 import java.util.*;
@@ -40,6 +39,41 @@ public class UndirectedGraph {
     }
 
     /**
+     * Calculates the Minimum Weight Spanning Tree
+     * Note: the passed graph should be complete.
+     * @param graph the base graph used to calculate the Minimum Weight Spanning Tree.
+     * @return the Minimum Weight Spanning Tree.
+     */
+    public static UndirectedGraph obtainMinimumWeightSpanningTree(UndirectedGraph graph){
+
+        // First we sort the edges by its weight, from big to small
+        Map<SymmetricPair<Integer,Integer>, Double> sortedEdges = graph.getEdges().entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+        UndirectedGraph mwst = new UndirectedGraph(graph.getNVertices());
+        int nEdges = 0;
+
+        // Iterate through the edges and add them one by one to the tree and checking that there are no cycles
+        for(Map.Entry entry: sortedEdges.entrySet()){
+            SymmetricPair<Integer,Integer> key = (SymmetricPair<Integer,Integer>) entry.getKey();
+            Double value = (Double) entry.getValue();
+
+            mwst.addEdge(key.getFirst(),key.getSecond(),value);
+            nEdges++;
+            if(mwst.isCyclic()) {
+                mwst.removeEdge(key.getFirst(), key.getSecond());
+                nEdges--;
+            }
+            // If the number of edges in the tree is equal to nVertices - 1, there is no need to add more edges
+            if(nEdges == (graph.getNVertices() - 1))
+                return mwst;
+        }
+
+        return mwst;
+    }
+
+    /**
      * Calculates the Maximum Weight Spanning Tree
      * Note: the passed graph should be complete.
      * @param graph the base graph used to calculate the Maximum Weight Spanning Tree.
@@ -49,7 +83,7 @@ public class UndirectedGraph {
 
         // First we sort the edges by its weight, from big to small
         Map<SymmetricPair<Integer,Integer>, Double> sortedEdges = graph.getEdges().entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
         UndirectedGraph mwst = new UndirectedGraph(graph.getNVertices());
@@ -128,6 +162,37 @@ public class UndirectedGraph {
     }
 
     /**
+     * Tests whether two Undirected Graphs are equal or not.
+     * @param o the Undirected Graph object that is going to be compared with the first one.
+     * @return true if the two Undirected Graphs are equals, false otherwise.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UndirectedGraph that = (UndirectedGraph) o;
+
+        if (nVertices != that.nVertices) return false;
+        if (!edges.equals(that.edges)) return false;
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        return Arrays.equals(adjacentEdges, that.adjacentEdges);
+
+    }
+
+    /**
+     * Returns the hashcode of equivalent of the Undirected graph.
+     * @return the hashcode that defines the Undirected graph.
+     */
+    @Override
+    public int hashCode() {
+        int result = nVertices;
+        result = 31 * result + edges.hashCode();
+        result = 31 * result + Arrays.hashCode(adjacentEdges);
+        return result;
+    }
+
+    /**
      * Checks if there is a cycle in the graph.
      * @return a boolean indicating if this graph contains cycles (true) or not (false).
      */
@@ -172,5 +237,7 @@ public class UndirectedGraph {
         }
         return false;
     }
+
+
 
 }

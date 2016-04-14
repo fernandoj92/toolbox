@@ -83,7 +83,6 @@ public class LTVariablesTest {
     public void testNewObservedVariable(){
 
         /* Tries to create a Observed Variable from a variable that doesn't belong to the LTVariables object */
-
         Variable newOVMultinomial = variables.newMultionomialVariable("testMultinomial", 3);
 
         try{
