@@ -19,15 +19,19 @@ public class LTVariables{
     /** List of observed variables. */
     private List<ObservedVariable> observedVariables;
 
+    /** Initial list of variables. */
+    private List<Variable> variables;
+
     /** 'Variables' object, needed for constructing the 'DAG' object. */
-    private Variables variables;
+    private Variables variablesObj;
 
     /**
      * Creates an instance of the class by passing a 'Variables' object.
-     * @param variables the required 'Variables' object.
+     * @param variablesObj the required 'Variables' object.
      */
-    public LTVariables(Variables variables){
-        this.variables = variables;
+    public LTVariables(Variables variablesObj){
+        this.variablesObj = variablesObj;
+        this.variables = new ArrayList<>(variablesObj.getListOfVariables());
         this.latentVariables = new ArrayList<>();
         this.observedVariables = new ArrayList<>();
     }
@@ -37,7 +41,7 @@ public class LTVariables{
      * @return the Variables object.
      */
     public Variables getVariablesObject(){
-        return this.variables;
+        return this.variablesObj;
     }
 
     /**
@@ -81,7 +85,7 @@ public class LTVariables{
      * @return The newly created observed variable.
      */
     public ObservedVariable newObservedVariable(Variable variable){
-        if(!variables.getListOfVariables().contains(variable))
+        if(!variables.contains(variable))
             throw new IllegalArgumentException("Variable doesn't belong to the LTVariables object");
 
         ObservedVariable observedVar = new ObservedVariable(variable);
@@ -96,7 +100,7 @@ public class LTVariables{
      * @return The newly created latent variable.
      */
     public LatentVariable newLatentVariable(Variable variable, int index){
-        if(!variables.getListOfVariables().contains(variable))
+        if(!variables.contains(variable))
             throw new IllegalArgumentException("Variable doesn't belong to the LTVariables object");
 
         LatentVariable latentVar = new LatentVariable(variable, index);

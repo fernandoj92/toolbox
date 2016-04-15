@@ -131,6 +131,14 @@ public class MutualInformation implements FSSMeasure{
     }
 
     /**
+     * Returns all the currently calculated Pair Scores.
+     * @return all the currently calculated Pair Scores.
+     */
+    public Map<SymmetricPair<Attribute,Attribute>,Double> getAllPairScores(){
+        return this.pairScores;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -138,6 +146,11 @@ public class MutualInformation implements FSSMeasure{
 
         if(this.pairScores.isEmpty())
             throw new IllegalStateException("No Pair scores have been computed");
+
+        // Checks that the user is not asking for attributes that aren't present in the data
+        long attributesNotPresent = checkAbsentAttributes(attributes);
+        if(attributesNotPresent > 0)
+            throw new IllegalArgumentException("Some attributes aren't presented in the data used for calculating the MI");
 
         double bivariateScore;
         double maxScore = Double.NEGATIVE_INFINITY;
@@ -166,6 +179,12 @@ public class MutualInformation implements FSSMeasure{
         if(this.pairScores.isEmpty())
             throw new IllegalStateException("No Pair scores have been computed");
 
+        // Checks that the user is not asking for attributes that aren't present in the data
+        long activeSetAbsentAttributes = checkAbsentAttributes(activeSet);
+        long outSetAbsentAttributes = checkAbsentAttributes(outSet);
+        if(activeSetAbsentAttributes > 0 || outSetAbsentAttributes > 0)
+            throw new IllegalArgumentException("Some attributes aren't presented in the data used for calculating the MI");
+
         Attribute closestOutAttribute = null;
         double maxScore = Double.NEGATIVE_INFINITY;
         double bivariateScore = Double.NEGATIVE_INFINITY;
@@ -191,6 +210,12 @@ public class MutualInformation implements FSSMeasure{
         if(this.pairScores.isEmpty())
             throw new IllegalStateException("No Pair scores have been computed");
 
+        // Checks that the user is not asking for attributes that aren't present in the data
+        long firstSetAbsentAttributes = checkAbsentAttributes(firstSet);
+        long secondSetAbsentAttributes = checkAbsentAttributes(secondSet);
+        if(firstSetAbsentAttributes > 0 || secondSetAbsentAttributes > 0)
+            throw new IllegalArgumentException("Some attributes aren't presented in the data used for calculating the MI");
+
         double maxScore = Double.NEGATIVE_INFINITY;
         double bivariateScore = Double.NEGATIVE_INFINITY;
 
@@ -206,5 +231,18 @@ public class MutualInformation implements FSSMeasure{
         return maxScore;
     }
 
+    /**
+     * Checks that the user is not asking for attributes that are absent in the data.
+     * @param attributes the attributes being passed by the user.
+     * @return the number of absent attributes.
+     */
+    private long checkAbsentAttributes(List<Attribute> attributes){
 
+        long absentAttributes = attributes.stream()
+                .map(attribute -> data.getAttributes().getFullListOfAttributes().contains(attribute))
+                .filter(res -> res == false)
+                .count();
+
+        return absentAttributes;
+    }
 }

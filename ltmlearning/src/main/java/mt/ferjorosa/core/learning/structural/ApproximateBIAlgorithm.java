@@ -152,7 +152,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
      * @param batch a {@link DataOnMemory} object that is going to be used to learn the model.
      */
     private void calculateSiblingClusters(DataOnMemory<DataInstance> batch){
-        outSetAttributes = batch.getAttributes().getFullListOfAttributes();
+        outSetAttributes = new ArrayList<>(batch.getAttributes().getFullListOfAttributes());
 
         // We first compute all the attributes' bivariate MI scores
         siblingClustersMeasure.computeAllPairScores(outSetAttributes);
@@ -273,8 +273,6 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
 
                 double unidimensionalScore = ltmSubModel.getScore();
                 double bidimensionalScore = ltm2dimensionalBestModel.getScore();
-                double resta = unidimensionalScore - bidimensionalScore;
-                double threshold = config.getUdTestThreshold() * unidimensionalScore / 100;
                 // Fails the UD test if its score difference is lower than the threshold
                 if(unidimensionalScore < bidimensionalScore ||
                         (unidimensionalScore - bidimensionalScore) < (config.getUdTestThreshold() * (-unidimensionalScore) / 100))

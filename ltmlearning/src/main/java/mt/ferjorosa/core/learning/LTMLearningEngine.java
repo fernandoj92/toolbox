@@ -65,14 +65,6 @@ public class LTMLearningEngine {
 
         // First creates an 'Attributes' object, necessary for the 'Variables' object creation.
         Variables variables = new Variables(new Attributes(attributes));
-        LTVariables ltVariables = new LTVariables(variables);
-
-        // Creates the observed LTDAG variables.
-        List<ObservedVariable> observedVariables = new ArrayList<>();
-        for(Variable var: variables){
-            ObservedVariable observedVar = ltVariables.newObservedVariable(var);
-            observedVariables.add(observedVar);
-        }
 
         // Creates a multinomial latent variable with the passed number of states.
         String[] latentVarStates = new String[lvCardinality];
@@ -80,7 +72,21 @@ public class LTMLearningEngine {
             latentVarStates[i] = i+"";
 
         Variable latentVariable = variables.newMultionomialVariable("H"+lvIndex, Arrays.asList(latentVarStates));
+
+        LTVariables ltVariables = new LTVariables(variables);
+
+        //Creates the LTDAG latent variable.
         LatentVariable latentVar = ltVariables.newLatentVariable(latentVariable, lvIndex);
+
+        // Creates the observed LTDAG variables.
+        List<ObservedVariable> observedVariables = new ArrayList<>();
+        for(Variable var: variables){
+            // To distinguish between latent variables and observed ones, we make use of their attribute object disparity
+            if(var.getAttribute() != null) {
+                ObservedVariable observedVar = ltVariables.newObservedVariable(var);
+                observedVariables.add(observedVar);
+            }
+        }
 
         // Creates the LTDAG
         LTDAG ltdag = new LTDAG(ltVariables);
@@ -109,14 +115,6 @@ public class LTMLearningEngine {
         List<Attribute> allAttributes = new ArrayList<>(leftAttributes);
         allAttributes.addAll(rightAttributes);
         Variables variables = new Variables(new Attributes(allAttributes));
-        LTVariables ltVariables = new LTVariables(variables);
-
-        // Attributes are Observed Variables in the LTM
-        List<ObservedVariable> observedVariables = new ArrayList<>();
-        for(Variable var: variables){
-            ObservedVariable observedVar = ltVariables.newObservedVariable(var);
-            observedVariables.add(observedVar);
-        }
 
         // 2 latent variables (with the passed number of states) are created, one for each tree.
         String[] leftVarStates = new String[leftCardinality];
@@ -129,6 +127,20 @@ public class LTMLearningEngine {
 
         Variable leftLatentVariable = variables.newMultionomialVariable("LeftLV", Arrays.asList(leftVarStates));
         Variable rightLatentVariable = variables.newMultionomialVariable("RightLV", Arrays.asList(rightVarStates));
+
+        LTVariables ltVariables = new LTVariables(variables);
+
+        // Attributes are Observed Variables in the LTM
+        List<ObservedVariable> observedVariables = new ArrayList<>();
+        for(Variable var: variables){
+            // To distinguish between latent variables and observed ones, we make use of their attribute object disparity
+            if(var.getAttribute() != null) {
+                ObservedVariable observedVar = ltVariables.newObservedVariable(var);
+                observedVariables.add(observedVar);
+            }
+        }
+
+        // LTVariables wrapper for the latent variables
         LatentVariable leftLatentVar = ltVariables.newLatentVariable(leftLatentVariable, 0);
         LatentVariable rightLatentVar = ltVariables.newLatentVariable(rightLatentVariable, 1);
 
@@ -177,17 +189,9 @@ public class LTMLearningEngine {
         }
         Attributes selectedAttributes = new Attributes(observedAttributes);
         Variables variables = new Variables(selectedAttributes);
-        LTVariables ltVariables = new LTVariables(variables);
 
-        // It creates the Observed variables of the new LTM
-        List<ObservedVariable> observedVariables = new ArrayList<>();
-        for(Variable var: variables){
-            ObservedVariable observedVar = ltVariables.newObservedVariable(var);
-            observedVariables.add(observedVar);
-        }
-
-        // It creates the Latent variables of the new LTM
-        List<LatentVariable> latentVariables = new ArrayList<>();
+        // Creates the latent variables (which doesn't have an associated attribute) with the same internal values.
+        List<Variable> baseLatentVariables = new ArrayList<>();
         for(int treeIndex = 0; treeIndex < ltms.size(); treeIndex++) {
             int lvCardinality = ltms.get(treeIndex).getLtdag().getLatentVariables().get(0).getVariable().getNumberOfStates();
             String[] latentVarStates = new String[lvCardinality];
@@ -195,7 +199,26 @@ public class LTMLearningEngine {
                 latentVarStates[i] = i+"";
             }
             Variable latentVariable = variables.newMultionomialVariable("H"+treeIndex, Arrays.asList(latentVarStates));
-            latentVariables.add(ltVariables.newLatentVariable(latentVariable, treeIndex));
+            baseLatentVariables.add(latentVariable);
+        }
+
+        // Now that all the Variable objects have been created, it creates the LTVariables object from the Variables obj
+        LTVariables ltVariables = new LTVariables(variables);
+
+        // It creates the Latent Variables of the new LTM by wrapping them
+        List<LatentVariable> latentVariables = new ArrayList<>();
+        for(int treeIndex = 0; treeIndex < ltms.size(); treeIndex++) {
+            latentVariables.add(ltVariables.newLatentVariable(baseLatentVariables.get(treeIndex), treeIndex));
+        }
+
+        // It creates the Observed variables of the new LTM by wrapping them
+        List<ObservedVariable> observedVariables = new ArrayList<>();
+        for(Variable var: variables){
+            // To distinguish between latent variables and observed ones, we make use of their attribute object disparity
+            if(var.getAttribute() != null) {
+                ObservedVariable observedVar = ltVariables.newObservedVariable(var);
+                observedVariables.add(observedVar);
+            }
         }
 
         // Creates the LTM structure
