@@ -42,20 +42,23 @@ public class LTVariablesTest {
         DataStream<DataInstance> data  = DataStreamLoader.openFromFile(resourcePath);
 
         variables = new Variables(data.getAttributes());
+        Variable latentCloudy = variables.newMultionomialVariable("latentCloudy", Arrays.asList("TRUE", "FALSE"));
 
         ltVariables = new LTVariables(variables);
 
         sprinkler = ltVariables.newObservedVariable(variables.getVariableByName("sprinkler"));
         rain = ltVariables.newObservedVariable(variables.getVariableByName("rain"));
         wetGrass = ltVariables.newObservedVariable(variables.getVariableByName("wetGrass"));
-        ltCloudy = ltVariables.newLatentVariable(
-                variables.newMultionomialVariable("latentCloudy", Arrays.asList("TRUE", "FALSE")), 0);
+        ltCloudy = ltVariables.newLatentVariable(latentCloudy , 0);
     }
 
     @Test
     public void testNewLatentVariable(){
 
         /* Tries to create a Latent Variable from a variable that doesn't belong to the LTVariables object */
+
+        // TODO: Este no es problema mio, al hacer contains() tanto en la lista como en el objeto Variables, da error
+        // ya que el ID de ambas vars es 0, estos es porque se usan 2 objetos Variables diferentes.
 
         List<Attribute> attributeList = new ArrayList<>();
         Attributes falseAttributes = new Attributes(attributeList);

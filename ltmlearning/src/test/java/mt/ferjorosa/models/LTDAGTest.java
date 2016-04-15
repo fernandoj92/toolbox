@@ -4,6 +4,7 @@ package mt.ferjorosa.models;
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataStream;
 import eu.amidst.core.io.DataStreamLoader;
+import eu.amidst.core.variables.Variable;
 import eu.amidst.core.variables.Variables;
 import mt.ferjorosa.core.models.LTDAG;
 import mt.ferjorosa.core.models.ltvariables.LTVariables;
@@ -36,14 +37,14 @@ public class LTDAGTest {
         DataStream<DataInstance> data  = DataStreamLoader.openFromFile(resourcePath);
 
         Variables variables = new Variables(data.getAttributes());
+        Variable latentCloudy = variables.newMultionomialVariable("latentCloudy", Arrays.asList("TRUE", "FALSE"));
 
         LTVariables ltVariables = new LTVariables(variables);
 
         sprinkler = ltVariables.newObservedVariable(variables.getVariableByName("sprinkler"));
         rain = ltVariables.newObservedVariable(variables.getVariableByName("rain"));
         wetGrass = ltVariables.newObservedVariable(variables.getVariableByName("wetGrass"));
-        ltCloudy = ltVariables.newLatentVariable(
-                variables.newMultionomialVariable("latentCloudy", Arrays.asList("TRUE", "FALSE")), 0);
+        ltCloudy = ltVariables.newLatentVariable(latentCloudy, 0);
 
         ltdag = new LTDAG(ltVariables);
     }
@@ -61,7 +62,7 @@ public class LTDAGTest {
         /* Checks that the returned latent variables corresponds with the previously created ones */
 
         Assert.assertEquals(ltdag.getLatentVariables().size(), 1);
-        Assert.assertTrue(ltdag.getObservedVariables().contains(ltCloudy));
+        Assert.assertTrue(ltdag.getLatentVariables().contains(ltCloudy));
     }
 
     @Test
