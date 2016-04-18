@@ -5,6 +5,7 @@ import eu.amidst.core.datastream.Attributes;
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataOnMemory;
 import eu.amidst.core.learning.parametric.ParameterLearningAlgorithm;
+import eu.amidst.core.learning.parametric.bayesian.SVB;
 import eu.amidst.core.models.BayesianNetwork;
 import eu.amidst.core.variables.Variable;
 import eu.amidst.core.variables.Variables;
@@ -286,7 +287,7 @@ public class LTMLearningEngine {
         public LearnKnownStructureLTM(ParameterLearningAlgorithm parameterLearningAlgorithm, LTDAG ltdag){
             this.parameterLearningAlgorithm = parameterLearningAlgorithm;
             this.ltdag = ltdag;
-            parameterLearningAlgorithm.setDAG(ltdag.getDAG());
+            this.parameterLearningAlgorithm.setDAG(ltdag.getDAG());
         }
 
         /**
@@ -299,12 +300,8 @@ public class LTMLearningEngine {
             parameterLearningAlgorithm.setDataStream(batch);
             //Performs the learning
             parameterLearningAlgorithm.runLearning();
-            // And stores the learnt model
-            BayesianNetwork learntModel = parameterLearningAlgorithm.getLearntBayesianNetwork();
-            // Creates a LTM object  that contains, the LTM structure, its final model and the score
-            double score = parameterLearningAlgorithm.getLogMarginalProbability();
-            //Returns the LTM
-            return new LTM(learntModel, score, ltdag);
+            // And stores the learnt model and the score by storing the parameter learning instance in the new LTM, then returns it
+            return new LTM(ltdag, parameterLearningAlgorithm);
         }
 
     }

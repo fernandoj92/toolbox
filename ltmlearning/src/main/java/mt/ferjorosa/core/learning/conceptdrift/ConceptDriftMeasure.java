@@ -23,9 +23,10 @@ public interface ConceptDriftMeasure {
 
     /**
      * Returns current Concept Drift state for the learnt model.
-     * @param learntModel learnt model being checked
+     * @param updatedModel current model that is going to be compared to a one-batch model to check for concept drifts.
+     * @param modelBatchScore is the updated model's score for current batch.
      * @param batch the batch of data that is going to be used to check it.
      * @return the concept drift state.
      */
-    ConceptDriftStates checkConceptDrift(LTM learntModel, DataOnMemory<DataInstance> batch);
+    ConceptDriftStates checkConceptDrift(LTM updatedModel, double modelBatchScore, DataOnMemory<DataInstance> batch);
 }

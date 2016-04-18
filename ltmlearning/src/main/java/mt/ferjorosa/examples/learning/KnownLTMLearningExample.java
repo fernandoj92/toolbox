@@ -22,24 +22,27 @@ public class KnownLTMLearningExample {
 
     public static void main(String[] args) throws Exception {
 
-        DataStream<DataInstance> data = DataStreamLoader.
+        DataStream<DataInstance> data1 = DataStreamLoader.
+                openFromFile("datasets/ferjorosaData/sprinklerDataHidden.arff");
+
+        DataStream<DataInstance> data2 = DataStreamLoader.
                 openFromFile("datasets/ferjorosaData/sprinklerDataHidden.arff");
 
         /**
          * Create the LTM structure (LTDAG) that is going to be learned
          */
 
-        Variables variables = new Variables(data.getAttributes());
-
-        LTVariables ltVariables = new LTVariables(variables);
+        Variables variables = new Variables(data1.getAttributes());
 
         Variable vsp = variables.getVariableByName("sprinkler");
+        Variable latentCloudy = variables.newMultionomialVariable("latentCloudy", Arrays.asList("TRUE", "FALSE"));
+
+        LTVariables ltVariables = new LTVariables(variables);
 
         ObservedVariable sprinkler = ltVariables.newObservedVariable(vsp);
         ObservedVariable rain = ltVariables.newObservedVariable(variables.getVariableByName("rain"));
         ObservedVariable wetGrass = ltVariables.newObservedVariable(variables.getVariableByName("wetGrass"));
-        LatentVariable ltCloudy = ltVariables.newLatentVariable(
-                variables.newMultionomialVariable("latentCloudy", Arrays.asList("TRUE", "FALSE")), 0);
+        LatentVariable ltCloudy = ltVariables.newLatentVariable(latentCloudy, 0);
 
         LTDAG ltdag = new LTDAG(ltVariables);
 
@@ -61,12 +64,11 @@ public class KnownLTMLearningExample {
         parameterLearningAlgorithm.setOutput(true);
         // Normally we would need to call initLearning(), but the learner does it for us, so no need to call it 2 times
         LTMLearningEngine learner = new LTMLearningEngine(parameterLearningAlgorithm);
-
-        for (DataOnMemory<DataInstance> batch : data.iterableOverBatches(100)){
+        for (DataOnMemory<DataInstance> batch : data1.iterableOverBatches(100)){
             LTM learntModel = learner.learnKnownStructureLTM(ltdag,batch);
             //We print the model
             System.out.println("-----------------------------------");
-            System.out.println(learntModel.getLearntBayesianNetwork().toString());
+            System.out.println("learnt model: " + learntModel.getScore());
         }
     }
 }

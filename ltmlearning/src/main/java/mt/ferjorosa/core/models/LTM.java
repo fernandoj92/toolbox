@@ -1,5 +1,8 @@
 package mt.ferjorosa.core.models;
 
+import eu.amidst.core.datastream.DataInstance;
+import eu.amidst.core.datastream.DataOnMemory;
+import eu.amidst.core.learning.parametric.ParameterLearningAlgorithm;
 import eu.amidst.core.models.BayesianNetwork;
 
 /**
@@ -16,22 +19,25 @@ public class LTM {
     /** Represents the LTM structure. */
     private LTDAG ltdag;
 
-    /** Represents the learnt Bayesian network. */
-    private BayesianNetwork learntModel;
+    /** The parameter learning algorihtm instance that stores the model and its score. */
+    private ParameterLearningAlgorithm parameterLearningAlgorithm;
 
-    /** Represents the score of the learned model (depends on the parameter learning algorithm). */
-    private double modelScore;
+    private boolean updated;
+
+    /** When calling updateModel() it is possible to update*/
+    private double updatedScore;
 
     /**
      * Creates an instance of the class by passing all its required components.
-     * @param learntModel the fully learnt model.
-     * @param modelScore the model's score.
      * @param ltdag the LTM structure.
+     * @param parameterLearningAlgorithm stores the fully learnt model and its score. It will also allow us to update them
+     *                                   with new batches.
      */
-    public LTM(BayesianNetwork learntModel, double modelScore, LTDAG ltdag){
-        this.learntModel = learntModel;
-        this.modelScore = modelScore;
+    public LTM(LTDAG ltdag, ParameterLearningAlgorithm parameterLearningAlgorithm){
+        this.parameterLearningAlgorithm = parameterLearningAlgorithm;
+        this.parameterLearningAlgorithm.setDAG(ltdag.getDAG());
         this.ltdag = ltdag;
+        this.updatedScore = parameterLearningAlgorithm.getLogMarginalProbability();
     }
 
     /**
@@ -39,7 +45,10 @@ public class LTM {
      * @return the model's score.
      */
     public double getScore(){
-        return this.modelScore;
+        if(updated)
+            return this.updatedScore;
+        else
+            return this.parameterLearningAlgorithm.getLogMarginalProbability();
     }
 
     /**
@@ -47,7 +56,7 @@ public class LTM {
      * @return the fully learnt model.
      */
     public BayesianNetwork getLearntBayesianNetwork(){
-        return this.learntModel;
+        return this.parameterLearningAlgorithm.getLearntBayesianNetwork();
     }
 
     /**
@@ -58,4 +67,32 @@ public class LTM {
         return this.ltdag;
     }
 
+    /**
+     * Updates current model by learning its parameters with a new batch. Depending on the parameter algorithm being
+     * used, it would take into consideration previous data or not (For example,
+     * {@link eu.amidst.core.learning.parametric.bayesian.SVB} does it).
+     *
+     * This method should not call initLearning() because that would reset previous knowledge, so its advisable to only
+     * use this method after an initial learning of the parameters (for example generating the LTM with LTMLearningEngine or the
+     * Approximate Bridged Islands Algorithm).
+     *
+     * @param batch a {@link DataOnMemory} object that is going to be used to learn the model.
+     */
+    public double updateModel(DataOnMemory<DataInstance> batch){
+
+        // This LTM no longer has a one-time learning score, it has been updated with a new batch of data.
+        this.updated = true;
+
+        // Updates the LTM parameters and updates its score
+        double sum = 0;
+        for (DataOnMemory<DataInstance> windowSizeBatch : batch.iterableOverBatches(100)){
+            sum += parameterLearningAlgorithm.updateModel(windowSizeBatch);
+        }
+
+        // Adds the batch score to the model's score
+        this.updatedScore += sum;
+
+        // Returns the score for the passed batch
+        return sum;
+    }
 }

@@ -1,19 +1,17 @@
-package mt.ferjorosa.examples.learning.BridgedIslands;
+package mt.ferjorosa.examples.learning;
 
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataOnMemory;
 import eu.amidst.core.datastream.DataStream;
 import eu.amidst.core.io.DataStreamLoader;
-import eu.amidst.core.learning.parametric.bayesian.ParallelSVB;
 import eu.amidst.core.learning.parametric.bayesian.SVB;
-import eu.amidst.core.utils.DAGGenerator;
 import eu.amidst.core.variables.Variables;
 import mt.ferjorosa.core.learning.LTMLearningEngine;
 import mt.ferjorosa.core.learning.structural.ApproximateBIAlgorithm;
 import mt.ferjorosa.core.learning.structural.ApproximateBIConfig;
 import mt.ferjorosa.core.learning.structural.StructuralLearning;
-import mt.ferjorosa.core.models.LTM;
 import mt.ferjorosa.core.models.LTDAG;
+import mt.ferjorosa.core.models.LTM;
 import mt.ferjorosa.core.models.ltvariables.LTVariables;
 import mt.ferjorosa.core.models.ltvariables.LatentVariable;
 import mt.ferjorosa.core.models.ltvariables.ObservedVariable;
@@ -21,52 +19,32 @@ import mt.ferjorosa.core.models.ltvariables.ObservedVariable;
 import java.util.Arrays;
 
 /**
- * Created by Fer on 07/04/2016.
+ * Created by Fernando on 4/18/2016.
  */
-public class AlarmDatasetComparison {
+public class AlarmDataSetUpdateModel {
 
     public static void main(String[] args) throws Exception {
-
         StructuralLearning structuralLearningAlgorithm = new ApproximateBIAlgorithm(new ApproximateBIConfig());
 
-        LTM learntModel = null;
+        LTM updatedModel = null;
         LTM zhangModel = null;
-        LTM parallelLearntModel = null;
-
-        // Learns the structure using the BI approximation I ve developed
-        DataStream<DataInstance> data = DataStreamLoader.openFromFile("datasets/ferjorosaData/Alarm_train.arff");
-        long oneCoreStartTime = System.currentTimeMillis();
-        for (DataOnMemory<DataInstance> batch : data.iterableOverBatches(1000)){
-            learntModel = structuralLearningAlgorithm.learnModel(batch);
-        }
-        long oneCoreEstimatedTime = System.currentTimeMillis() - oneCoreStartTime;
-
-        // Learns the structure using the BI approximation I ve developed with Parallelization
-        DataStream<DataInstance> data2 = DataStreamLoader.openFromFile("datasets/ferjorosaData/Alarm_train.arff");
-        long multiCoreStartTime = System.currentTimeMillis();
-        for (DataOnMemory<DataInstance> batch : data2.iterableOverBatches(1000)){
-            parallelLearntModel = buildParallelLTM(batch);
-        }
-        long multiCoreEstimatedTime = System.currentTimeMillis() - multiCoreStartTime;
-
+        double updatedModelScore = 0;
+        double learntModelScore = 0;
         // Learns the parameters of the structure learnt by Zhang's algorithm
         DataStream<DataInstance> data3 = DataStreamLoader.openFromFile("datasets/ferjorosaData/Alarm_train.arff");
-        for (DataOnMemory<DataInstance> batch : data3.iterableOverBatches(1000)){
+        int it = 0;
+        for (DataOnMemory<DataInstance> batch : data3.iterableOverBatches(250)){
             zhangModel = buildZhangLTM(batch);
+            learntModelScore += zhangModel.getScore();
+            if(it == 0){
+                updatedModel = buildZhangLTM(batch);
+                updatedModelScore += updatedModel.getScore();
+                it++;
+            }else
+                updatedModelScore += updatedModel.updateModel(batch);
+            System.out.println("Learnt score: "+ learntModelScore);
+            System.out.println("Updated score: "+ updatedModelScore);
         }
-        // Learns a Naïve Bayes structure
-        DataStream<DataInstance> data4 = DataStreamLoader.openFromFile("datasets/ferjorosaData/Alarm_train.arff");
-        LTM naiveBayesModel = buildNBmodel(data4);
-
-        System.out.println("ABI score: "+ learntModel.getScore());
-        System.out.println("Zhang BI score: "+ zhangModel.getScore());
-        System.out.println("Parallel ABI score: "+ parallelLearntModel.getScore());
-        System.out.println("Naive Bayes score:" + naiveBayesModel.getScore());
-
-        System.out.println("------------------------------------");
-        System.out.println("ABI learning time: "+ oneCoreEstimatedTime);
-        System.out.println("Parallel ABI learning time: "+ multiCoreEstimatedTime);
-
     }
 
     private static LTM buildZhangLTM(DataOnMemory<DataInstance> batch){
@@ -225,43 +203,9 @@ public class AlarmDatasetComparison {
 
         //We create a SVB object
         SVB parameterLearningAlgorithm = new SVB();
-        // Normally we would need to call initLearning(), but the learner does it for us, so no need to call it 2 times
+        // Normally we would need to call initLearning(), but the engine does it for us, so no need to call it 2 times
         LTMLearningEngine learner = new LTMLearningEngine(parameterLearningAlgorithm);
 
         return learner.learnKnownStructureLTM(ltdag, batch);
-    }
-
-    private static LTM buildNBmodel(DataStream<DataInstance> data){
-        //We create a SVB object
-        SVB parameterLearningAlgorithm = new SVB();
-
-        //We fix the DAG structure
-        parameterLearningAlgorithm.setDAG(DAGGenerator.getHiddenNaiveBayesStructure(data.getAttributes(),"GlobalHidden", 2));
-
-        //We fix the size of the window
-        parameterLearningAlgorithm.setWindowsSize(100);
-
-        //We can activate the output
-        parameterLearningAlgorithm.setOutput(true);
-
-        //We set the data which is going to be used for leaning the parameters
-        parameterLearningAlgorithm.setDataStream(data);
-
-        //We perform the learning
-        parameterLearningAlgorithm.runLearning();
-
-        return new LTM(null,parameterLearningAlgorithm);
-    }
-
-    private static LTM buildParallelLTM(DataOnMemory<DataInstance> batch){
-
-        //We create a ParallelSVB object
-        ParallelSVB parameterLearningAlgorithm = new ParallelSVB();
-        //We fix the number of cores we want to exploit
-        parameterLearningAlgorithm.setNCores(4);
-
-        StructuralLearning parallelStructuralLearning = new ApproximateBIAlgorithm(new ApproximateBIConfig(),parameterLearningAlgorithm);
-
-        return parallelStructuralLearning.learnModel(batch);
     }
 }

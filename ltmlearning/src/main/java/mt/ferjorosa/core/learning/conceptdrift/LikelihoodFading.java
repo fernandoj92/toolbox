@@ -3,27 +3,30 @@ package mt.ferjorosa.core.learning.conceptdrift;
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataOnMemory;
 import eu.amidst.core.inference.InferenceAlgorithm;
+import eu.amidst.core.learning.parametric.ParameterLearningAlgorithm;
+import mt.ferjorosa.core.learning.LTMLearningEngine;
 import mt.ferjorosa.core.models.LTM;
 
 /**
- * This class
- * TODO: el fading factor deberia ser la likelihood que se va a tomar de referencia
+ * This class compares the scores of current model, after learning a new batch of data, and another model with the same
+ * structure but with parameters only influenced by this new batch, not by older data like the current model.
+ *
+ * The user can establish a value called "fading factor" that will be evaluated with the difference of score between models.
  */
 public class LikelihoodFading implements ConceptDriftMeasure {
 
-    /** The user established factor. The model's measure score (the likelihood in this case) will be compared to this factor. */
+    /** The user established factor. The models score difference (the likelihood in this case) will be compared to this factor. */
     private double fadingFactor;
 
-    /** The inference engine being used to calculate the likelihood.*/
-    private InferenceAlgorithm inferenceEngine;
+    /** The engine used to learn the model's parameters when a Concept Drift occurs. */
+    private LTMLearningEngine ltmLearningEngine;
 
     /**
-     * Creates an instance of this measure by passing the inference engine used to calculate the likelihood of the model
-     * for current batch of data.
-     * @param inferenceEngine the inference engine used to calculate the likelihood of the data for current model.
+     * Creates an instance of this measure by passing the parameter learning algorithm used to learn
+     * the one-batch model that is going to be compared with the updated model in the concept drift check.
      */
-    public LikelihoodFading(InferenceAlgorithm inferenceEngine){
-        this.inferenceEngine = inferenceEngine;
+    public LikelihoodFading(ParameterLearningAlgorithm parameterLearningAlgorithm){
+        this.ltmLearningEngine = new LTMLearningEngine(parameterLearningAlgorithm);
     }
 
     /**
@@ -42,31 +45,22 @@ public class LikelihoodFading implements ConceptDriftMeasure {
         this.fadingFactor = factor;
     }
 
-    // Aqui ejecutamos la inferencia y comprobamos la diferencia entre la log-likelihood del modelo actual
-    // y la comparamos con la del nuevo LTM aprendido, en caso de que la del nuevo sea X superior a la del antiguo
-    // se producira un CONCEPT_DRIFT o un CONCEPT_SHIFT
     /**
      * Returns current Concept Drift state for the currently learnt model.
-     * @param model learnt model being checked
+     * @param updatedModel current model that is going to be compared to a one-batch model to check for concept drifts.
+     * @param modelBatchScore is the updated model's score for current batch.
      * @param batch the batch of data that is going to be used to check it.
      * @return the concept drift state.
      */
     @Override
-    public ConceptDriftStates checkConceptDrift(LTM model, DataOnMemory<DataInstance> batch){
-        // Sets the model
-        this.inferenceEngine.setModel(model.getLearntBayesianNetwork());
+    public ConceptDriftStates checkConceptDrift(LTM updatedModel, double modelBatchScore, DataOnMemory<DataInstance> batch){
 
-        // Sets the evidence
+        LTM oneBatchModel = ltmLearningEngine.learnKnownStructureLTM(updatedModel.getLtdag(),batch);
 
-        // Runs the inference
-
-        if( 0 > fadingFactor)
+        if((oneBatchModel.getScore() + modelBatchScore) > fadingFactor)
             return ConceptDriftStates.CONCEPT_DRIFT;
-        if( 1 > fadingFactor)
-            return ConceptDriftStates.CONCEPT_SHIFT;
         else
             return ConceptDriftStates.NONE;
     }
-
 
 }

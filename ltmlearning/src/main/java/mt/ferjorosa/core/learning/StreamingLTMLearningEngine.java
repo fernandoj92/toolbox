@@ -3,6 +3,7 @@ package mt.ferjorosa.core.learning;
 import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataOnMemory;
 import eu.amidst.core.datastream.DataStream;
+import eu.amidst.core.learning.parametric.ParameterLearningAlgorithm;
 import mt.ferjorosa.core.learning.conceptdrift.ConceptDriftStates;
 import mt.ferjorosa.core.learning.conceptdrift.ConceptDriftMeasure;
 import mt.ferjorosa.core.learning.structural.StructuralLearning;
@@ -23,6 +24,7 @@ import mt.ferjorosa.core.models.LTM;
  * TODO: No me gusta el hecho de tener el engine de aprender los LTM combinado con el ABI
  * TODO: Quizas seria posible evaluar que partes del model son las que peor resultados da y actualizar solo una parte del modelo.
  * TODO: Es necesario un método para parar el streaming (tras X iteraciones o "manualmente" cambiando la constante streamIsRunning)
+ *       para ello seguramente haya que hacer uso de varios hilos (Peligro)
  */
 public class StreamingLTMLearningEngine {
 
@@ -35,8 +37,8 @@ public class StreamingLTMLearningEngine {
     /** The structural learning algorithm used to learn the model when a Concept Shift occurs. */
     private StructuralLearning structuralLearningAlgorithm;
 
-    /** The engine used to learn the model's parameters when a Concept Drift occurs. */
-    private LTMLearningEngine ltmLearningEngine;
+    /** The parameter learning algorithm used to update the model when a new batch of data arrives. */
+    private ParameterLearningAlgorithm parameterLearningAlgorithm;
 
     /** Currently stored Latent Tree Model. */
     private LTM currentModel;
@@ -53,10 +55,15 @@ public class StreamingLTMLearningEngine {
      * a concept drift has occurred.
      * @param conceptDriftMeasure the measure being used to distinguish (i.e the likelihood of the data with current model).
      * @param structuralLearningAlgorithm the algorithm used to fully learn a new model.
+     * @param parameterLearningAlgorithm the parameter learning algorithm used to update current model's parameters when
+     *                                   a new batch of data arrives
      */
-    public StreamingLTMLearningEngine(ConceptDriftMeasure conceptDriftMeasure, StructuralLearning structuralLearningAlgorithm ){
-        this. structuralLearningAlgorithm = structuralLearningAlgorithm;
+    public StreamingLTMLearningEngine(ConceptDriftMeasure conceptDriftMeasure,
+                                      StructuralLearning structuralLearningAlgorithm,
+                                      ParameterLearningAlgorithm parameterLearningAlgorithm){
         this.conceptDriftMeasure = conceptDriftMeasure;
+        this.structuralLearningAlgorithm = structuralLearningAlgorithm;
+        this.parameterLearningAlgorithm = parameterLearningAlgorithm;
     }
 
     /**
@@ -97,16 +104,25 @@ public class StreamingLTMLearningEngine {
         this.streamIsRunning = true;
 
         for (DataOnMemory<DataInstance> batch : dataStream.iterableOverBatches(batchSize)){
-            ConceptDriftStates state = conceptDriftMeasure.checkConceptDrift(currentModel, batch);
+
+            //Updates current model with the new data
+            double batchScore = currentModel.updateModel(batch);
+
+            /**
+             * Checks if the new data isn't properly represented by current structure.
+             *
+             * Learns 2 models and compares them. First updates current model's parameters with the new batch of data and then
+             * learns a new model with the same structure. This second model will not take into consideration previous data
+             * as the first one does.
+             */
+            ConceptDriftStates state = conceptDriftMeasure.checkConceptDrift(currentModel, batchScore, batch);
+
+            // Different ways of action depending on the state
             switch (state){
 
-                // If it is a concept shift, then learns current model's parameters with the new data.
+                // If there is a concept shift, then it learns a new model using the new batch as seed.
                 case CONCEPT_SHIFT:
-                    this.currentModel = structuralLearningAlgorithm.learnModel(batch);
-
-                // If it is a concept drift, then learns  current model's parameters with the new data.
-                case CONCEPT_DRIFT:
-                    this.currentModel = ltmLearningEngine.learnKnownStructureLTM(currentModel.getLtdag(),batch);
+                    this.currentModel = structuralLearningAlgorithm.learnModel(batch); break;
 
                 // Nothing needs to be changed
                 default : break;
