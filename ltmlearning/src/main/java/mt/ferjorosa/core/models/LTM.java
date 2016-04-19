@@ -22,7 +22,8 @@ public class LTM {
     /** The parameter learning algorihtm instance that stores the model and its score. */
     private ParameterLearningAlgorithm parameterLearningAlgorithm;
 
-    private boolean updated;
+    /** The score returned by the model for the last batch of data */
+    private double lastBatchScore;
 
     /** When calling updateModel() it is possible to update*/
     private double updatedScore;
@@ -41,14 +42,19 @@ public class LTM {
     }
 
     /**
-     * Returns the LTM score for a specific set of data instances.
+     * Returns the LTM score for a series of data batches (updates).
      * @return the model's score.
      */
     public double getScore(){
-        if(updated)
-            return this.updatedScore;
-        else
-            return this.parameterLearningAlgorithm.getLogMarginalProbability();
+        return this.updatedScore;
+    }
+
+    /**
+     * Returns the LTM score of the last batch used for its learning.
+     * @return the last batch's score.
+     */
+    public double getLastBatchScore(){
+        return this.lastBatchScore;
     }
 
     /**
@@ -80,9 +86,6 @@ public class LTM {
      */
     public double updateModel(DataOnMemory<DataInstance> batch){
 
-        // This LTM no longer has a one-time learning score, it has been updated with a new batch of data.
-        this.updated = true;
-
         // Updates the LTM parameters and updates its score
         double sum = 0;
         for (DataOnMemory<DataInstance> windowSizeBatch : batch.iterableOverBatches(100)){
@@ -91,6 +94,9 @@ public class LTM {
 
         // Adds the batch score to the model's score
         this.updatedScore += sum;
+
+        // Stores the batch score
+        this.lastBatchScore = sum;
 
         // Returns the score for the passed batch
         return sum;

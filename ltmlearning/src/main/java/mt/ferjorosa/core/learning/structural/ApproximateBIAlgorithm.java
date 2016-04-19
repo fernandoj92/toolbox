@@ -120,8 +120,9 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
         // 1 - Calculate sibling clusters (islands)
         calculateSiblingClusters(batch);
 
+        int cont = 0;
         for(LTM island : siblingClusters){
-            System.out.println("Island "+island.getLtdag().getLatentVariables().get(0).getIndex()+":");
+            System.out.println("Island "+cont+":");
 
             String s = "";
             for(ObservedVariable obv : island.getLtdag().getObservedVariables()){
@@ -129,6 +130,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
             }
             System.out.println(s);
             System.out.println("-------------");
+            cont++;
         }
 
         // 2 - Refine each cluster's LV cardinality
@@ -419,11 +421,11 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
 
                 LTM newModel = ltmLearner.learnUnidimensionalLTM(clusterAttributes, currentCardinality, newSiblingClusters.size(), batch);
 
-                if(newModel.getScore()  < currentModel.getScore())
+                if(newModel.getScore()  <= currentModel.getScore())
                     // New cardinality doesn't improve the score, therefore the while loop is stopped
                     increaseCardinality = false;
                 else
-                    // New cardinility improves the model's score, so it stores current refined model
+                    // New cardinality improves the model's score, so it stores current refined model
                     currentModel = newModel;
             }
 

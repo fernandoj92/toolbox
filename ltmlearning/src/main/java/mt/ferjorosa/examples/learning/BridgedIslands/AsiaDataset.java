@@ -46,7 +46,7 @@ public class AsiaDataset {
 
         System.out.println("elapsed time: "+estimatedTime);
         System.out.println("ABI score: "+ learntModel.getScore());
-        System.out.println("Zhang's BI score: "+ learntModel.getScore());
+        System.out.println("Zhang's BI score: "+ zhangModel.getScore());
 
         //BayesianNetworkWriter.saveToFile(learntModel.getLearntBayesianNetwork(),"networks/asia_train.bn");
         //BNWriterToHugin.saveToHuginFile(learntModel.getLearntBayesianNetwork(),"networks/asia_train.net");

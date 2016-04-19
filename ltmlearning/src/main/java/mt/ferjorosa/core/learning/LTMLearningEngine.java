@@ -296,10 +296,11 @@ public class LTMLearningEngine {
          * @return the fully learnt LTM
          */
         public LTM learnModel(DataOnMemory<DataInstance> batch){
+
             // Sets the data that is going to be used for learning the LTM parameters
             parameterLearningAlgorithm.setDataStream(batch);
             // Performs the learning. Given that it uses the runLearning() method, it will call initLearning() before each
-            // learning process and therefore previous knowloedge won't interfere, producing separated LTMs
+            // learning process and therefore previous knowledge won't interfere, producing separated LTMs
             parameterLearningAlgorithm.runLearning();
             // And stores the learnt model and the score by storing the parameter learning instance in the new LTM, then returns it
             return new LTM(ltdag, parameterLearningAlgorithm);
