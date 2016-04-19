@@ -62,7 +62,7 @@ public class LTMLearningEngine {
      * @param lvIndex the latent variable's index to distinguish it from other LVs
      * @return a fully learnt LTM.
      */
-    public LTM learnUnidimensionalLTM(List<Attribute> attributes, DataOnMemory<DataInstance> batch, int lvCardinality, int lvIndex){
+    public LTM learnUnidimensionalLTM(List<Attribute> attributes, int lvCardinality, int lvIndex, DataOnMemory<DataInstance> batch){
 
         // First creates an 'Attributes' object, necessary for the 'Variables' object creation.
         Variables variables = new Variables(new Attributes(attributes));
@@ -157,7 +157,7 @@ public class LTMLearningEngine {
         }
 
         /**
-         * The left tree is chosen as the root of the tree. This is an heuristic and its base on what Leary et.al (2013)
+         * The left tree is chosen as the root of the tree. This is an heuristic and it's based on what Leary et.al (2013)
          * says: "the LTM root cannot be learnt from data".
          */
         ltdag.addParent(rightLatentVar,leftLatentVar);
@@ -259,7 +259,7 @@ public class LTMLearningEngine {
         for(Integer parentIndex: latentVarConnections.keySet()){
             LatentVariable parent = latentVariables.get(parentIndex);
             LatentVariable son = latentVariables.get(latentVarConnections.get(parentIndex));
-            ltdag.addParent(parent, son);
+            ltdag.addParent(son, parent);
         }
 
         // Finally, it learns the LTM parameters
@@ -296,9 +296,10 @@ public class LTMLearningEngine {
          * @return the fully learnt LTM
          */
         public LTM learnModel(DataOnMemory<DataInstance> batch){
-            //Sets the data that is going to be used for learning the LTM parameters
+            // Sets the data that is going to be used for learning the LTM parameters
             parameterLearningAlgorithm.setDataStream(batch);
-            //Performs the learning
+            // Performs the learning. Given that it uses the runLearning() method, it will call initLearning() before each
+            // learning process and therefore previous knowloedge won't interfere, producing separated LTMs
             parameterLearningAlgorithm.runLearning();
             // And stores the learnt model and the score by storing the parameter learning instance in the new LTM, then returns it
             return new LTM(ltdag, parameterLearningAlgorithm);

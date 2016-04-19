@@ -163,7 +163,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
             if(outSetAttributes.size() <= 2){
                 if(siblingClusters.isEmpty()){
                     // If we only have 2 attributes in the dataSet, a LCM is learned and most the next steps will be avoided
-                    LTM ltmWith2Variables = ltmLearner.learnUnidimensionalLTM(outSetAttributes,batch,config.getBaseLvCardinality(), siblingClusters.size());
+                    LTM ltmWith2Variables = ltmLearner.learnUnidimensionalLTM(outSetAttributes,config.getBaseLvCardinality(), siblingClusters.size(),batch);
                     siblingClusters.add(ltmWith2Variables);
                 }else{
                     // We look for the best sibling cluster to add each of these attributes
@@ -211,7 +211,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
         List<Attribute> newClusterAttributes = bestcluster.getLtdag().getLTVariables().getAttributes();
         newClusterAttributes.add(attribute);
         siblingClusters.remove(bestcluster);
-        return ltmLearner.learnUnidimensionalLTM(newClusterAttributes, batch, config.getBaseLvCardinality(), siblingClusters.size());
+        return ltmLearner.learnUnidimensionalLTM(newClusterAttributes, config.getBaseLvCardinality(), siblingClusters.size(), batch);
     }
 
     /**
@@ -260,7 +260,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
             // BI uses heuristics to construct the LTM. After >= 4 attributes in the activeSet, it starts executing the UD test.
             if(activeSet.size() >= 4){
 
-                LTM ltmSubModel = ltmLearner.learnUnidimensionalLTM(activeSet, batch, config.getBaseLvCardinality(), siblingClusters.size());
+                LTM ltmSubModel = ltmLearner.learnUnidimensionalLTM(activeSet, config.getBaseLvCardinality(), siblingClusters.size(), batch);
                 LTM ltm2dimensionalBestModel = findBest2dimensionalLTM(activeSet, batch);
 
                 islandLTM = ltmSubModel;
@@ -287,7 +287,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
 
         // It always learns a LTM, at least with 2 variables, current best pair.
         if(islandLTM == null)
-            islandLTM = ltmLearner.learnUnidimensionalLTM(activeSet, batch, config.getBaseLvCardinality(), siblingClusters.size());
+            islandLTM = ltmLearner.learnUnidimensionalLTM(activeSet, config.getBaseLvCardinality(), siblingClusters.size(), batch);
 
 
         System.out.println("isla de "+islandLTM.getLtdag().getObservedVariables().size()+" variables");
@@ -417,7 +417,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
             while(increaseCardinality) {
                 currentCardinality++;
 
-                LTM newModel = ltmLearner.learnUnidimensionalLTM(clusterAttributes, batch, currentCardinality, newSiblingClusters.size());
+                LTM newModel = ltmLearner.learnUnidimensionalLTM(clusterAttributes, currentCardinality, newSiblingClusters.size(), batch);
 
                 if(newModel.getScore()  < currentModel.getScore())
                     // New cardinality doesn't improve the score, therefore the while loop is stopped

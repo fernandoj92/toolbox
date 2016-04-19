@@ -113,19 +113,19 @@ public class DirectedTree {
 
     /**
      * Private method being used inside its recursive variant to add new edges.
-     * @param parent the parent's node index.
-     * @param son the index of the node receiving the edge.
+     * @param from the parent's node index.
+     * @param to the index of the node receiving the edge.
      * @param weight the associated weight.
      */
-    private void addEdge(int parent, int son, double weight){
+    private void addEdge(int from, int to, double weight){
 
-        if(edges.get(parent) == null){
-            Map sonAndValue = new HashMap<Integer, Double>();
-            sonAndValue.put(son, weight);
-            edges.put(parent, sonAndValue);
+        if(edges.get(from) == null){
+            Map toAndValue = new HashMap<Integer, Double>();
+            toAndValue.put(to, weight);
+            edges.put(from, toAndValue);
         }else{
-            Map edge = edges.get(parent);
-            edge.put(son, weight);
+            Map edge = edges.get(from);
+            edge.put(to, weight);
         }
     }
 

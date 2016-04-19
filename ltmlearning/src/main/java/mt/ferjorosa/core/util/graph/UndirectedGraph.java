@@ -134,17 +134,17 @@ public class UndirectedGraph {
 
     /**
      * Creates a new edge between two nodes.
-     * @param parent left side of the edge.
-     * @param son right side of the edge.
+     * @param left left side of the edge.
+     * @param right right side of the edge.
      * @param weight the weight of the edge.
      */
-    public void addEdge(int parent,int son, double weight) {
-        if(parent < 0 || son < 0 || parent >= nVertices || son > nVertices)
+    public void addEdge(int left,int right, double weight) {
+        if(left < 0 || right < 0 || left >= nVertices || right > nVertices)
             throw new IllegalArgumentException("Illegal edge parameters.");
 
-        adjacentEdges[parent].add(son);
-        adjacentEdges[son].add(parent);
-        edges.put(new SymmetricPair<>(parent,son), weight);
+        adjacentEdges[left].add(right);
+        adjacentEdges[right].add(left);
+        edges.put(new SymmetricPair<>(left,right), weight);
     }
 
     /**
