@@ -46,6 +46,8 @@ public class StreamingLTMLearningEngine {
     /** Size of the batch used in the streaming of data. */
     private int batchSize = 1000;
 
+    private double lastBatchScore = 0;
+
     /** */
     private boolean streamIsRunning;
 
@@ -55,15 +57,11 @@ public class StreamingLTMLearningEngine {
      * a concept drift has occurred.
      * @param conceptDriftMeasure the measure being used to distinguish (i.e the likelihood of the data with current model).
      * @param structuralLearningAlgorithm the algorithm used to fully learn a new model.
-     * @param parameterLearningAlgorithm the parameter learning algorithm used to update current model's parameters when
-     *                                   a new batch of data arrives
      */
     public StreamingLTMLearningEngine(ConceptDriftMeasure conceptDriftMeasure,
-                                      StructuralLearning structuralLearningAlgorithm,
-                                      ParameterLearningAlgorithm parameterLearningAlgorithm){
+                                      StructuralLearning structuralLearningAlgorithm){
         this.conceptDriftMeasure = conceptDriftMeasure;
         this.structuralLearningAlgorithm = structuralLearningAlgorithm;
-        this.parameterLearningAlgorithm = parameterLearningAlgorithm;
     }
 
     /**
@@ -80,6 +78,14 @@ public class StreamingLTMLearningEngine {
      */
     public void setBatchSize(int batchSize){
         this.batchSize = batchSize;
+    }
+
+    public LTM getCurrentModel(){
+        return this.currentModel;
+    }
+
+    public double getLastBatchScore(){
+        return this.lastBatchScore;
     }
 
     /**
@@ -130,6 +136,34 @@ public class StreamingLTMLearningEngine {
         }
     }
 
+    public void updateModel(DataOnMemory<DataInstance> batch){
+
+        if(this.currentModel == null)
+            throw new IllegalStateException("It is necessary to call initLearning() before starting to stream data");
+
+        //Updates current model with the new data
+        lastBatchScore = currentModel.updateModel(batch);
+
+        /**
+         * Checks if the new data isn't properly represented by current structure.
+         *
+         * Learns 2 models and compares them. First updates current model's parameters with the new batch of data and then
+         * learns a new model with the same structure. This second model will not take into consideration previous data
+         * as the first one does.
+         */
+        ConceptDriftStates state = conceptDriftMeasure.checkConceptDrift(currentModel, lastBatchScore, batch);
+
+        // Different ways of action depending on the state
+        switch (state){
+
+            // If there is a concept shift, then it learns a new model using the new batch as seed.
+            case CONCEPT_SHIFT:
+                this.currentModel = structuralLearningAlgorithm.learnModel(batch); break;
+
+            // Nothing needs to be changed
+            default : break;
+        }
+    }
 }
 
 

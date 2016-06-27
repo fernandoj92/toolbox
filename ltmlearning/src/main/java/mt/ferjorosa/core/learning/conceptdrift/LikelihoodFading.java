@@ -56,6 +56,9 @@ public class LikelihoodFading implements ConceptDriftMeasure {
     public ConceptDriftStates checkConceptDrift(LTM updatedModel, double modelBatchScore, DataOnMemory<DataInstance> batch){
 
         LTM oneBatchModel = ltmLearningEngine.learnKnownStructureLTM(updatedModel.getLtdag(),batch);
+        System.out.println("\n MODELO ONE-BATCH:");
+        System.out.println(oneBatchModel.getLearntBayesianNetwork().toString());
+        System.out.println("\n SCORE MODELO ONE-BATCH: "+oneBatchModel.getScore());
 
         if((oneBatchModel.getScore() + modelBatchScore) > fadingFactor)
             return ConceptDriftStates.CONCEPT_DRIFT;

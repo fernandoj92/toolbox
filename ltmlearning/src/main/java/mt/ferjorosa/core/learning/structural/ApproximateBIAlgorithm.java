@@ -480,9 +480,9 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
         UndirectedGraph mwst = UndirectedGraph.obtainMaximumWeightSpanningTree(completeGraph);
 
         // After calculating the MWST, a random root is selected and the undirected tree is converted into a directed tree.
-        Random rn = new Random();
-        int rootIndex = rn.nextInt(mwst.getNVertices());
-        DirectedTree rootedMWST = new DirectedTree(mwst, rootIndex);
+        //Random rn = new Random();
+        //int rootIndex = rn.nextInt(mwst.getNVertices());
+        DirectedTree rootedMWST = new DirectedTree(mwst, 0);
 
         // Finally, a flat-LTM is learnt in relation to the previously calculated MWST
         return ltmLearner.learnFlatLTM(rootedMWST,siblingClusters,batch);
