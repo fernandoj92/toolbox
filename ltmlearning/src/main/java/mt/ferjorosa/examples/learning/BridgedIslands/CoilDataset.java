@@ -4,7 +4,6 @@ import eu.amidst.core.datastream.DataInstance;
 import eu.amidst.core.datastream.DataOnMemory;
 import eu.amidst.core.datastream.DataStream;
 import eu.amidst.core.io.DataStreamLoader;
-import eu.amidst.core.learning.parametric.bayesian.ParallelSVB;
 import eu.amidst.core.learning.parametric.bayesian.SVB;
 import mt.ferjorosa.core.learning.structural.ApproximateBIAlgorithm;
 import mt.ferjorosa.core.learning.structural.ApproximateBIConfig;
@@ -12,13 +11,14 @@ import mt.ferjorosa.core.learning.structural.StructuralLearning;
 import mt.ferjorosa.core.models.LTM;
 
 /**
- * Created by Fer on 07/04/2016.
+ * Created by Fer on 07/07/2016.
  */
-public class AlarmDataset {
+public class CoilDataset {
+
 
     public static void main(String[] args) throws Exception {
 
-        DataStream<DataInstance> data = DataStreamLoader.openFromFile("datasets/ferjorosaData/Alarm_train.arff");
+        DataStream<DataInstance> data = DataStreamLoader.openFromFile("datasets/ferjorosaData/Coil-42-test.arff");
 
         //We create a ParallelSVB object
         //ParallelSVB parameterLearningAlgorithm = new ParallelSVB();
@@ -32,7 +32,7 @@ public class AlarmDataset {
         LTM learntModel = null;
 
         long startTime = System.currentTimeMillis();
-        for (DataOnMemory<DataInstance> batch : data.iterableOverBatches(1000)){
+        for (DataOnMemory<DataInstance> batch : data.iterableOverBatches(4000)){
             learntModel = structuralLearningAlgorithm.learnModel(batch);
         }
         long estimatedTime = System.currentTimeMillis() - startTime;
@@ -47,3 +47,4 @@ public class AlarmDataset {
 
     }
 }
+

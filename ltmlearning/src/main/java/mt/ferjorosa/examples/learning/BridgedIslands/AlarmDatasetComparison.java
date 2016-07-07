@@ -40,7 +40,7 @@ public class AlarmDatasetComparison {
             learntModel = structuralLearningAlgorithm.learnModel(batch);
         }
         long oneCoreEstimatedTime = System.currentTimeMillis() - oneCoreStartTime;
-
+/*
         // Learns the structure using the BI approximation I ve developed with Parallelization
         DataStream<DataInstance> data2 = DataStreamLoader.openFromFile("datasets/ferjorosaData/Alarm_train.arff");
         long multiCoreStartTime = System.currentTimeMillis();
@@ -48,7 +48,7 @@ public class AlarmDatasetComparison {
             parallelLearntModel = buildParallelLTM(batch);
         }
         long multiCoreEstimatedTime = System.currentTimeMillis() - multiCoreStartTime;
-
+*/
         // Learns the parameters of the structure learnt by Zhang's algorithm
         DataStream<DataInstance> data3 = DataStreamLoader.openFromFile("datasets/ferjorosaData/Alarm_train.arff");
         for (DataOnMemory<DataInstance> batch : data3.iterableOverBatches(1000)){
@@ -56,16 +56,16 @@ public class AlarmDatasetComparison {
         }
         // Learns a Naïve Bayes structure
         DataStream<DataInstance> data4 = DataStreamLoader.openFromFile("datasets/ferjorosaData/Alarm_train.arff");
-        LTM naiveBayesModel = buildNBmodel(data4);
+//        LTM naiveBayesModel = buildNBmodel(data4);
 
         System.out.println("ABI score: "+ learntModel.getScore());
         System.out.println("Zhang BI score: "+ zhangModel.getScore());
-        System.out.println("Parallel ABI score: "+ parallelLearntModel.getScore());
-        System.out.println("Naive Bayes score:" + naiveBayesModel.getScore());
+        //System.out.println("Parallel ABI score: "+ parallelLearntModel.getScore());
+       // System.out.println("Naive Bayes score:" + naiveBayesModel.getScore());
 
         System.out.println("------------------------------------");
         System.out.println("ABI learning time: "+ oneCoreEstimatedTime);
-        System.out.println("Parallel ABI learning time: "+ multiCoreEstimatedTime);
+        //System.out.println("Parallel ABI learning time: "+ multiCoreEstimatedTime);
 
     }
 

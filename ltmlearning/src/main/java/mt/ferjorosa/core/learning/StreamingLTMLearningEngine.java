@@ -113,7 +113,7 @@ public class StreamingLTMLearningEngine {
 
         int currentIteration = 0;
         int iterationLastDrift = 0;
-        ArrayList<Double> differences = new ArrayList<>();
+        //ArrayList<Double> differences = new ArrayList<>();
 
         for (DataOnMemory<DataInstance> batch : dataStream.iterableOverBatches(batchSize)){
 
@@ -138,7 +138,7 @@ public class StreamingLTMLearningEngine {
                 case CONCEPT_DRIFT:
                     this.currentModel = structuralLearningAlgorithm.learnModel(batch);
                     iterationLastDrift = currentIteration;
-
+                    conceptDriftMeasure.reset();
                     break;
 
                 // Nothing needs to be changed
@@ -147,7 +147,12 @@ public class StreamingLTMLearningEngine {
         }
     }
 
+    private int currentIteration = 0;
+    private int iterationLastDrift = 0;
+
     public void updateModel(DataOnMemory<DataInstance> batch){
+
+        this.currentIteration++;
 
         if(this.currentModel == null)
             throw new IllegalStateException("It is necessary to call initLearning() before starting to stream data");
@@ -162,14 +167,18 @@ public class StreamingLTMLearningEngine {
          * learns a new model with the same structure. This second model will not take into consideration previous data
          * as the first one does.
          */
-        ConceptDriftStates state = conceptDriftMeasure.checkConceptDrift(currentModel, lastBatchScore, batch);
+
+        ConceptDriftStates state = conceptDriftMeasure.checkConceptDriftPH(currentModel, lastBatchScore, batch, currentIteration, iterationLastDrift);
 
         // Different ways of action depending on the state
         switch (state){
 
             // If there is a concept shift, then it learns a new model using the new batch as seed.
-            case CONCEPT_SHIFT:
-                this.currentModel = structuralLearningAlgorithm.learnModel(batch); break;
+            case CONCEPT_DRIFT:
+                this.currentModel = structuralLearningAlgorithm.learnModel(batch);
+                iterationLastDrift = currentIteration;
+                conceptDriftMeasure.reset();
+                break;
 
             // Nothing needs to be changed
             default : break;

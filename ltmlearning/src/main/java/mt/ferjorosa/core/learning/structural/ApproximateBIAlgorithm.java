@@ -47,6 +47,9 @@ import java.util.stream.Collectors;
  * TODO: Punto 6 del algoritmo
  * TODO: Este algoritmo siempre genera un LCM de 3 variables cuando recibe solo 3 atributos, aunque busque un arbol de 2 LVs, siempre queda igual.
  * TODO: connectSiblingClusters escoge una raiz del MWST de forma aleatoria.
+ * TODO: Cambiar la forma en la que se calcula la MI de las variables latentes (rellenar el dataset)
+ * TODO: calculateSiblingClusters para <= 2 necesita repaso, ya que lo de añadir esas dos variables a dos clusters...no se
+ * TODO: Cada learnModel debe resetear las entrañas del algoritmo, ya que sino se queda basura de el anterior aprendizaje
  */
 public class ApproximateBIAlgorithm implements StructuralLearning {
 
@@ -60,7 +63,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
     private LTMLearningEngine ltmLearner;
 
     /** The list of unconnected LCMs, also called sibling clusters. */
-    private ArrayList<LTM> siblingClusters = new ArrayList<>();
+    private ArrayList<LTM> siblingClusters;
 
     /** Configuration parameters for the algorithm. */
     private ApproximateBIConfig config;
@@ -115,6 +118,8 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
      */
     @Override
     public LTM learnModel(DataOnMemory<DataInstance> batch) {
+
+        this.siblingClusters = new ArrayList<>();
         siblingClustersMeasure.setData(batch);
 
         // 1 - Calculate sibling clusters (islands)
@@ -292,7 +297,7 @@ public class ApproximateBIAlgorithm implements StructuralLearning {
             islandLTM = ltmLearner.learnUnidimensionalLTM(activeSet, config.getBaseLvCardinality(), siblingClusters.size(), batch);
 
 
-        System.out.println("isla de "+islandLTM.getLtdag().getObservedVariables().size()+" variables");
+        //System.out.println("isla de "+islandLTM.getLtdag().getObservedVariables().size()+" variables");
 
         return islandLTM;
     }

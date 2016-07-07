@@ -7,6 +7,7 @@ import mt.ferjorosa.core.learning.LTMLearningEngine;
 import mt.ferjorosa.core.models.LTM;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by Fernando on 7/7/2016.
@@ -72,22 +73,24 @@ public class PageHinkley implements ConceptDriftMeasure{
         //System.out.println(oneBatchModel.getLearntBayesianNetwork().toString());
         //System.out.println("\n SCORE MODELO ONE-BATCH: "+oneBatchModel.getScore());
 
-        double currentScoreDiff = oneBatchModel.getScore() + modelBatchScore;
+        double currentScoreDiff = oneBatchModel.getScore() - modelBatchScore;
         scoreDiffsSinceLastCD.add(currentScoreDiff);
         double Cum = 0;
         for(Double score: scoreDiffsSinceLastCD){
             Cum += score / scoreDiffsSinceLastCD.size();
         }
         CumSinceLastCD.add(Cum);
-        // Now we calculate the maximum Cum value
-        if(Cum < minCumSinceLastCD)
-            minCumSinceLastCD = Cum;
+        // Now we calculate the minimum Cum value
+        minCumSinceLastCD = Collections.min(CumSinceLastCD);
         // Finally we calculate the PH value
         double currentPH = Cum - minCumSinceLastCD;
         // Store the PH value for test purposes
         PHValues.add(currentPH);
-        if(currentPH > gamma)
+        System.out.println("PH ("+currentIteration+"): "+currentPH);
+        if(currentPH > gamma) {
+            System.out.println(currentIteration + ": DRIFT");
             return ConceptDriftStates.CONCEPT_DRIFT;
+        }
         return ConceptDriftStates.NONE;
     }
 
