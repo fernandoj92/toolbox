@@ -9,6 +9,8 @@ import mt.ferjorosa.core.learning.conceptdrift.ConceptDriftMeasure;
 import mt.ferjorosa.core.learning.structural.StructuralLearning;
 import mt.ferjorosa.core.models.LTM;
 
+import java.util.ArrayList;
+
 /**
  * This class allows to learn a changing Latent Tree Model from a streaming of data batches. It requires a structural
  * learning algorithm that will learn the LTM structure and parameters once the batch arrives, updating the currently
@@ -109,7 +111,13 @@ public class StreamingLTMLearningEngine {
 
         this.streamIsRunning = true;
 
+        int currentIteration = 0;
+        int iterationLastDrift = 0;
+        ArrayList<Double> differences = new ArrayList<>();
+
         for (DataOnMemory<DataInstance> batch : dataStream.iterableOverBatches(batchSize)){
+
+            currentIteration++;
 
             //Updates current model with the new data
             double batchScore = currentModel.updateModel(batch);
@@ -121,14 +129,17 @@ public class StreamingLTMLearningEngine {
              * learns a new model with the same structure. This second model will not take into consideration previous data
              * as the first one does.
              */
-            ConceptDriftStates state = conceptDriftMeasure.checkConceptDrift(currentModel, batchScore, batch);
+            ConceptDriftStates state = conceptDriftMeasure.checkConceptDriftPH(currentModel, batchScore, batch, currentIteration, iterationLastDrift);
 
             // Different ways of action depending on the state
             switch (state){
 
                 // If there is a concept shift, then it learns a new model using the new batch as seed.
-                case CONCEPT_SHIFT:
-                    this.currentModel = structuralLearningAlgorithm.learnModel(batch); break;
+                case CONCEPT_DRIFT:
+                    this.currentModel = structuralLearningAlgorithm.learnModel(batch);
+                    iterationLastDrift = currentIteration;
+
+                    break;
 
                 // Nothing needs to be changed
                 default : break;

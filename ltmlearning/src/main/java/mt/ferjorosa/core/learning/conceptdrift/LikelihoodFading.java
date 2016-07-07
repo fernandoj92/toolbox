@@ -66,4 +66,13 @@ public class LikelihoodFading implements ConceptDriftMeasure {
             return ConceptDriftStates.NONE;
     }
 
+    @Override
+    public ConceptDriftStates checkConceptDriftPH(LTM updatedModel, double modelBatchScore, DataOnMemory<DataInstance> batch, int currentIteration, int iterationLastDrift) {
+        return null;
+    }
+
+    @Override
+    public void reset() {
+
+    }
 }

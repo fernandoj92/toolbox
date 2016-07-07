@@ -29,4 +29,9 @@ public interface ConceptDriftMeasure {
      * @return the concept drift state.
      */
     ConceptDriftStates checkConceptDrift(LTM updatedModel, double modelBatchScore, DataOnMemory<DataInstance> batch);
+
+    ConceptDriftStates checkConceptDriftPH(LTM updatedModel, double modelBatchScore, DataOnMemory<DataInstance> batch, int currentIteration, int iterationLastDrift);
+
+    void reset();
+
 }
