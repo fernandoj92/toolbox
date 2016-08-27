@@ -72,7 +72,7 @@ public class UndirectedGraphTest {
         Assert.assertEquals(manualMWST, obtainedMWST);
         Assert.assertEquals(manualMWST.hashCode(), obtainedMWST.hashCode());
     }
-
+    @Test
     public void testMinimumSpanningTree(){
 
         /* First creates a complete undirected graph */

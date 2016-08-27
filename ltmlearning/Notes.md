@@ -12,3 +12,7 @@ TODO: Hacer un Hill climbing para escoger relaciones entre las variables observa
 TODO: Hacer una clase de configuracion para el Approximate BI alg
 
 IMPORTANT: Parallel SVB returns different ELBO results and theresfore when used in the ABI alg, it returns different structures.
+
+--------------------- 07-08-2016 --------------------
+
+TODO: Crear una clase con 1 método estático: BNtoJson(BayesianNetwork)
