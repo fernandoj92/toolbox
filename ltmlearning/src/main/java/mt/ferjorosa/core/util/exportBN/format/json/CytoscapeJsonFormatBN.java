@@ -2,7 +2,10 @@ package mt.ferjorosa.core.util.exportBN.format.json;
 
 import eu.amidst.core.models.BayesianNetwork;
 import eu.amidst.core.models.DAG;
+import eu.amidst.core.models.ParentSet;
+import eu.amidst.core.variables.Variable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,23 +13,35 @@ import java.util.List;
  */
 public class CytoscapeJsonFormatBN {
 
-    private Element elements;
+    private Elements elements;
 
     public CytoscapeJsonFormatBN(BayesianNetwork bayesianNetwork){
 
         DAG dag = bayesianNetwork.getDAG();
 
+        List<Node> nodes = new ArrayList<>();
+        List<Edge> edges = new ArrayList<>();
 
+        for(Variable var : dag.getVariables().getListOfVariables()){
+            nodes.add(new Node(var.getVarID() + ""));
+        }
+
+        for(ParentSet parent : dag.getParentSets()){
+            for(Variable var : parent.getParents())
+                edges.add(new Edge(parent.getMainVar().getVarID()+"",var.getVarID()+""));
+        }
+
+        this.elements = new Elements(nodes,edges);
     }
 
     /** ------------------------------------------------------------------------------------------------------------- */
 
-    private class Element{
+    private class Elements {
 
         private List<Node> nodes;
         private List<Edge> edges;
 
-        public Element(List<Node> nodes, List<Edge> edges){
+        public Elements(List<Node> nodes, List<Edge> edges){
             this.nodes = nodes;
             this.edges = edges;
         }
@@ -36,8 +51,8 @@ public class CytoscapeJsonFormatBN {
 
         private NodeData data;
 
-        public Node(NodeData data){
-            this.data = data;
+        public Node(String id){
+            this.data = new NodeData(id);
         }
 
         private class NodeData{
@@ -53,8 +68,8 @@ public class CytoscapeJsonFormatBN {
 
         private EdgeData data;
 
-        public Edge(EdgeData data){
-            this.data = data;
+        public Edge(String source, String target){
+            this.data = new EdgeData(source,target);
         }
 
         private class EdgeData{

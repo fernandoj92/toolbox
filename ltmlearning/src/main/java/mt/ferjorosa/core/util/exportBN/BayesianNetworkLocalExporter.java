@@ -1,6 +1,7 @@
 package mt.ferjorosa.core.util.exportBN;
 
-import eu.amidst.core.models.DAG;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Created by Fernando on 07/08/2016.
@@ -8,6 +9,10 @@ import eu.amidst.core.models.DAG;
 public class BayesianNetworkLocalExporter {
 
     public static void writeJsonFile(String bayesianNetworkJson, String path){
-
+        try (FileWriter writer = new FileWriter(path)) {
+            writer.write(bayesianNetworkJson);
+        }catch (IOException ioException){
+            ioException.printStackTrace();
+        }
     }
 }
