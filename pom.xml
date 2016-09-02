@@ -89,6 +89,7 @@
         <module>examples</module>
         <module>moalink</module>
         <module>ltmlearning</module>
+        <module>ltmlearning-web</module>
     </modules>
 
 
