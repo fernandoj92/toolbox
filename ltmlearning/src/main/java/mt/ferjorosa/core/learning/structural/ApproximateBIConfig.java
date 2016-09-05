@@ -29,11 +29,7 @@ public class ApproximateBIConfig {
      * @param baseLvCardinality
      * @param udTestThreshold
      */
-    public ApproximateBIConfig(
-            int maxIslandSize,
-            int baseLvCardinality,
-            double udTestThreshold)
-    {
+    public ApproximateBIConfig(int maxIslandSize, int baseLvCardinality, double udTestThreshold) {
         this.maxIslandSize = maxIslandSize;
         this.baseLvCardinality = baseLvCardinality;
         this.udTestThreshold = udTestThreshold;

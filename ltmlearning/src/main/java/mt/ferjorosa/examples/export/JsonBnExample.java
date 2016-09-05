@@ -100,8 +100,10 @@ public class JsonBnExample {
          */
         String json = ConvertBN.toCytoscapeJson(bn, true);
         System.out.println(json);
+        System.out.println(System.getProperty("user.dir"));
 
-        BayesianNetworkLocalExporter.writeJsonFile(json, System.getProperty("user.dir") + "\\ltmlearning\\networks\\json\\test.json");
+        //BayesianNetworkLocalExporter.writeJsonFile(json, System.getProperty("user.dir") + "\\ltmlearning\\networks\\json\\test2.json");
+        BayesianNetworkLocalExporter.writeJsonFile(json, System.getProperty("user.dir") + "/ltmlearning/networks/json/test2.json");
 
     }
 }
