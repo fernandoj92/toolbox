@@ -1,6 +1,8 @@
 package mt.ferjorosa.web.app;
 
-import mt.ferjorosa.web.app.stream.StreamWebSocketHandler;
+import mt.ferjorosa.web.app.staticLearn.StaticLearnController;
+import mt.ferjorosa.web.app.localData.LocalDataController;
+import mt.ferjorosa.web.app.streamLearn.StreamWebSocketHandler;
 
 import static spark.Spark.*;
 
@@ -14,10 +16,13 @@ public class Application {
 
         // Configure Spark
         port(8899); // Server port
-        staticFiles.location("/public");
+        //staticFiles.location("/public");
 
         webSocket("/stream", StreamWebSocketHandler.class);
         //init(); // Needed if you don't define any HTTP routes after your WebSocket routes
-        get("/hello", (req, res) -> "Hello From LTM");
+
+        get("/listLocalFiles", LocalDataController.listLocalFiles);
+        post("/learn/flatLTM", StaticLearnController.learnFlatLtmABI);
+
     }
 }

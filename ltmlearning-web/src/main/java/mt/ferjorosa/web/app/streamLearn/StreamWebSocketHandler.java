@@ -1,4 +1,4 @@
-package mt.ferjorosa.web.app.stream;
+package mt.ferjorosa.web.app.streamLearn;
 
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
